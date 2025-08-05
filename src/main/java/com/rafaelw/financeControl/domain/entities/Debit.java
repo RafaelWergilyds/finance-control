@@ -20,7 +20,7 @@ import lombok.ToString;
 public class Debit {
       private Long id;
       private String name;
-      private BigDecimal value;
+      private BigDecimal amount;
       private Instant moment;
 
       private User user;

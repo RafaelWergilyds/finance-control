@@ -1,7 +1,6 @@
 package com.rafaelw.financeControl.infra.db.entities;
 
-import com.rafaelw.financeControl.domain.entities.Category;
-import com.rafaelw.financeControl.domain.entities.User;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@Entity
 @Builder
 @Getter
 @Setter
@@ -32,15 +32,15 @@ public class DebitEntity {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
   private String name;
-  private BigDecimal value;
+  private BigDecimal amount;
   private Instant moment;
 
   @ManyToOne
   @JoinColumn(name = "user_id")
-  private User user;
+  private UserEntity user;
 
   @ManyToOne
   @JoinColumn(name = "category_id")
-  private Category category;
+  private CategoryEntity category;
 
 }

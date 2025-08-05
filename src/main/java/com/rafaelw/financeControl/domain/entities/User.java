@@ -30,4 +30,7 @@ public class User {
   private Set<Category> categories = new HashSet<>();
   private List<Debit> debits = new ArrayList<>();
 
+  public void addDebits(Debit debit){
+
+  }
 }

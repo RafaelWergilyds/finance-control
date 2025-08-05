@@ -1,8 +1,7 @@
 package com.rafaelw.financeControl.infra.db.entities;
 
-import com.rafaelw.financeControl.domain.entities.Category;
-import com.rafaelw.financeControl.domain.entities.Debit;
 import com.rafaelw.financeControl.domain.entities.enums.Role;
+import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@Entity
 @Builder
 @Getter
 @Setter
@@ -42,10 +42,10 @@ public class UserEntity {
   @Enumerated(value = EnumType.STRING)
   private Role role;
 
-  @OneToMany(mappedBy = "users")
-  private Set<Category> categories = new HashSet<>();
+  @OneToMany(mappedBy = "user")
+  private Set<CategoryEntity> categories = new HashSet<>();
 
-  @OneToMany(mappedBy = "users")
-  private List<Debit> debits = new ArrayList<>();
+  @OneToMany(mappedBy = "user")
+  private List<DebitEntity> debits = new ArrayList<>();
 
 }
