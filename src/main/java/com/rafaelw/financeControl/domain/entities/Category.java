@@ -23,4 +23,5 @@ public class Category {
 
     private User user;
     private Set<Debit> debits = new HashSet<>();
+
 }

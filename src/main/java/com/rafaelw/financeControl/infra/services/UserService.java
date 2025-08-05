@@ -6,7 +6,9 @@ import com.rafaelw.financeControl.infra.db.entities.UserEntity;
 import com.rafaelw.financeControl.infra.db.repository.UserRepository;
 import com.rafaelw.financeControl.infra.dto.user.UserDTO;
 import com.rafaelw.financeControl.infra.mappers.UserMapper;
+import com.rafaelw.financeControl.infra.services.exceptions.UserAlreadyExistsException;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,12 @@ public class UserService {
     }
 
     public UserEntity insert(UserDTO data){
+      Optional<UserEntity> userAlreadyExist = repository.findByEmail(data.email());
+
+      if (userAlreadyExist.isPresent()){
+        throw new UserAlreadyExistsException(data.email());
+      }
+
       User user = new User(null, data.name(), data.email(), data.password(), Role.COMMON, null, null);
       UserEntity userEntity = userMapper.toUserEntity(user);
       return repository.save(userEntity);
