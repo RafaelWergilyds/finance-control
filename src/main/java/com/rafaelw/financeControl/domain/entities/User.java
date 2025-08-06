@@ -30,7 +30,18 @@ public class User {
   private Set<Category> categories = new HashSet<>();
   private List<Debit> debits = new ArrayList<>();
 
-  public void addDebits(Debit debit){
+  public void addCategory(Category category){
+      this.categories.add(category);
+      category.setUser(this);
+  }
 
+  public void removeCategory(Category category){
+    this.categories.remove(category);
+    category.setUser(null);
+  }
+
+  public void addDebit(Debit debit){
+    this.debits.add(debit);
+    debit.setUser(this);
   }
 }

@@ -4,7 +4,8 @@ import com.rafaelw.financeControl.domain.entities.User;
 import com.rafaelw.financeControl.domain.entities.enums.Role;
 import com.rafaelw.financeControl.infra.db.entities.UserEntity;
 import com.rafaelw.financeControl.infra.db.repository.UserRepository;
-import com.rafaelw.financeControl.infra.dto.user.UserDTO;
+import com.rafaelw.financeControl.infra.dto.user.UserRequestDTO;
+import com.rafaelw.financeControl.infra.dto.user.UserResponseDTO;
 import com.rafaelw.financeControl.infra.mappers.UserMapper;
 import com.rafaelw.financeControl.infra.services.exceptions.UserAlreadyExistsException;
 import java.util.List;
@@ -20,22 +21,26 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public List<User> findAll(){
+    public List<UserResponseDTO> findAll(){
       List<UserEntity> userEntities = repository.findAll();
-      List<User> users = userEntities.stream().map(userEntity ->
+      List<User> domainUsers = userEntities.stream().map(userEntity ->
         userMapper.toUser(userEntity)).toList();
-      return users;
+
+      List<UserResponseDTO> usersResponseDTOS = domainUsers.stream().map(domainUser ->
+          userMapper.toResponseDTO(domainUser)).toList();
+
+      return usersResponseDTOS;
     }
 
-    public User findById(Long id){
+    public UserResponseDTO findById(Long id){
       UserEntity userEntity = repository.findById(id).orElse(new UserEntity());
 
-      User user = userMapper.toUser(userEntity);
+      UserResponseDTO user = userMapper.toResponseDTO(userEntity);
 
       return user;
     }
 
-    public UserEntity insert(UserDTO data){
+    public UserEntity insert(UserRequestDTO data){
       Optional<UserEntity> userAlreadyExist = repository.findByEmail(data.email());
 
       if (userAlreadyExist.isPresent()){
