@@ -16,7 +16,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-    @Autowired
+
+  @Autowired
   private JpaUserRepository repository;
 
   @Autowired
@@ -48,5 +49,12 @@ public class UserService {
       return userMapper.toResponseDTO(userEntity);
     }
 
+    public void delete(Long id){
+        Optional<UserEntity> userEntity = repository.findById(id);
+        if(userEntity.isEmpty()){
+          throw new UserNotFoundException(id);
+        }
+        repository.deleteById(userEntity.get().getId());
+    }
 
 }

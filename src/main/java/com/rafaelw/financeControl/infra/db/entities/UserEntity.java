@@ -21,6 +21,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Builder
@@ -31,6 +33,8 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(of = "id")
 @Table(name = "users")
+@SQLDelete(sql = "UPDATE users SET active = false WHERE id = ?")
+@SQLRestriction("active = true")
 public class UserEntity {
 
   @Id
