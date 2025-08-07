@@ -6,6 +6,7 @@ import com.rafaelw.financeControl.infra.db.entities.UserEntity;
 import com.rafaelw.financeControl.infra.db.repository.JpaUserRepository;
 import com.rafaelw.financeControl.infra.dto.user.UserRequestDTO;
 import com.rafaelw.financeControl.infra.dto.user.UserResponseDTO;
+import com.rafaelw.financeControl.infra.dto.user.UserUpdateDTO;
 import com.rafaelw.financeControl.infra.mappers.UserMapper;
 import com.rafaelw.financeControl.infra.services.exceptions.UserNotFoundException;
 import com.rafaelw.financeControl.infra.services.factories.UserFactory;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+
+  @Autowired
+  private VerifyUserByEmail verifyUserByEmail;
 
   @Autowired
   private JpaUserRepository repository;
@@ -43,10 +47,32 @@ public class UserService {
     }
 
     public UserResponseDTO insert(UserRequestDTO data){
-      User user = userFactory.create(data.name(), data.email(), data.password(), data.role());
+      User user = userFactory.create(data.name(), data.email(), data.password());
       UserEntity userEntity = userMapper.toUserEntity(user);
       repository.save(userEntity);
       return userMapper.toResponseDTO(userEntity);
+    }
+
+    public UserResponseDTO update(Long id, UserUpdateDTO data){
+        Optional<UserEntity> userEntity = repository.findById(id);
+
+        if (userEntity.isEmpty()){
+          throw new UserNotFoundException(id);
+        }
+
+        User user = userMapper.toUser(userEntity.get());
+        if(data.name() != null){
+          user.changeName(data.name());
+        }
+        if(data.email() != null){
+          user.changeEmail(data.email(), verifyUserByEmail);
+        }
+        if(data.password() != null){
+          user.changePassword(data.password());
+        }
+
+        return userMapper.toResponseDTO(user);
+
     }
 
     public void delete(Long id){

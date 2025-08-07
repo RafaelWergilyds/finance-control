@@ -1,6 +1,5 @@
 package com.rafaelw.financeControl.infra.dto.user;
 
-import com.rafaelw.financeControl.domain.entities.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -13,6 +12,7 @@ public record UserRequestDTO(
     String email,
 
     @NotBlank
-    String password,
-    Role role) {
+    String password
+)
+{
 }

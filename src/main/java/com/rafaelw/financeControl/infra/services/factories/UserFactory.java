@@ -12,8 +12,8 @@ public class UserFactory {
   @Autowired
   private VerifyUserByEmail verifyUserByEmail;
 
-  public User create(String name, String email, String password, Role role){
+  public User create(String name, String email, String password){
     verifyUserByEmail.execute(email);
-    return User.create(name, email, password, role);
+    return User.create(name, email, password);
   }
 }

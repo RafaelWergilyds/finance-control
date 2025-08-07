@@ -1,6 +1,7 @@
 package com.rafaelw.financeControl.domain.entities;
 
 import com.rafaelw.financeControl.domain.entities.enums.Role;
+import com.rafaelw.financeControl.domain.service.VerifyUserByEmail;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Builder
 @Getter
@@ -31,15 +33,31 @@ public class User {
   private Set<Category> categories = new HashSet<>();
   private List<Debit> debits = new ArrayList<>();
 
-  public User(String name, String email, String password, Role role){
+  public User(String name, String email, String password){
     this.name = name;
     this.email = email;
     this.password = password;
-    this.role = role;
+    this.role = Role.COMMON;
     this.active = true;
   }
 
-  public static User create(String name, String email, String password, Role role){
-    return new User(name, email, password, role);
+  public static User create(String name, String email, String password){
+    return new User(name, email, password);
+  }
+
+  public void changeName(String name){
+    this.name = name;
+  }
+
+  public void changeEmail(String email, VerifyUserByEmail verifyUserByEmail){
+    if(this.email.equals(email)){
+      return;
+    }
+    verifyUserByEmail.execute(email);
+    this.email = email;
+  }
+
+  public void changePassword(String password){
+    this.password = password;
   }
 }

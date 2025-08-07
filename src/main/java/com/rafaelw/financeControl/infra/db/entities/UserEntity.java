@@ -48,7 +48,8 @@ public class UserEntity {
   private boolean active = true;
 
   @Enumerated(value = EnumType.STRING)
-  private Role role;
+  @Column(columnDefinition = "varchar(20) default 'COMMON'")
+  private Role role = Role.COMMON;
 
   @OneToMany(mappedBy = "user")
   private Set<CategoryEntity> categories = new HashSet<>();
