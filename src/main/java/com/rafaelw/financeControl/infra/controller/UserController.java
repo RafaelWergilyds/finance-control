@@ -5,6 +5,7 @@ import com.rafaelw.financeControl.infra.db.entities.UserEntity;
 import com.rafaelw.financeControl.infra.dto.user.UserRequestDTO;
 import com.rafaelw.financeControl.infra.dto.user.UserResponseDTO;
 import com.rafaelw.financeControl.infra.services.UserService;
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,9 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserEntity> insert(@RequestBody UserRequestDTO data){
-      UserEntity user = service.insert(data);
-      URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
+    public ResponseEntity<UserResponseDTO> insert(@Valid @RequestBody UserRequestDTO data){
+      UserResponseDTO user = service.insert(data);
+      URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user).toUri();
       return ResponseEntity.created(uri).body(user);
     }
 

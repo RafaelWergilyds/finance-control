@@ -24,8 +24,4 @@ public class Category {
     private User user;
     private Set<Debit> debits = new HashSet<>();
 
-    public void addDebit(Debit debit){
-        this.debits.add(debit);
-        debit.setCategory(this);
-    }
 }

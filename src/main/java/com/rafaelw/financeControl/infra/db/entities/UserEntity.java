@@ -1,6 +1,7 @@
 package com.rafaelw.financeControl.infra.db.entities;
 
 import com.rafaelw.financeControl.domain.entities.enums.Role;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -38,6 +39,9 @@ public class UserEntity {
   private String name;
   private String email;
   private String password;
+
+  @Column(columnDefinition = "boolean default true")
+  private boolean active = true;
 
   @Enumerated(value = EnumType.STRING)
   private Role role;

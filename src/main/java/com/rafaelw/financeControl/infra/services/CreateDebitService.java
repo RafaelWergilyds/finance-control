@@ -9,7 +9,7 @@ import com.rafaelw.financeControl.infra.db.entities.DebitEntity;
 import com.rafaelw.financeControl.infra.db.entities.UserEntity;
 import com.rafaelw.financeControl.infra.db.repository.CategoryRepository;
 import com.rafaelw.financeControl.infra.db.repository.JpaDebitRepository;
-import com.rafaelw.financeControl.infra.db.repository.UserRepository;
+import com.rafaelw.financeControl.infra.db.repository.JpaUserRepository;
 import com.rafaelw.financeControl.infra.dto.debit.CreateDebitDTO;
 import com.rafaelw.financeControl.infra.mappers.CategoryMapper;
 import com.rafaelw.financeControl.infra.mappers.DebitMapper;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CreateDebitService {
     @Autowired
-    private UserRepository userRepository;
+    private JpaUserRepository userRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;

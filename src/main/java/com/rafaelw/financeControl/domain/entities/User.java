@@ -25,23 +25,21 @@ public class User {
   private String name;
   private String email;
   private String password;
+  private boolean active;
 
   private Role role;
   private Set<Category> categories = new HashSet<>();
   private List<Debit> debits = new ArrayList<>();
 
-  public void addCategory(Category category){
-      this.categories.add(category);
-      category.setUser(this);
+  public User(String name, String email, String password, Role role){
+    this.name = name;
+    this.email = email;
+    this.password = password;
+    this.role = role;
+    this.active = true;
   }
 
-  public void removeCategory(Category category){
-    this.categories.remove(category);
-    category.setUser(null);
-  }
-
-  public void addDebit(Debit debit){
-    this.debits.add(debit);
-    debit.setUser(this);
+  public static User create(String name, String email, String password, Role role){
+    return new User(name, email, password, role);
   }
 }

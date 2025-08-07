@@ -6,7 +6,7 @@ import com.rafaelw.financeControl.domain.service.CreateCategory;
 import com.rafaelw.financeControl.infra.db.entities.CategoryEntity;
 import com.rafaelw.financeControl.infra.db.entities.UserEntity;
 import com.rafaelw.financeControl.infra.db.repository.CategoryRepository;
-import com.rafaelw.financeControl.infra.db.repository.UserRepository;
+import com.rafaelw.financeControl.infra.db.repository.JpaUserRepository;
 import com.rafaelw.financeControl.infra.dto.category.CategoryRequestDTO;
 import com.rafaelw.financeControl.infra.mappers.CategoryMapper;
 import com.rafaelw.financeControl.infra.mappers.UserMapper;
@@ -19,7 +19,7 @@ public class CategoryService {
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private JpaUserRepository userRepository;
 
     @Autowired
     private CategoryMapper categoryMapper;
