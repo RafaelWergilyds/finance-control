@@ -7,7 +7,7 @@ import com.rafaelw.financeControl.domain.service.CreateDebit;
 import com.rafaelw.financeControl.infra.db.entities.CategoryEntity;
 import com.rafaelw.financeControl.infra.db.entities.DebitEntity;
 import com.rafaelw.financeControl.infra.db.entities.UserEntity;
-import com.rafaelw.financeControl.infra.db.repository.CategoryRepository;
+import com.rafaelw.financeControl.infra.db.repository.JpaCategoryRepository;
 import com.rafaelw.financeControl.infra.db.repository.JpaDebitRepository;
 import com.rafaelw.financeControl.infra.db.repository.JpaUserRepository;
 import com.rafaelw.financeControl.infra.dto.debit.CreateDebitDTO;
@@ -19,39 +19,41 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CreateDebitService {
-    @Autowired
-    private JpaUserRepository userRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+  @Autowired
+  private JpaUserRepository userRepository;
 
-    @Autowired
-    private JpaDebitRepository debitRepository;
+  @Autowired
+  private JpaCategoryRepository jpaCategoryRepository;
 
-    @Autowired
-    private CreateDebit createDebit;
+  @Autowired
+  private JpaDebitRepository debitRepository;
 
-    @Autowired
-    private DebitMapper debitMapper;
+  @Autowired
+  private CreateDebit createDebit;
 
-    @Autowired
-    private UserMapper userMapper;
+  @Autowired
+  private DebitMapper debitMapper;
 
-    @Autowired
-    private CategoryMapper categoryMapper;
+  @Autowired
+  private UserMapper userMapper;
 
-    public DebitEntity execute(CreateDebitDTO data){
-      CategoryEntity categoryEntity = categoryRepository.findById(data.categoryId()).orElse(new CategoryEntity());
-      UserEntity userEntity = userRepository.findById(data.userId()).orElse(new UserEntity());
+  @Autowired
+  private CategoryMapper categoryMapper;
 
-      User user = userMapper.toUser(userEntity);
-      Category category = categoryMapper.toCategory(categoryEntity);
+  public DebitEntity execute(CreateDebitDTO data) {
+    CategoryEntity categoryEntity = jpaCategoryRepository.findById(data.categoryId())
+        .orElse(new CategoryEntity());
+    UserEntity userEntity = userRepository.findById(data.userId()).orElse(new UserEntity());
 
-      Debit debit = createDebit.createDebit(user, category, data.name(), data.amount());
+    User user = userMapper.toUser(userEntity);
+    Category category = categoryMapper.toCategory(categoryEntity);
 
-      DebitEntity debitEntity = debitMapper.toDebitEntity(debit);
-      debitRepository.save(debitEntity);
+    Debit debit = createDebit.createDebit(user, category, data.name(), data.amount());
 
-      return debitEntity;
-    }
+    DebitEntity debitEntity = debitMapper.toDebitEntity(debit);
+    debitRepository.save(debitEntity);
+
+    return debitEntity;
+  }
 }

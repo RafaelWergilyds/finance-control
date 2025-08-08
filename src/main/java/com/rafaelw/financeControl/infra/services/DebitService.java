@@ -9,16 +9,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DebitService {
+
   @Autowired
   private JpaDebitRepository debitRepository;
 
   @Autowired
   private DebitMapper debitMapper;
 
-  public Debit findById(Long id){
+  public Debit findById(Long id) {
     DebitEntity debitEntity = debitRepository.findById(id).orElse(new DebitEntity());
-    Debit debit = debitMapper.toDebit(debitEntity);
-    return debit;
+    return debitMapper.toDebit(debitEntity);
   }
 
 }

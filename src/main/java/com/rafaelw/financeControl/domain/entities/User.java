@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Builder
 @Getter
@@ -23,41 +22,44 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ToString
 @EqualsAndHashCode(of = "id")
 public class User {
+
   private Long id;
   private String name;
   private String email;
   private String password;
-  private boolean active;
+  private boolean active = true;
 
   private Role role;
   private Set<Category> categories = new HashSet<>();
   private List<Debit> debits = new ArrayList<>();
 
-  public User(String name, String email, String password){
+  public User(String name, String email, String password) {
     this.name = name;
     this.email = email;
     this.password = password;
     this.role = Role.COMMON;
-    this.active = true;
   }
 
-  public static User create(String name, String email, String password){
+  public static User create(String name, String email, String password) {
     return new User(name, email, password);
   }
 
-  public void changeName(String name){
+  public void changeName(String name) {
+    if (this.name.equals(name)) {
+      return;
+    }
     this.name = name;
   }
 
-  public void changeEmail(String email, VerifyUserByEmail verifyUserByEmail){
-    if(this.email.equals(email)){
+  public void changeEmail(String email, VerifyUserByEmail verifyUserByEmail) {
+    if (this.email.equals(email)) {
       return;
     }
     verifyUserByEmail.execute(email);
     this.email = email;
   }
 
-  public void changePassword(String password){
+  public void changePassword(String password) {
     this.password = password;
   }
 }

@@ -2,11 +2,16 @@ package com.rafaelw.financeControl.infra.mappers;
 
 import com.rafaelw.financeControl.domain.entities.Category;
 import com.rafaelw.financeControl.infra.db.entities.CategoryEntity;
+import com.rafaelw.financeControl.infra.dto.category.CategoryResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
+
+  CategoryResponseDTO toResponseDTO(CategoryEntity categoryEntity);
+
+  CategoryResponseDTO toResponseDTO(Category category);
 
   @Mapping(target = "user.categories", ignore = true)
   @Mapping(target = "user.debits", ignore = true)

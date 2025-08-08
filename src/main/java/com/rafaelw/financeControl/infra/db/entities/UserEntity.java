@@ -32,9 +32,9 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode(of = "id")
-@Table(name = "users")
 @SQLDelete(sql = "UPDATE users SET active = false WHERE id = ?")
 @SQLRestriction("active = true")
+@Table(name = "users")
 public class UserEntity {
 
   @Id

@@ -1,7 +1,5 @@
 package com.rafaelw.financeControl.infra.controller;
 
-import com.rafaelw.financeControl.domain.entities.User;
-import com.rafaelw.financeControl.infra.db.entities.UserEntity;
 import com.rafaelw.financeControl.infra.dto.user.UserRequestDTO;
 import com.rafaelw.financeControl.infra.dto.user.UserResponseDTO;
 import com.rafaelw.financeControl.infra.dto.user.UserUpdateDTO;
@@ -22,42 +20,45 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping("/users")
 public class UserController {
-    @Autowired
-    private UserService service;
+
+  @Autowired
+  private UserService service;
 
 
-    @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> findAll(){
-      List<UserResponseDTO> list = service.findAll();
-      return ResponseEntity.ok().body(list);
-    }
+  @GetMapping
+  public ResponseEntity<List<UserResponseDTO>> findAll() {
+    List<UserResponseDTO> list = service.findAll();
+    return ResponseEntity.ok().body(list);
+  }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id){
-      UserResponseDTO response = service.findById(id);
-      return ResponseEntity.ok().body(response);
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id) {
+    UserResponseDTO response = service.findById(id);
+    return ResponseEntity.ok().body(response);
+  }
 
-    @PostMapping
-    public ResponseEntity<UserResponseDTO> insert(@Valid @RequestBody UserRequestDTO data){
-      UserResponseDTO response = service.insert(data);
-      URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(response).toUri();
-      return ResponseEntity.created(uri).body(response);
-    }
+  @PostMapping
+  public ResponseEntity<UserResponseDTO> insert(@Valid @RequestBody UserRequestDTO data) {
+    UserResponseDTO response = service.insert(data);
+    URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+        .buildAndExpand(response).toUri();
+    return ResponseEntity.created(uri).body(response);
+  }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<UserResponseDTO> update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO data){
-      UserResponseDTO response = service.update(id, data);
-      return ResponseEntity.ok().body(response);
-    }
+  @PutMapping("/{id}")
+  public ResponseEntity<UserResponseDTO> update(@PathVariable Long id,
+      @Valid @RequestBody UserUpdateDTO data) {
+    UserResponseDTO response = service.update(id, data);
+    return ResponseEntity.ok().body(response);
+  }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
-      service.delete(id);
-      return ResponseEntity.noContent().build();
-    }
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
+    service.delete(id);
+    return ResponseEntity.noContent().build();
+  }
 
 
 }

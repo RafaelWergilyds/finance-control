@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -30,57 +31,62 @@ public class UserService {
   @Autowired
   private UserFactory userFactory;
 
-    public List<UserResponseDTO> findAll(){
-      List<UserEntity> userEntities = repository.findAll();
-      List<User> domainUsers = userEntities.stream().map(userEntity ->
+  @Transactional(readOnly = true)
+  public List<UserResponseDTO> findAll() {
+    List<UserEntity> userEntities = repository.findAll();
+    List<User> domainUsers = userEntities.stream().map(userEntity ->
         userMapper.toUser(userEntity)).toList();
 
-      return domainUsers.stream().map(domainUser ->
-          userMapper.toResponseDTO(domainUser)).toList();
+    return domainUsers.stream().map(domainUser ->
+        userMapper.toResponseDTO(domainUser)).toList();
+  }
+
+  @Transactional(readOnly = true)
+  public UserResponseDTO findById(Long id) {
+    UserEntity userEntity = repository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException(id));
+
+    return userMapper.toResponseDTO(userEntity);
+  }
+
+  @Transactional
+  public UserResponseDTO insert(UserRequestDTO data) {
+    User user = userFactory.create(data.name(), data.email(), data.password());
+    UserEntity userEntity = userMapper.toUserEntity(user);
+    repository.save(userEntity);
+    return userMapper.toResponseDTO(userEntity);
+  }
+
+  @Transactional
+  public UserResponseDTO update(Long userId, UserUpdateDTO data) {
+    UserEntity userEntity = repository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException(userId));
+
+    User user = userMapper.toUser(userEntity);
+    if (data.name() != null) {
+      user.changeName(data.name());
+    }
+    if (data.email() != null) {
+      user.changeEmail(data.email(), verifyUserByEmail);
+    }
+    if (data.password() != null) {
+      user.changePassword(data.password());
     }
 
-    public UserResponseDTO findById(Long id){
-      Optional<UserEntity> userEntity = repository.findById(id);
-      return userEntity
-          .map(entity -> userMapper.toResponseDTO(entity))
-          .orElseThrow(() -> new UserNotFoundException(id));
+    UserEntity updatedUser = userMapper.toUserEntity(user);
+    repository.save(updatedUser);
+
+    return userMapper.toResponseDTO(updatedUser);
+
+  }
+
+  @Transactional
+  public void delete(Long id) {
+    Optional<UserEntity> userEntity = repository.findById(id);
+    if (userEntity.isEmpty()) {
+      throw new UserNotFoundException(id);
     }
-
-    public UserResponseDTO insert(UserRequestDTO data){
-      User user = userFactory.create(data.name(), data.email(), data.password());
-      UserEntity userEntity = userMapper.toUserEntity(user);
-      repository.save(userEntity);
-      return userMapper.toResponseDTO(userEntity);
-    }
-
-    public UserResponseDTO update(Long id, UserUpdateDTO data){
-        Optional<UserEntity> userEntity = repository.findById(id);
-
-        if (userEntity.isEmpty()){
-          throw new UserNotFoundException(id);
-        }
-
-        User user = userMapper.toUser(userEntity.get());
-        if(data.name() != null){
-          user.changeName(data.name());
-        }
-        if(data.email() != null){
-          user.changeEmail(data.email(), verifyUserByEmail);
-        }
-        if(data.password() != null){
-          user.changePassword(data.password());
-        }
-
-        return userMapper.toResponseDTO(user);
-
-    }
-
-    public void delete(Long id){
-        Optional<UserEntity> userEntity = repository.findById(id);
-        if(userEntity.isEmpty()){
-          throw new UserNotFoundException(id);
-        }
-        repository.deleteById(userEntity.get().getId());
-    }
+    repository.deleteById(userEntity.get().getId());
+  }
 
 }

@@ -18,10 +18,15 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(of = "id")
 public class Category {
-    private Long id;
-    private String name;
 
-    private User user;
-    private Set<Debit> debits = new HashSet<>();
+  private Long id;
+  private String name;
 
+  private User user;
+  private Set<Debit> debits = new HashSet<>();
+
+  public Category(String name) {
+    this.name = name;
+  }
+  
 }
