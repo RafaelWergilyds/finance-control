@@ -53,7 +53,9 @@ public class UserService {
   public UserResponseDTO insert(UserRequestDTO data) {
     User user = userFactory.create(data.name(), data.email(), data.password());
     UserEntity userEntity = userMapper.toUserEntity(user);
+
     repository.save(userEntity);
+
     return userMapper.toResponseDTO(userEntity);
   }
 

@@ -3,13 +3,16 @@ package com.rafaelw.financeControl.infra.services;
 import com.rafaelw.financeControl.domain.entities.Category;
 import com.rafaelw.financeControl.domain.entities.User;
 import com.rafaelw.financeControl.infra.db.entities.CategoryEntity;
+import com.rafaelw.financeControl.infra.db.entities.DebitEntity;
 import com.rafaelw.financeControl.infra.db.entities.UserEntity;
 import com.rafaelw.financeControl.infra.db.repository.JpaCategoryRepository;
+import com.rafaelw.financeControl.infra.db.repository.JpaDebitRepository;
 import com.rafaelw.financeControl.infra.db.repository.JpaUserRepository;
 import com.rafaelw.financeControl.infra.dto.category.CategoryRequestDTO;
 import com.rafaelw.financeControl.infra.dto.category.CategoryResponseDTO;
 import com.rafaelw.financeControl.infra.dto.category.CategoryUpdateDTO;
 import com.rafaelw.financeControl.infra.mappers.CategoryMapper;
+import com.rafaelw.financeControl.infra.mappers.DebitMapper;
 import com.rafaelw.financeControl.infra.mappers.UserMapper;
 import com.rafaelw.financeControl.infra.services.exceptions.CategoryNotFoundException;
 import com.rafaelw.financeControl.infra.services.exceptions.UserNotFoundException;
@@ -23,6 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
 
   @Autowired
+  private JpaDebitRepository jpaDebitRepository;
+
+  @Autowired
   private JpaCategoryRepository jpaCategoryRepository;
 
   @Autowired
@@ -33,6 +39,9 @@ public class CategoryService {
 
   @Autowired
   private UserMapper userMapper;
+
+  @Autowired
+  private DebitMapper debitMapper;
 
   @Autowired
   private CategoryFactory categoryFactory;
@@ -64,9 +73,7 @@ public class CategoryService {
         .orElseThrow(() -> new UserNotFoundException(userId));
 
     User user = userMapper.toUser(userEntity);
-
     Category category = categoryFactory.create(user, data.name());
-
     CategoryEntity categoryEntity = categoryMapper.toCategoryEntity(category);
 
     jpaCategoryRepository.save(categoryEntity);
@@ -78,12 +85,10 @@ public class CategoryService {
   public CategoryResponseDTO update(Long userId, Long categoryId, CategoryUpdateDTO data) {
     userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
-
     CategoryEntity categoryEntity = jpaCategoryRepository.findByIdAndUserId(categoryId, userId)
         .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
     Category category = categoryMapper.toCategory(categoryEntity);
-
     category.setName(data.name());
 
     CategoryEntity updatedCategory = categoryMapper.toCategoryEntity(category);
@@ -92,6 +97,19 @@ public class CategoryService {
     return categoryMapper.toResponseDTO(updatedCategory);
 
 
+  }
+
+  @Transactional
+  public void delete(Long userId, Long categoryId) {
+    jpaCategoryRepository.findByIdAndUserId(categoryId, userId)
+        .orElseThrow(() -> new CategoryNotFoundException(categoryId));
+    List<DebitEntity> associatedDebits = jpaDebitRepository.findAllByCategoryId(categoryId);
+
+    for (DebitEntity debit : associatedDebits) {
+      debit.setCategory(null);
+    }
+
+    jpaCategoryRepository.deleteById(categoryId);
   }
 
 }

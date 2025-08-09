@@ -8,6 +8,7 @@ import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,5 +53,11 @@ public class CategoryController {
       @PathVariable Long categoryId, @RequestBody CategoryUpdateDTO data) {
     CategoryResponseDTO response = categoryService.update(userId, categoryId, data);
     return ResponseEntity.ok().body(response);
+  }
+
+  @DeleteMapping("/{categoryId}")
+  public ResponseEntity<Void> delete(@PathVariable Long userId, @PathVariable Long categoryId) {
+    categoryService.delete(userId, categoryId);
+    return ResponseEntity.noContent().build();
   }
 }

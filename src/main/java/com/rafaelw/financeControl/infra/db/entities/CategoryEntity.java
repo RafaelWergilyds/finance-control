@@ -17,7 +17,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Builder
@@ -27,7 +26,6 @@ import org.hibernate.annotations.SQLDelete;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode(of = "id")
-@SQLDelete(sql = "ÜPDATE debits SET category_id = null WHERE category_id = null")
 @Table(name = "categories")
 public class CategoryEntity {
 

@@ -1,13 +1,10 @@
 package com.rafaelw.financeControl.infra.controller;
 
-import com.rafaelw.financeControl.domain.entities.Debit;
-import com.rafaelw.financeControl.infra.db.entities.DebitEntity;
-import com.rafaelw.financeControl.infra.dto.debit.CreateDebitDTO;
-import com.rafaelw.financeControl.infra.services.CreateDebitService;
+import com.rafaelw.financeControl.infra.dto.debit.DebitRequestDTO;
+import com.rafaelw.financeControl.infra.dto.debit.DebitResponseDTO;
 import com.rafaelw.financeControl.infra.services.DebitService;
-import jakarta.websocket.server.PathParam;
 import java.net.URI;
-import javax.swing.text.html.parser.Entity;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,26 +16,32 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping("/debits")
+@RequestMapping("/users/{userId}/debits")
 public class DebitController {
-
-  @Autowired
-  private CreateDebitService createDebitService;
 
   @Autowired
   private DebitService debitService;
 
-  @GetMapping(value = "/{id}")
-  public ResponseEntity<Debit> findById(@PathVariable Long id){
-    Debit debit = debitService.findById(id);
-    return ResponseEntity.ok().body(debit);
+  @GetMapping(value = "/{debitId}")
+  public ResponseEntity<DebitResponseDTO> findById(@PathVariable Long userId,
+      @PathVariable Long debitId) {
+    DebitResponseDTO response = debitService.findById(userId, debitId);
+    return ResponseEntity.ok().body(response);
+  }
+
+  @GetMapping
+  public ResponseEntity<List<DebitResponseDTO>> findAll(@PathVariable Long userId) {
+    List<DebitResponseDTO> response = debitService.findAll(userId);
+    return ResponseEntity.ok().body(response);
   }
 
   @PostMapping
-  public ResponseEntity<DebitEntity> createDebit(@RequestBody CreateDebitDTO data){
-    DebitEntity debit = createDebitService.execute(data);
-    URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(debit.getId()).toUri();
-    return ResponseEntity.created(uri).body(debit);
+  public ResponseEntity<DebitResponseDTO> createDebit(@PathVariable Long userId,
+      @RequestBody DebitRequestDTO data) {
+    DebitResponseDTO response = debitService.create(userId, data);
+    URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{debitId}")
+        .buildAndExpand(userId, response.id()).toUri();
+    return ResponseEntity.created(uri).body(response);
 
   }
 }
