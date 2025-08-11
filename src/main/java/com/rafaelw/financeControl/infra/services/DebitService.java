@@ -13,13 +13,13 @@ import com.rafaelw.financeControl.infra.db.repository.JpaUserRepository;
 import com.rafaelw.financeControl.infra.dto.debit.DebitRequestDTO;
 import com.rafaelw.financeControl.infra.dto.debit.DebitResponseDTO;
 import com.rafaelw.financeControl.infra.dto.debit.DebitUpdateDTO;
+import com.rafaelw.financeControl.infra.dto.debit.TotalDebitsResponse;
 import com.rafaelw.financeControl.infra.mappers.CategoryMapper;
 import com.rafaelw.financeControl.infra.mappers.DebitMapper;
 import com.rafaelw.financeControl.infra.mappers.UserMapper;
 import com.rafaelw.financeControl.infra.services.exceptions.CategoryNotFoundException;
 import com.rafaelw.financeControl.infra.services.exceptions.DebitNotFoundException;
 import com.rafaelw.financeControl.infra.services.exceptions.UserNotFoundException;
-import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -121,13 +121,13 @@ public class DebitService {
     debitRepository.deleteById(debitId);
   }
 
-  public BigDecimal getTotalSum(Long userId) {
+  public TotalDebitsResponse getTotalSum(Long userId) {
     UserPersist userPersist = userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
     User user = userMapper.toDomain(userPersist);
 
-    return user.getTotalSumDebits();
+    return new TotalDebitsResponse(user.getTotalSumDebits());
   }
 
   private void addCategoryToDebit(Debit debit, Long userId, Long categoryId) {

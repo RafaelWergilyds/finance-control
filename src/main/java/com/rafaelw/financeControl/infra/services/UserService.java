@@ -10,7 +10,6 @@ import com.rafaelw.financeControl.infra.dto.user.UserResponseDTO;
 import com.rafaelw.financeControl.infra.dto.user.UserUpdateDTO;
 import com.rafaelw.financeControl.infra.mappers.UserMapper;
 import com.rafaelw.financeControl.infra.services.exceptions.UserNotFoundException;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,15 +89,6 @@ public class UserService {
       throw new UserNotFoundException(id);
     }
     repository.deleteById(userPersist.get().getId());
-  }
-
-  public BigDecimal getTotalSum(Long userId) {
-    UserPersist userPersist = repository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
-
-    User user = userMapper.toDomain(userPersist);
-
-    return user.getTotalSumDebits();
   }
 
 }

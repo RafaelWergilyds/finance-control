@@ -3,8 +3,8 @@ package com.rafaelw.financeControl.infra.controller;
 import com.rafaelw.financeControl.infra.dto.debit.DebitRequestDTO;
 import com.rafaelw.financeControl.infra.dto.debit.DebitResponseDTO;
 import com.rafaelw.financeControl.infra.dto.debit.DebitUpdateDTO;
+import com.rafaelw.financeControl.infra.dto.debit.TotalDebitsResponse;
 import com.rafaelw.financeControl.infra.services.DebitService;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +64,8 @@ public class DebitController {
   }
 
   @GetMapping("/totalDebits")
-  public ResponseEntity<BigDecimal> getTotalDebits(@PathVariable Long userId) {
-    BigDecimal response = debitService.getTotalSum(userId);
+  public ResponseEntity<TotalDebitsResponse> getTotalDebits(@PathVariable Long userId) {
+    TotalDebitsResponse response = debitService.getTotalSum(userId);
     return ResponseEntity.ok().body(response);
   }
 
