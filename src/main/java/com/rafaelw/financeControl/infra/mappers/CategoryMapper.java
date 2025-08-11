@@ -3,19 +3,31 @@ package com.rafaelw.financeControl.infra.mappers;
 import com.rafaelw.financeControl.domain.entities.Category;
 import com.rafaelw.financeControl.infra.db.entities.CategoryPersist;
 import com.rafaelw.financeControl.infra.dto.category.CategoryResponseDTO;
-import org.mapstruct.Context;
-import org.mapstruct.Mapper;
+import com.rafaelw.financeControl.infra.mappers.struct.AvoidContext;
+import com.rafaelw.financeControl.infra.mappers.struct.CategoryMapperStruct;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface CategoryMapper {
+@Component
+public class CategoryMapper {
 
-  CategoryResponseDTO toResponseDTO(CategoryPersist categoryPersist);
+  @Autowired
+  private CategoryMapperStruct mapperStruct;
 
-  CategoryResponseDTO toResponseDTO(Category category);
+  public CategoryResponseDTO toResponseDTO(Category category) {
+    return mapperStruct.toResponseDTO(category);
+  }
 
-  Category toDomain(CategoryPersist categoryPersist, @Context AvoidContext context);
+  public CategoryResponseDTO toResponseDTO(CategoryPersist categoryPersist) {
+    return mapperStruct.toResponseDTO(categoryPersist);
+  }
 
-  CategoryPersist toPersist(Category category, @Context AvoidContext context);
+  public Category toDomain(CategoryPersist categoryPersist) {
+    return mapperStruct.toDomain(categoryPersist, new AvoidContext());
+  }
 
+  public CategoryPersist toPersist(Category category) {
+    return mapperStruct.toPersist(category, new AvoidContext());
+  }
 
 }

@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.infra.mappers;
+package com.rafaelw.financeControl.infra.mappers.struct;
 
 import java.util.IdentityHashMap;
 import java.util.Map;

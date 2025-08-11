@@ -3,19 +3,31 @@ package com.rafaelw.financeControl.infra.mappers;
 import com.rafaelw.financeControl.domain.entities.User;
 import com.rafaelw.financeControl.infra.db.entities.UserPersist;
 import com.rafaelw.financeControl.infra.dto.user.UserResponseDTO;
-import org.mapstruct.Context;
-import org.mapstruct.Mapper;
+import com.rafaelw.financeControl.infra.mappers.struct.AvoidContext;
+import com.rafaelw.financeControl.infra.mappers.struct.UserMapperStruct;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface UserMapper {
+@Component
+public class UserMapper {
 
-  UserResponseDTO toResponseDTO(UserPersist userPersist);
+  @Autowired
+  private UserMapperStruct mapperStruct;
 
-  UserResponseDTO toResponseDTO(User user);
+  public UserResponseDTO toResponseDTO(UserPersist userPersist) {
+    return mapperStruct.toResponseDTO(userPersist);
+  }
 
-  User toDomain(UserPersist userPersist, @Context AvoidContext context);
+  public UserResponseDTO toResponseDTO(User user) {
+    return mapperStruct.toResponseDTO(user);
+  }
 
-  UserPersist toPersist(User user, @Context AvoidContext context);
+  public User toDomain(UserPersist userPersist) {
+    return mapperStruct.toDomain(userPersist, new AvoidContext());
+  }
 
+  public UserPersist toPersist(User user) {
+    return mapperStruct.toPersist(user, new AvoidContext());
+  }
 
 }

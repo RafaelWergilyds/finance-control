@@ -8,7 +8,6 @@ import com.rafaelw.financeControl.infra.db.repository.JpaUserRepository;
 import com.rafaelw.financeControl.infra.dto.user.UserRequestDTO;
 import com.rafaelw.financeControl.infra.dto.user.UserResponseDTO;
 import com.rafaelw.financeControl.infra.dto.user.UserUpdateDTO;
-import com.rafaelw.financeControl.infra.mappers.AvoidContext;
 import com.rafaelw.financeControl.infra.mappers.UserMapper;
 import com.rafaelw.financeControl.infra.services.exceptions.UserNotFoundException;
 import java.math.BigDecimal;
@@ -37,7 +36,7 @@ public class UserService {
   public List<UserResponseDTO> findAll() {
     List<UserPersist> userEntities = repository.findAll();
     List<User> domainUsers = userEntities.stream().map(userPersist ->
-        userMapper.toDomain(userPersist, new AvoidContext())).toList();
+        userMapper.toDomain(userPersist)).toList();
 
     return domainUsers.stream().map(domainUser ->
         userMapper.toResponseDTO(domainUser)).toList();
@@ -54,7 +53,7 @@ public class UserService {
   @Transactional
   public UserResponseDTO insert(UserRequestDTO data) {
     User user = userFactory.create(data.name(), data.email(), data.password());
-    UserPersist userPersist = userMapper.toPersist(user, new AvoidContext());
+    UserPersist userPersist = userMapper.toPersist(user);
 
     repository.save(userPersist);
 
@@ -66,7 +65,7 @@ public class UserService {
     UserPersist userPersist = repository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
-    User user = userMapper.toDomain(userPersist, new AvoidContext());
+    User user = userMapper.toDomain(userPersist);
     if (data.name() != null) {
       user.changeName(data.name());
     }
@@ -77,7 +76,7 @@ public class UserService {
       user.changePassword(data.password());
     }
 
-    UserPersist updatedUser = userMapper.toPersist(user, new AvoidContext());
+    UserPersist updatedUser = userMapper.toPersist(user);
     repository.save(updatedUser);
 
     return userMapper.toResponseDTO(updatedUser);
@@ -97,7 +96,7 @@ public class UserService {
     UserPersist userPersist = repository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
-    User user = userMapper.toDomain(userPersist, new AvoidContext());
+    User user = userMapper.toDomain(userPersist);
 
     return user.getTotalSumDebits();
   }

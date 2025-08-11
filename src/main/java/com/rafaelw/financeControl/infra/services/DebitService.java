@@ -13,7 +13,6 @@ import com.rafaelw.financeControl.infra.db.repository.JpaUserRepository;
 import com.rafaelw.financeControl.infra.dto.debit.DebitRequestDTO;
 import com.rafaelw.financeControl.infra.dto.debit.DebitResponseDTO;
 import com.rafaelw.financeControl.infra.dto.debit.DebitUpdateDTO;
-import com.rafaelw.financeControl.infra.mappers.AvoidContext;
 import com.rafaelw.financeControl.infra.mappers.CategoryMapper;
 import com.rafaelw.financeControl.infra.mappers.DebitMapper;
 import com.rafaelw.financeControl.infra.mappers.UserMapper;
@@ -70,14 +69,14 @@ public class DebitService {
     UserPersist userPersist = userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
-    User user = userMapper.toDomain(userPersist, new AvoidContext());
+    User user = userMapper.toDomain(userPersist);
     Debit debit = debitFactory.create(user, data.name(), data.amount());
 
     if (data.categoryId() != null) {
       addCategoryToDebit(debit, userId, data.categoryId());
     }
 
-    DebitPersist debitPersist = debitMapper.toPersist(debit, new AvoidContext());
+    DebitPersist debitPersist = debitMapper.toPersist(debit);
     debitRepository.save(debitPersist);
 
     return debitMapper.toResponse(debitPersist);
@@ -91,7 +90,7 @@ public class DebitService {
     DebitPersist debitPersist = debitRepository.findByIdAndUserId(debitId, userId)
         .orElseThrow(() -> new DebitNotFoundException(debitId));
 
-    Debit debit = debitMapper.toDomain(debitPersist, new AvoidContext());
+    Debit debit = debitMapper.toDomain(debitPersist);
 
     if (data.name() != null) {
       debit.setName(data.name());
@@ -103,7 +102,7 @@ public class DebitService {
       addCategoryToDebit(debit, userId, data.categoryId());
     }
 
-    DebitPersist debitUpdated = debitMapper.toPersist(debit, new AvoidContext());
+    DebitPersist debitUpdated = debitMapper.toPersist(debit);
     debitRepository.save(debitUpdated);
 
     return debitMapper.toResponse(debitUpdated);
@@ -126,7 +125,7 @@ public class DebitService {
     UserPersist userPersist = userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
-    User user = userMapper.toDomain(userPersist, new AvoidContext());
+    User user = userMapper.toDomain(userPersist);
 
     return user.getTotalSumDebits();
   }
@@ -135,7 +134,7 @@ public class DebitService {
     CategoryPersist categoryPersist = categoryRepository.findByIdAndUserId(categoryId,
             userId)
         .orElseThrow(() -> new CategoryNotFoundException(categoryId));
-    Category category = categoryMapper.toDomain(categoryPersist, new AvoidContext());
+    Category category = categoryMapper.toDomain(categoryPersist);
     debit.setCategory(category);
   }
 

@@ -12,7 +12,6 @@ import com.rafaelw.financeControl.infra.db.repository.JpaUserRepository;
 import com.rafaelw.financeControl.infra.dto.category.CategoryRequestDTO;
 import com.rafaelw.financeControl.infra.dto.category.CategoryResponseDTO;
 import com.rafaelw.financeControl.infra.dto.category.CategoryUpdateDTO;
-import com.rafaelw.financeControl.infra.mappers.AvoidContext;
 import com.rafaelw.financeControl.infra.mappers.CategoryMapper;
 import com.rafaelw.financeControl.infra.mappers.DebitMapper;
 import com.rafaelw.financeControl.infra.mappers.UserMapper;
@@ -63,7 +62,7 @@ public class CategoryService {
     List<CategoryPersist> categoriesPersistList = jpaCategoryRepository.findAllByUserId(userId);
 
     return categoriesPersistList.stream()
-        .map(categoryPersist -> categoryMapper.toDomain(categoryPersist, new AvoidContext()))
+        .map(categoryPersist -> categoryMapper.toDomain(categoryPersist))
         .map(category -> categoryMapper.toResponseDTO(category)).toList();
 
   }
@@ -73,9 +72,9 @@ public class CategoryService {
     UserPersist userPersist = userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
-    User user = userMapper.toDomain(userPersist, new AvoidContext());
+    User user = userMapper.toDomain(userPersist);
     Category category = categoryFactory.create(user, data.name());
-    CategoryPersist categoryPersist = categoryMapper.toPersist(category, new AvoidContext());
+    CategoryPersist categoryPersist = categoryMapper.toPersist(category);
 
     jpaCategoryRepository.save(categoryPersist);
 
@@ -89,10 +88,10 @@ public class CategoryService {
     CategoryPersist categoryPersist = jpaCategoryRepository.findByIdAndUserId(categoryId, userId)
         .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
-    Category category = categoryMapper.toDomain(categoryPersist, new AvoidContext());
+    Category category = categoryMapper.toDomain(categoryPersist);
     category.setName(data.name());
 
-    CategoryPersist updatedCategory = categoryMapper.toPersist(category, new AvoidContext());
+    CategoryPersist updatedCategory = categoryMapper.toPersist(category);
     jpaCategoryRepository.save(updatedCategory);
 
     return categoryMapper.toResponseDTO(updatedCategory);
