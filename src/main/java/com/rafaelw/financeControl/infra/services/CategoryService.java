@@ -96,7 +96,6 @@ public class CategoryService {
 
     return categoryMapper.toResponseDTO(updatedCategory);
 
-
   }
 
   @Transactional
