@@ -2,6 +2,7 @@ package com.rafaelw.financeControl.domain.entities;
 
 import com.rafaelw.financeControl.domain.entities.enums.Role;
 import com.rafaelw.financeControl.domain.service.VerifyUserByEmail;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -61,5 +62,12 @@ public class User {
 
   public void changePassword(String password) {
     this.password = password;
+  }
+
+  public BigDecimal getTotalSumDebits() {
+    if (debits == null || debits.isEmpty()) {
+      return BigDecimal.ZERO;
+    }
+    return debits.stream().map(Debit::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
   }
 }

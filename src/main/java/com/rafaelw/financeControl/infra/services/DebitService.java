@@ -3,22 +3,24 @@ package com.rafaelw.financeControl.infra.services;
 import com.rafaelw.financeControl.domain.entities.Category;
 import com.rafaelw.financeControl.domain.entities.Debit;
 import com.rafaelw.financeControl.domain.entities.User;
-import com.rafaelw.financeControl.infra.db.entities.CategoryEntity;
-import com.rafaelw.financeControl.infra.db.entities.DebitEntity;
-import com.rafaelw.financeControl.infra.db.entities.UserEntity;
+import com.rafaelw.financeControl.domain.factories.DebitFactory;
+import com.rafaelw.financeControl.infra.db.entities.CategoryPersist;
+import com.rafaelw.financeControl.infra.db.entities.DebitPersist;
+import com.rafaelw.financeControl.infra.db.entities.UserPersist;
 import com.rafaelw.financeControl.infra.db.repository.JpaCategoryRepository;
 import com.rafaelw.financeControl.infra.db.repository.JpaDebitRepository;
 import com.rafaelw.financeControl.infra.db.repository.JpaUserRepository;
 import com.rafaelw.financeControl.infra.dto.debit.DebitRequestDTO;
 import com.rafaelw.financeControl.infra.dto.debit.DebitResponseDTO;
 import com.rafaelw.financeControl.infra.dto.debit.DebitUpdateDTO;
+import com.rafaelw.financeControl.infra.mappers.AvoidContext;
 import com.rafaelw.financeControl.infra.mappers.CategoryMapper;
 import com.rafaelw.financeControl.infra.mappers.DebitMapper;
 import com.rafaelw.financeControl.infra.mappers.UserMapper;
 import com.rafaelw.financeControl.infra.services.exceptions.CategoryNotFoundException;
 import com.rafaelw.financeControl.infra.services.exceptions.DebitNotFoundException;
 import com.rafaelw.financeControl.infra.services.exceptions.UserNotFoundException;
-import com.rafaelw.financeControl.infra.services.factories.DebitFactory;
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,34 +52,35 @@ public class DebitService {
 
   @Transactional(readOnly = true)
   public DebitResponseDTO findById(Long userId, Long debitId) {
-    DebitEntity debitEntity = debitRepository.findByIdAndUserId(debitId, userId)
+    DebitPersist debitPersist = debitRepository.findByIdAndUserId(debitId, userId)
         .orElseThrow(() -> new DebitNotFoundException(debitId));
-    return debitMapper.toResponse(debitEntity);
+    return debitMapper.toResponse(debitPersist);
   }
 
   @Transactional(readOnly = true)
   public List<DebitResponseDTO> findAll(Long userId) {
-    List<DebitEntity> debitsEntity = debitRepository.findAllByUserId(userId);
+    List<DebitPersist> debitsPersist = debitRepository.findAllByUserId(userId);
 
-    return debitsEntity.stream().map(debitEntity -> debitMapper.toResponse(debitEntity)).toList();
+    return debitsPersist.stream().map(debitPersist -> debitMapper.toResponse(debitPersist))
+        .toList();
   }
 
   @Transactional
   public DebitResponseDTO create(Long userId, DebitRequestDTO data) {
-    UserEntity userEntity = userRepository.findById(userId)
+    UserPersist userPersist = userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
-    User user = userMapper.toUser(userEntity);
+    User user = userMapper.toDomain(userPersist, new AvoidContext());
     Debit debit = debitFactory.create(user, data.name(), data.amount());
 
     if (data.categoryId() != null) {
       addCategoryToDebit(debit, userId, data.categoryId());
     }
 
-    DebitEntity debitEntity = debitMapper.toDebitEntity(debit);
-    debitRepository.save(debitEntity);
+    DebitPersist debitPersist = debitMapper.toPersist(debit, new AvoidContext());
+    debitRepository.save(debitPersist);
 
-    return debitMapper.toResponse(debitEntity);
+    return debitMapper.toResponse(debitPersist);
   }
 
   @Transactional
@@ -85,10 +88,10 @@ public class DebitService {
     userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
-    DebitEntity debitEntity = debitRepository.findByIdAndUserId(debitId, userId)
+    DebitPersist debitPersist = debitRepository.findByIdAndUserId(debitId, userId)
         .orElseThrow(() -> new DebitNotFoundException(debitId));
 
-    Debit debit = debitMapper.toDebit(debitEntity);
+    Debit debit = debitMapper.toDomain(debitPersist, new AvoidContext());
 
     if (data.name() != null) {
       debit.setName(data.name());
@@ -100,7 +103,7 @@ public class DebitService {
       addCategoryToDebit(debit, userId, data.categoryId());
     }
 
-    DebitEntity debitUpdated = debitMapper.toDebitEntity(debit);
+    DebitPersist debitUpdated = debitMapper.toPersist(debit, new AvoidContext());
     debitRepository.save(debitUpdated);
 
     return debitMapper.toResponse(debitUpdated);
@@ -111,19 +114,28 @@ public class DebitService {
   public void delete(Long userId, Long debitId) {
     userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
-    DebitEntity debitEntity = debitRepository.findByIdAndUserId(debitId, userId)
+    DebitPersist debitPersist = debitRepository.findByIdAndUserId(debitId, userId)
         .orElseThrow(() -> new DebitNotFoundException(debitId));
 
-    debitEntity.setCategory(null);
+    debitPersist.setCategory(null);
 
     debitRepository.deleteById(debitId);
   }
 
+  public BigDecimal getTotalSum(Long userId) {
+    UserPersist userPersist = userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException(userId));
+
+    User user = userMapper.toDomain(userPersist, new AvoidContext());
+
+    return user.getTotalSumDebits();
+  }
+
   private void addCategoryToDebit(Debit debit, Long userId, Long categoryId) {
-    CategoryEntity categoryEntity = categoryRepository.findByIdAndUserId(categoryId,
+    CategoryPersist categoryPersist = categoryRepository.findByIdAndUserId(categoryId,
             userId)
         .orElseThrow(() -> new CategoryNotFoundException(categoryId));
-    Category category = categoryMapper.toCategory(categoryEntity);
+    Category category = categoryMapper.toDomain(categoryPersist, new AvoidContext());
     debit.setCategory(category);
   }
 

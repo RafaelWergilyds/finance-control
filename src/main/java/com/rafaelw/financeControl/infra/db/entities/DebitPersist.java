@@ -6,10 +6,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.HashSet;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -26,18 +25,22 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode(of = "id")
-@Table(name = "categories")
-public class CategoryEntity {
+@Table(name = "debits")
+public class DebitPersist {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
   private String name;
+  private BigDecimal amount;
+  private Instant moment;
 
   @ManyToOne
   @JoinColumn(name = "user_id")
-  private UserEntity user;
+  private UserPersist user;
 
-  @OneToMany(mappedBy = "category")
-  private Set<DebitEntity> debits = new HashSet<>();
+  @ManyToOne
+  @JoinColumn(name = "category_id")
+  private CategoryPersist category;
+
 }

@@ -1,14 +1,14 @@
 package com.rafaelw.financeControl.domain.repository;
 
-import com.rafaelw.financeControl.infra.db.entities.DebitEntity;
+import com.rafaelw.financeControl.infra.db.entities.DebitPersist;
 import java.util.List;
 import java.util.Optional;
 
 public interface DebitRepository {
 
-  List<DebitEntity> findAllByUserId(Long id);
+  List<DebitPersist> findAllByUserId(Long id);
 
-  Optional<DebitEntity> findByIdAndUserId(Long debitId, Long userId);
+  Optional<DebitPersist> findByIdAndUserId(Long debitId, Long userId);
 
-  List<DebitEntity> findAllByCategoryId(Long id);
+  List<DebitPersist> findAllByCategoryId(Long id);
 }

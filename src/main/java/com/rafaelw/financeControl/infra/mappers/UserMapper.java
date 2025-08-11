@@ -1,24 +1,21 @@
 package com.rafaelw.financeControl.infra.mappers;
 
 import com.rafaelw.financeControl.domain.entities.User;
-import com.rafaelw.financeControl.infra.db.entities.UserEntity;
+import com.rafaelw.financeControl.infra.db.entities.UserPersist;
 import com.rafaelw.financeControl.infra.dto.user.UserResponseDTO;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    UserResponseDTO toResponseDTO(UserEntity userEntity);
-    UserResponseDTO toResponseDTO(User user);
+  UserResponseDTO toResponseDTO(UserPersist userPersist);
 
-    @Mapping(target = "categories", ignore = true)
-    @Mapping(target = "debits", ignore = true)
-    User toUser(UserEntity userEntity);
+  UserResponseDTO toResponseDTO(User user);
 
-    @Mapping(target = "categories", ignore = true)
-    @Mapping(target = "debits", ignore = true)
-    UserEntity toUserEntity(User user);
+  User toDomain(UserPersist userPersist, @Context AvoidContext context);
+
+  UserPersist toPersist(User user, @Context AvoidContext context);
 
 
 }

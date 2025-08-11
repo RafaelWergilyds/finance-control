@@ -4,6 +4,7 @@ import com.rafaelw.financeControl.infra.dto.debit.DebitRequestDTO;
 import com.rafaelw.financeControl.infra.dto.debit.DebitResponseDTO;
 import com.rafaelw.financeControl.infra.dto.debit.DebitUpdateDTO;
 import com.rafaelw.financeControl.infra.services.DebitService;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,12 @@ public class DebitController {
   public ResponseEntity<Void> delete(@PathVariable Long userId, @PathVariable Long debitId) {
     debitService.delete(userId, debitId);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/totalDebits")
+  public ResponseEntity<BigDecimal> getTotalDebits(@PathVariable Long userId) {
+    BigDecimal response = debitService.getTotalSum(userId);
+    return ResponseEntity.ok().body(response);
   }
 
 }

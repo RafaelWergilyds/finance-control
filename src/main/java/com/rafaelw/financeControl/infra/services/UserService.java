@@ -1,15 +1,17 @@
 package com.rafaelw.financeControl.infra.services;
 
 import com.rafaelw.financeControl.domain.entities.User;
+import com.rafaelw.financeControl.domain.factories.UserFactory;
 import com.rafaelw.financeControl.domain.service.VerifyUserByEmail;
-import com.rafaelw.financeControl.infra.db.entities.UserEntity;
+import com.rafaelw.financeControl.infra.db.entities.UserPersist;
 import com.rafaelw.financeControl.infra.db.repository.JpaUserRepository;
 import com.rafaelw.financeControl.infra.dto.user.UserRequestDTO;
 import com.rafaelw.financeControl.infra.dto.user.UserResponseDTO;
 import com.rafaelw.financeControl.infra.dto.user.UserUpdateDTO;
+import com.rafaelw.financeControl.infra.mappers.AvoidContext;
 import com.rafaelw.financeControl.infra.mappers.UserMapper;
 import com.rafaelw.financeControl.infra.services.exceptions.UserNotFoundException;
-import com.rafaelw.financeControl.infra.services.factories.UserFactory;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +35,9 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public List<UserResponseDTO> findAll() {
-    List<UserEntity> userEntities = repository.findAll();
-    List<User> domainUsers = userEntities.stream().map(userEntity ->
-        userMapper.toUser(userEntity)).toList();
+    List<UserPersist> userEntities = repository.findAll();
+    List<User> domainUsers = userEntities.stream().map(userPersist ->
+        userMapper.toDomain(userPersist, new AvoidContext())).toList();
 
     return domainUsers.stream().map(domainUser ->
         userMapper.toResponseDTO(domainUser)).toList();
@@ -43,28 +45,28 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public UserResponseDTO findById(Long id) {
-    UserEntity userEntity = repository.findById(id)
+    UserPersist userPersist = repository.findById(id)
         .orElseThrow(() -> new UserNotFoundException(id));
 
-    return userMapper.toResponseDTO(userEntity);
+    return userMapper.toResponseDTO(userPersist);
   }
 
   @Transactional
   public UserResponseDTO insert(UserRequestDTO data) {
     User user = userFactory.create(data.name(), data.email(), data.password());
-    UserEntity userEntity = userMapper.toUserEntity(user);
+    UserPersist userPersist = userMapper.toPersist(user, new AvoidContext());
 
-    repository.save(userEntity);
+    repository.save(userPersist);
 
-    return userMapper.toResponseDTO(userEntity);
+    return userMapper.toResponseDTO(userPersist);
   }
 
   @Transactional
   public UserResponseDTO update(Long userId, UserUpdateDTO data) {
-    UserEntity userEntity = repository.findById(userId)
+    UserPersist userPersist = repository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
-    User user = userMapper.toUser(userEntity);
+    User user = userMapper.toDomain(userPersist, new AvoidContext());
     if (data.name() != null) {
       user.changeName(data.name());
     }
@@ -75,7 +77,7 @@ public class UserService {
       user.changePassword(data.password());
     }
 
-    UserEntity updatedUser = userMapper.toUserEntity(user);
+    UserPersist updatedUser = userMapper.toPersist(user, new AvoidContext());
     repository.save(updatedUser);
 
     return userMapper.toResponseDTO(updatedUser);
@@ -84,11 +86,20 @@ public class UserService {
 
   @Transactional
   public void delete(Long id) {
-    Optional<UserEntity> userEntity = repository.findById(id);
-    if (userEntity.isEmpty()) {
+    Optional<UserPersist> userPersist = repository.findById(id);
+    if (userPersist.isEmpty()) {
       throw new UserNotFoundException(id);
     }
-    repository.deleteById(userEntity.get().getId());
+    repository.deleteById(userPersist.get().getId());
+  }
+
+  public BigDecimal getTotalSum(Long userId) {
+    UserPersist userPersist = repository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException(userId));
+
+    User user = userMapper.toDomain(userPersist, new AvoidContext());
+
+    return user.getTotalSumDebits();
   }
 
 }

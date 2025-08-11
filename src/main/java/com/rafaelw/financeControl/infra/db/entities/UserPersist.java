@@ -35,12 +35,14 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE users SET active = false WHERE id = ?")
 @SQLRestriction("active = true")
 @Table(name = "users")
-public class UserEntity {
+public class UserPersist {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
   private String name;
+
+  @Column(unique = true)
   private String email;
   private String password;
 
@@ -52,9 +54,9 @@ public class UserEntity {
   private Role role = Role.COMMON;
 
   @OneToMany(mappedBy = "user")
-  private Set<CategoryEntity> categories = new HashSet<>();
+  private Set<CategoryPersist> categories = new HashSet<>();
 
   @OneToMany(mappedBy = "user")
-  private List<DebitEntity> debits = new ArrayList<>();
+  private List<DebitPersist> debits = new ArrayList<>();
 
 }
