@@ -2,14 +2,17 @@ package com.rafaelw.financeControl.infra.controller;
 
 import com.rafaelw.financeControl.infra.dto.debit.DebitRequestDTO;
 import com.rafaelw.financeControl.infra.dto.debit.DebitResponseDTO;
+import com.rafaelw.financeControl.infra.dto.debit.DebitUpdateDTO;
 import com.rafaelw.financeControl.infra.services.DebitService;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,4 +47,19 @@ public class DebitController {
     return ResponseEntity.created(uri).body(response);
 
   }
+
+  @PutMapping("/{debitId}")
+  public ResponseEntity<DebitResponseDTO> update(@PathVariable Long userId,
+      @PathVariable Long debitId, @RequestBody
+      DebitUpdateDTO data) {
+    DebitResponseDTO response = debitService.update(userId, debitId, data);
+    return ResponseEntity.ok().body(response);
+  }
+
+  @DeleteMapping("/{debitId}")
+  public ResponseEntity<Void> delete(@PathVariable Long userId, @PathVariable Long debitId) {
+    debitService.delete(userId, debitId);
+    return ResponseEntity.noContent().build();
+  }
+
 }
