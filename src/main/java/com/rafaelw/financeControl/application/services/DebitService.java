@@ -23,6 +23,7 @@ import com.rafaelw.financeControl.infra.persist.repository.JpaDebitRepository;
 import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
 import com.rafaelw.financeControl.infra.persist.repository.specifications.DebitSpecification;
 import com.rafaelw.financeControl.infra.persist.repository.specifications.SpecificationUtil;
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -67,9 +68,15 @@ public class DebitService {
     if (filter.categoryId() != null) {
       debitSpec = debitSpec.and(DebitSpecification.findByCategoryId(filter.categoryId()));
     }
-
     if (filter.categoryName() != null) {
       debitSpec = debitSpec.and(DebitSpecification.findByCategoryName(filter.categoryName()));
+    }
+    if (filter.minAmount() != null && filter.minAmount().compareTo(BigDecimal.ZERO) >= 0) {
+      debitSpec = debitSpec.and(
+          DebitSpecification.hasAmountGreaterThanOrEqualsTo(filter.minAmount()));
+    }
+    if (filter.maxAmount() != null && filter.maxAmount().compareTo(BigDecimal.ZERO) >= 0) {
+      debitSpec = debitSpec.and(DebitSpecification.hasAmountLessThanEqualsTo(filter.maxAmount()));
     }
 
     List<DebitPersist> debitPersistFiltered = debitRepository.findAll(debitSpec);
