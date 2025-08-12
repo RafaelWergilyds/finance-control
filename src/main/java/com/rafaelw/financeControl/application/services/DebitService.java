@@ -149,17 +149,6 @@ public class DebitService {
     return new TotalDebitsResponse(getTotalSumDebits.execute(debits));
   }
 
-  public TotalDebitsResponse getTotalSumByCategory(Long userId, Long categoryId) {
-    userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
-    CategoryPersist categoryPersist = categoryRepository.findByIdAndUserId(categoryId, userId)
-        .orElseThrow(() -> new CategoryNotFoundException(categoryId));
-
-    Category category = categoryMapper.toDomain(categoryPersist);
-
-    return new TotalDebitsResponse(category.SumTotalDebits());
-  }
-
   private void addCategoryToDebit(Debit debit, Long userId, Long categoryId) {
     CategoryPersist categoryPersist = categoryRepository.findByIdAndUserId(categoryId,
             userId)
