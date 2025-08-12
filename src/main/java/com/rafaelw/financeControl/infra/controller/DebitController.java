@@ -1,10 +1,11 @@
 package com.rafaelw.financeControl.infra.controller;
 
-import com.rafaelw.financeControl.infra.dto.debit.DebitRequestDTO;
-import com.rafaelw.financeControl.infra.dto.debit.DebitResponseDTO;
-import com.rafaelw.financeControl.infra.dto.debit.DebitUpdateDTO;
-import com.rafaelw.financeControl.infra.dto.debit.TotalDebitsResponse;
-import com.rafaelw.financeControl.infra.services.DebitService;
+import com.rafaelw.financeControl.application.dto.debit.DebitFilterDTO;
+import com.rafaelw.financeControl.application.dto.debit.DebitRequestDTO;
+import com.rafaelw.financeControl.application.dto.debit.DebitResponseDTO;
+import com.rafaelw.financeControl.application.dto.debit.DebitUpdateDTO;
+import com.rafaelw.financeControl.application.dto.debit.TotalDebitsResponse;
+import com.rafaelw.financeControl.application.services.DebitService;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +34,11 @@ public class DebitController {
     return ResponseEntity.ok().body(response);
   }
 
+
   @GetMapping
-  public ResponseEntity<List<DebitResponseDTO>> findAll(@PathVariable Long userId) {
-    List<DebitResponseDTO> response = debitService.findAll(userId);
+  public ResponseEntity<List<DebitResponseDTO>> findAllFiltered(@PathVariable Long userId,
+      DebitFilterDTO filter) {
+    List<DebitResponseDTO> response = debitService.findAll(userId, filter);
     return ResponseEntity.ok().body(response);
   }
 

@@ -1,9 +1,9 @@
 package com.rafaelw.financeControl.infra.controller;
 
-import com.rafaelw.financeControl.infra.dto.user.UserRequestDTO;
-import com.rafaelw.financeControl.infra.dto.user.UserResponseDTO;
-import com.rafaelw.financeControl.infra.dto.user.UserUpdateDTO;
-import com.rafaelw.financeControl.infra.services.UserService;
+import com.rafaelw.financeControl.application.dto.user.UserRequestDTO;
+import com.rafaelw.financeControl.application.dto.user.UserResponseDTO;
+import com.rafaelw.financeControl.application.dto.user.UserUpdateDTO;
+import com.rafaelw.financeControl.application.services.UserService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -59,5 +59,5 @@ public class UserController {
     service.delete(id);
     return ResponseEntity.noContent().build();
   }
-  
+
 }

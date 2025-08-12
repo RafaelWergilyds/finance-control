@@ -1,9 +1,9 @@
 package com.rafaelw.financeControl.infra.controller;
 
-import com.rafaelw.financeControl.infra.dto.category.CategoryRequestDTO;
-import com.rafaelw.financeControl.infra.dto.category.CategoryResponseDTO;
-import com.rafaelw.financeControl.infra.dto.category.CategoryUpdateDTO;
-import com.rafaelw.financeControl.infra.services.CategoryService;
+import com.rafaelw.financeControl.application.dto.category.CategoryRequestDTO;
+import com.rafaelw.financeControl.application.dto.category.CategoryResponseDTO;
+import com.rafaelw.financeControl.application.dto.category.CategoryUpdateDTO;
+import com.rafaelw.financeControl.application.services.CategoryService;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.rafaelw.financeControl.domain.repository;
 
-import com.rafaelw.financeControl.infra.db.entities.DebitPersist;
+import com.rafaelw.financeControl.infra.persist.entities.DebitPersist;
 import java.util.List;
 import java.util.Optional;
 
