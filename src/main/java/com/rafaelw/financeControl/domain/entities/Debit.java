@@ -41,4 +41,6 @@ public class Debit {
     this.moment = Instant.now();
     this.category = category;
   }
+
+
 }

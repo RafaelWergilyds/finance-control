@@ -6,6 +6,11 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class DebitSpecification {
 
+  public static Specification<DebitPersist> findByUserId(Long id) {
+    return (root, query, criteriaBuilder) ->
+        criteriaBuilder.equal(root.get("user").get("id"), id);
+  }
+
   public static Specification<DebitPersist> findByCategoryId(Long id) {
     return (root, query, criteriaBuilder) ->
         criteriaBuilder.equal(root.get("category").get("id"), id);

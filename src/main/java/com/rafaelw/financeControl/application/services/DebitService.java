@@ -15,6 +15,7 @@ import com.rafaelw.financeControl.domain.entities.Category;
 import com.rafaelw.financeControl.domain.entities.Debit;
 import com.rafaelw.financeControl.domain.entities.User;
 import com.rafaelw.financeControl.domain.factories.DebitFactory;
+import com.rafaelw.financeControl.domain.service.GetTotalSumDebits;
 import com.rafaelw.financeControl.infra.persist.entities.CategoryPersist;
 import com.rafaelw.financeControl.infra.persist.entities.DebitPersist;
 import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
@@ -32,6 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DebitService {
+
+  @Autowired
+  private GetTotalSumDebits getTotalSumDebits;
 
   @Autowired
   private JpaDebitRepository debitRepository;
@@ -63,21 +67,10 @@ public class DebitService {
 
   @Transactional(readOnly = true)
   public List<DebitResponseDTO> findAll(Long userId, DebitFilterDTO filter) {
-    Specification<DebitPersist> debitSpec = SpecificationUtil.empty();
+    userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException(userId));
 
-    if (filter.categoryId() != null) {
-      debitSpec = debitSpec.and(DebitSpecification.findByCategoryId(filter.categoryId()));
-    }
-    if (filter.categoryName() != null) {
-      debitSpec = debitSpec.and(DebitSpecification.findByCategoryName(filter.categoryName()));
-    }
-    if (filter.minAmount() != null && filter.minAmount().compareTo(BigDecimal.ZERO) >= 0) {
-      debitSpec = debitSpec.and(
-          DebitSpecification.hasAmountGreaterThanOrEqualsTo(filter.minAmount()));
-    }
-    if (filter.maxAmount() != null && filter.maxAmount().compareTo(BigDecimal.ZERO) >= 0) {
-      debitSpec = debitSpec.and(DebitSpecification.hasAmountLessThanEqualsTo(filter.maxAmount()));
-    }
+    Specification<DebitPersist> debitSpec = filterDebit(userId, filter);
 
     List<DebitPersist> debitPersistFiltered = debitRepository.findAll(debitSpec);
 
@@ -143,15 +136,17 @@ public class DebitService {
     debitRepository.deleteById(debitId);
   }
 
-  public TotalDebitsResponse getTotalSum(Long userId) {
-    UserPersist userPersist = userRepository.findById(userId)
+  public TotalDebitsResponse getTotalSum(Long userId, DebitFilterDTO filter) {
+    userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
-    List<DebitPersist> debitPersist = debitRepository.findAllByUserId(userId);
+    Specification<DebitPersist> debitSpec = filterDebit(userId, filter);
 
-    User user = userMapper.toDomain(userPersist);
+    List<DebitPersist> debitPersists = debitRepository.findAll(debitSpec);
+    List<Debit> debits = debitPersists.stream()
+        .map(debitPersist -> debitMapper.toDomain(debitPersist)).toList();
 
-    return new TotalDebitsResponse(user.getTotalSumDebits());
+    return new TotalDebitsResponse(getTotalSumDebits.execute(debits));
   }
 
   public TotalDebitsResponse getTotalSumByCategory(Long userId, Long categoryId) {
@@ -163,7 +158,6 @@ public class DebitService {
     Category category = categoryMapper.toDomain(categoryPersist);
 
     return new TotalDebitsResponse(category.SumTotalDebits());
-
   }
 
   private void addCategoryToDebit(Debit debit, Long userId, Long categoryId) {
@@ -172,6 +166,26 @@ public class DebitService {
         .orElseThrow(() -> new CategoryNotFoundException(categoryId));
     Category category = categoryMapper.toDomain(categoryPersist);
     debit.setCategory(category);
+  }
+
+  private Specification<DebitPersist> filterDebit(Long userId, DebitFilterDTO filter) {
+    Specification<DebitPersist> spec = SpecificationUtil.empty();
+    spec = spec.and(DebitSpecification.findByUserId(userId));
+
+    if (filter.categoryId() != null) {
+      spec = spec.and(DebitSpecification.findByCategoryId(filter.categoryId()));
+    }
+    if (filter.categoryName() != null) {
+      spec = spec.and(DebitSpecification.findByCategoryName(filter.categoryName()));
+    }
+    if (filter.minAmount() != null && filter.minAmount().compareTo(BigDecimal.ZERO) >= 0) {
+      spec = spec.and(
+          DebitSpecification.hasAmountGreaterThanOrEqualsTo(filter.minAmount()));
+    }
+    if (filter.maxAmount() != null && filter.maxAmount().compareTo(BigDecimal.ZERO) >= 0) {
+      spec = spec.and(DebitSpecification.hasAmountLessThanEqualsTo(filter.maxAmount()));
+    }
+    return spec;
   }
 
 }

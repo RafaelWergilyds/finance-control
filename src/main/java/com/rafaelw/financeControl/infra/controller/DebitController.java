@@ -67,8 +67,9 @@ public class DebitController {
   }
 
   @GetMapping("/totalDebits")
-  public ResponseEntity<TotalDebitsResponse> getTotalDebits(@PathVariable Long userId) {
-    TotalDebitsResponse response = debitService.getTotalSum(userId);
+  public ResponseEntity<TotalDebitsResponse> getTotalDebits(@PathVariable Long userId,
+      DebitFilterDTO filter) {
+    TotalDebitsResponse response = debitService.getTotalSum(userId, filter);
     return ResponseEntity.ok().body(response);
   }
 
