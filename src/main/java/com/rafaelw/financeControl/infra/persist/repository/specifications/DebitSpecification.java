@@ -21,6 +21,16 @@ public class DebitSpecification {
         criteriaBuilder.equal(root.get("category").get("name"), name);
   }
 
+  public static Specification<DebitPersist> findNextDebitId(Long id) {
+    return (root, query, criteriaBuilder) ->
+        criteriaBuilder.greaterThanOrEqualTo(root.get("id"), id);
+  }
+
+  public static Specification<DebitPersist> findPreviousDebitId(Long id) {
+    return (root, query, criteriaBuilder) ->
+        criteriaBuilder.lessThanOrEqualTo(root.get("id"), id);
+  }
+
   public static Specification<DebitPersist> hasAmountLessThanEqualsTo(BigDecimal amount) {
     return (root, query, criteriaBuilder) ->
         criteriaBuilder.lessThanOrEqualTo(

@@ -4,6 +4,8 @@ import com.rafaelw.financeControl.application.dto.debit.DebitFilterDTO;
 import com.rafaelw.financeControl.application.dto.debit.DebitRequestDTO;
 import com.rafaelw.financeControl.application.dto.debit.DebitResponseDTO;
 import com.rafaelw.financeControl.application.dto.debit.DebitUpdateDTO;
+import com.rafaelw.financeControl.application.dto.debit.PaginatedDebitsResponse;
+import com.rafaelw.financeControl.application.dto.debit.PaginationDTO;
 import com.rafaelw.financeControl.application.dto.debit.TotalDebitsResponse;
 import com.rafaelw.financeControl.application.services.DebitService;
 import java.net.URI;
@@ -37,8 +39,15 @@ public class DebitController {
 
   @GetMapping
   public ResponseEntity<List<DebitResponseDTO>> findAllFiltered(@PathVariable Long userId,
-      DebitFilterDTO filter) {
-    List<DebitResponseDTO> response = debitService.findAll(userId, filter);
+      DebitFilterDTO filter, PaginationDTO page) {
+    List<DebitResponseDTO> response = debitService.findAll(userId, filter, page);
+    return ResponseEntity.ok().body(response);
+  }
+
+  @GetMapping("/paginated")
+  public ResponseEntity<PaginatedDebitsResponse> findAllPaginate(@PathVariable Long userId,
+      DebitFilterDTO filter, Integer pageSize, Long cursor) {
+    PaginatedDebitsResponse response = debitService.findAllPage(userId, filter, pageSize, cursor);
     return ResponseEntity.ok().body(response);
   }
 
