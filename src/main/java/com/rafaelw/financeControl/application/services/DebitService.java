@@ -12,6 +12,7 @@ import com.rafaelw.financeControl.application.mappers.DebitMapper;
 import com.rafaelw.financeControl.application.mappers.UserMapper;
 import com.rafaelw.financeControl.application.services.exceptions.CategoryNotFoundException;
 import com.rafaelw.financeControl.application.services.exceptions.DebitNotFoundException;
+import com.rafaelw.financeControl.application.services.exceptions.ResourcesNotFound;
 import com.rafaelw.financeControl.application.services.exceptions.UserNotFoundException;
 import com.rafaelw.financeControl.application.utils.Pagination;
 import com.rafaelw.financeControl.domain.entities.Category;
@@ -28,6 +29,10 @@ import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
 import com.rafaelw.financeControl.infra.persist.repository.specifications.DebitSpecification;
 import com.rafaelw.financeControl.infra.persist.repository.specifications.SpecificationUtil;
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,12 +140,18 @@ public class DebitService {
     }
 
     Page<DebitPersist> debitsPage = debitRepository.findAll(debitSpec, pageAsc);
+
+    if (debitsPage.isEmpty()) {
+      throw new ResourcesNotFound();
+    }
+    
     List<DebitPersist> debitPersist = new ArrayList<>(debitsPage.getContent());
 
     if (debitPersist.size() > pageSize) {
       nextPage = debitPersist.getLast().getId();
       debitPersist.removeLast();
     }
+
     startCursor = debitPersist.getFirst().getId();
     endCursor = debitPersist.getLast().getId();
     List<DebitResponseDTO> debitResponseDTOs = debitPersist.stream()
@@ -245,6 +256,18 @@ public class DebitService {
     }
     if (filter.maxAmount() != null && filter.maxAmount().compareTo(BigDecimal.ZERO) >= 0) {
       spec = spec.and(DebitSpecification.hasAmountLessThanEqualsTo(filter.maxAmount()));
+    }
+    if (filter.maxMoment() != null) {
+      LocalDate localDate = LocalDate.parse(filter.maxMoment());
+      ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneOffset.UTC);
+      Instant moment = zonedDateTime.toInstant();
+      spec = spec.and(DebitSpecification.findPreviousDebitMoment(moment));
+    }
+    if (filter.minMoment() != null) {
+      LocalDate localDate = LocalDate.parse(filter.minMoment());
+      ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneOffset.UTC);
+      Instant moment = zonedDateTime.toInstant();
+      spec = spec.and(DebitSpecification.findNextDebitMoment(moment));
     }
     return spec;
   }

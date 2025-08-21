@@ -27,7 +27,7 @@ public class DebitSpecification {
         criteriaBuilder.greaterThanOrEqualTo(root.get("moment"), moment);
   }
 
-  public static Specification<DebitPersist> findPreviousDebiMoment(Instant moment) {
+  public static Specification<DebitPersist> findPreviousDebitMoment(Instant moment) {
     return (root, query, criteriaBuilder) ->
         criteriaBuilder.lessThanOrEqualTo(root.get("moment"), moment);
   }
