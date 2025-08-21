@@ -115,7 +115,9 @@ public class DebitService {
       Page<DebitPersist> previousPaginate = debitRepository.findAll(debitPreviousSpec, pageDesc);
       List<DebitPersist> listPrevious = new ArrayList<>(previousPaginate.getContent());
 
-      previousPage = listPrevious.getLast().getId();
+      if (listPrevious.size() > pageSize) {
+        previousPage = listPrevious.getLast().getId();
+      }
 
       if (debitPersist.size() > pageSize) {
         nextPage = debitPersist.getLast().getId();
