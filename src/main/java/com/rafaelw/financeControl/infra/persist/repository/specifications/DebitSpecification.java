@@ -32,12 +32,12 @@ public class DebitSpecification {
         criteriaBuilder.lessThanOrEqualTo(root.get("moment"), moment);
   }
 
-  public static Specification<DebitPersist> findNextDebitId(Long id) {
+  public static Specification<DebitPersist> findGreaterThanDebitId(Long id) {
     return (root, query, criteriaBuilder) ->
         criteriaBuilder.greaterThanOrEqualTo(root.get("id"), id);
   }
 
-  public static Specification<DebitPersist> findPreviousDebitId(Long id) {
+  public static Specification<DebitPersist> findLessThanDebitId(Long id) {
     return (root, query, criteriaBuilder) ->
         criteriaBuilder.lessThanOrEqualTo(root.get("id"), id);
   }

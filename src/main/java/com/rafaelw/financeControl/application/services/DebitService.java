@@ -111,13 +111,13 @@ public class DebitService {
     Specification<DebitPersist> debitSpec = filterDebit(userId, filter);
 
     if (cursor != null) {
-      debitSpec = debitSpec.and(DebitSpecification.findNextDebitId(cursor));
-      Page<DebitPersist> debitsPage = debitRepository.findAll(debitSpec, pageAsc);
+      debitSpec = debitSpec.and(DebitSpecification.findLessThanDebitId(cursor));
+      Page<DebitPersist> debitsPage = debitRepository.findAll(debitSpec, pageDesc);
       List<DebitPersist> debitPersist = new ArrayList<>(debitsPage.getContent());
 
       Specification<DebitPersist> debitPreviousSpec = filterDebit(userId, filter);
-      debitPreviousSpec = debitPreviousSpec.and(DebitSpecification.findPreviousDebitId(cursor));
-      Page<DebitPersist> previousPaginate = debitRepository.findAll(debitPreviousSpec, pageDesc);
+      debitPreviousSpec = debitPreviousSpec.and(DebitSpecification.findGreaterThanDebitId(cursor));
+      Page<DebitPersist> previousPaginate = debitRepository.findAll(debitPreviousSpec, pageAsc);
       List<DebitPersist> listPrevious = new ArrayList<>(previousPaginate.getContent());
 
       if (listPrevious.size() > pageSize) {
@@ -139,12 +139,12 @@ public class DebitService {
           previousPage);
     }
 
-    Page<DebitPersist> debitsPage = debitRepository.findAll(debitSpec, pageAsc);
+    Page<DebitPersist> debitsPage = debitRepository.findAll(debitSpec, pageDesc);
 
     if (debitsPage.isEmpty()) {
       throw new ResourcesNotFound();
     }
-    
+
     List<DebitPersist> debitPersist = new ArrayList<>(debitsPage.getContent());
 
     if (debitPersist.size() > pageSize) {
