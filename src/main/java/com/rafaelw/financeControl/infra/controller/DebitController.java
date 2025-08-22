@@ -8,6 +8,7 @@ import com.rafaelw.financeControl.application.dto.debit.PaginatedDebitsResponse;
 import com.rafaelw.financeControl.application.dto.debit.PaginationDTO;
 import com.rafaelw.financeControl.application.dto.debit.TotalDebitsResponse;
 import com.rafaelw.financeControl.application.services.DebitService;
+import com.rafaelw.financeControl.infra.controller.headers.PaginationHeader;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class DebitController {
   @Autowired
   private DebitService debitService;
 
+  @Autowired
+  private PaginationHeader paginationHeader;
+
   @GetMapping(value = "/{debitId}")
   public ResponseEntity<DebitResponseDTO> findById(@PathVariable Long userId,
       @PathVariable Long debitId) {
@@ -49,11 +53,7 @@ public class DebitController {
   public ResponseEntity<List<DebitResponseDTO>> findAllPaginate(@PathVariable Long userId,
       DebitFilterDTO filter, Integer pageSize, Long cursor) {
     PaginatedDebitsResponse response = debitService.findAllPage(userId, filter, pageSize, cursor);
-    HttpHeaders responseHeaders = new HttpHeaders();
-    responseHeaders.add("X-Start-Cursor", String.valueOf(response.startCursor()));
-    responseHeaders.add("X-End-Cursor", String.valueOf(response.endCursor()));
-    responseHeaders.add("X-Next-Page", String.valueOf(response.nextPage()));
-    responseHeaders.add("X-Previous-Page", String.valueOf(response.previousPage()));
+    HttpHeaders responseHeaders = paginationHeader.execute(response);
     return ResponseEntity.ok().headers(responseHeaders).body(response.data());
   }
 
