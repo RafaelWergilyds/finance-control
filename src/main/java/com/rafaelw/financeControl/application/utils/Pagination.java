@@ -1,6 +1,5 @@
 package com.rafaelw.financeControl.application.utils;
 
-import com.rafaelw.financeControl.infra.persist.repository.specifications.SpecificationUtil;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -30,8 +29,7 @@ public class Pagination {
     Pageable pageAsc = PageRequest.of(0, queryPageSize, sortAsc);
     Pageable pageDesc = PageRequest.of(0, queryPageSize, sortDesc);
 
-    Specification<T> finalSpec = SpecificationUtil.empty();
-    finalSpec.and(spec);
+    Specification<T> finalSpec = Specification.allOf(spec);
 
     if (cursor != null) {
       finalSpec = finalSpec.and(
@@ -47,8 +45,9 @@ public class Pagination {
     }
 
     if (cursor != null) {
-      Specification<T> previousPageSpec = ((root, query, cb) -> cb.greaterThanOrEqualTo(
-          root.get(idProperty), cursor));
+      Specification<T> previousPageSpec = Specification.allOf(spec)
+          .and((root, query, cb) -> cb.greaterThanOrEqualTo(
+              root.get(idProperty), cursor));
       Page<T> previousPageCheck = repository.findAll(previousPageSpec, pageAsc);
       List<T> previousPageCheckList = previousPageCheck.getContent();
 
