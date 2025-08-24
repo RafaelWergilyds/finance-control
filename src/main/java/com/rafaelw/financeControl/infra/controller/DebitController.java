@@ -4,15 +4,12 @@ import com.rafaelw.financeControl.application.dto.debit.DebitFilterDTO;
 import com.rafaelw.financeControl.application.dto.debit.DebitRequestDTO;
 import com.rafaelw.financeControl.application.dto.debit.DebitResponseDTO;
 import com.rafaelw.financeControl.application.dto.debit.DebitUpdateDTO;
-import com.rafaelw.financeControl.application.dto.debit.PaginatedDebitsResponse;
-import com.rafaelw.financeControl.application.dto.debit.PaginationDTO;
 import com.rafaelw.financeControl.application.dto.debit.TotalDebitsResponse;
 import com.rafaelw.financeControl.application.services.DebitService;
+import com.rafaelw.financeControl.application.utils.PaginatedResponse;
 import com.rafaelw.financeControl.infra.controller.headers.PaginationHeader;
 import java.net.URI;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,20 +38,21 @@ public class DebitController {
     return ResponseEntity.ok().body(response);
   }
 
-
-  @GetMapping
-  public ResponseEntity<List<DebitResponseDTO>> findAllFiltered(@PathVariable Long userId,
-      DebitFilterDTO filter, PaginationDTO page) {
-    List<DebitResponseDTO> response = debitService.findAll(userId, filter, page);
-    return ResponseEntity.ok().body(response);
-  }
+//  @GetMapping
+//  public ResponseEntity<List<DebitResponseDTO>> findAllFiltered(@PathVariable Long userId,
+//      DebitFilterDTO filter, PaginationDTO page) {
+//    List<DebitResponseDTO> response = debitService.findAll(userId, filter, page);
+//    return ResponseEntity.ok().body(response);
+//  }
 
   @GetMapping("/paginated")
-  public ResponseEntity<List<DebitResponseDTO>> findAllPaginate(@PathVariable Long userId,
+  public ResponseEntity<PaginatedResponse<DebitResponseDTO>> findAllPaginate(
+      @PathVariable Long userId,
       DebitFilterDTO filter, Integer pageSize, Long cursor) {
-    PaginatedDebitsResponse response = debitService.findAllPage(userId, filter, pageSize, cursor);
-    HttpHeaders responseHeaders = paginationHeader.execute(response);
-    return ResponseEntity.ok().headers(responseHeaders).body(response.data());
+    PaginatedResponse<DebitResponseDTO> response = debitService.findAllPage(userId, filter,
+        pageSize, cursor);
+//    HttpHeaders responseHeaders = paginationHeader.execute(response);
+    return ResponseEntity.ok().body(response);
   }
 
   @PostMapping
