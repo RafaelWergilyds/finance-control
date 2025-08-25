@@ -9,7 +9,9 @@ import com.rafaelw.financeControl.application.services.DebitService;
 import com.rafaelw.financeControl.application.utils.PaginatedResponse;
 import com.rafaelw.financeControl.infra.controller.headers.PaginationHeader;
 import java.net.URI;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,13 +48,13 @@ public class DebitController {
 //  }
 
   @GetMapping("/paginated")
-  public ResponseEntity<PaginatedResponse<DebitResponseDTO>> findAllPaginate(
+  public ResponseEntity<List<DebitResponseDTO>> findAllPaginate(
       @PathVariable Long userId,
       DebitFilterDTO filter, Integer pageSize, Long cursor) {
-    PaginatedResponse<DebitResponseDTO> response = debitService.findAllPage(userId, filter,
+    PaginatedResponse<DebitResponseDTO> response = debitService.findAll(userId, filter,
         pageSize, cursor);
-//    HttpHeaders responseHeaders = paginationHeader.execute(response);
-    return ResponseEntity.ok().body(response);
+    HttpHeaders responseHeaders = paginationHeader.execute(response);
+    return ResponseEntity.ok().headers(responseHeaders).body(response.data());
   }
 
   @PostMapping

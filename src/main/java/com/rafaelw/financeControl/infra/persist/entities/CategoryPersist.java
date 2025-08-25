@@ -27,7 +27,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(of = "id")
 @Table(name = "categories")
-public class CategoryPersist {
+public class CategoryPersist implements JpaEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

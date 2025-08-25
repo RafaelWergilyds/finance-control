@@ -26,7 +26,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(of = "id")
 @Table(name = "debits")
-public class DebitPersist {
+public class DebitPersist implements JpaEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

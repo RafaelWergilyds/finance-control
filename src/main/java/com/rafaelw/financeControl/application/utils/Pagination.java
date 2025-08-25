@@ -1,5 +1,6 @@
 package com.rafaelw.financeControl.application.utils;
 
+import com.rafaelw.financeControl.infra.persist.entities.JpaEntity;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -13,19 +14,24 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public class Pagination {
 
-  public static <T, R> PaginatedResponse<R> paginate(JpaSpecificationExecutor<T> repository,
-      Specification<T> spec, Integer pageSize, Long cursor, Function<T, Long> idExtractor,
-      Function<T, R> mapper, String idProperty) {
+  public static <T extends JpaEntity, R> PaginatedResponse<R> paginate(
+      JpaSpecificationExecutor<T> repository,
+      Specification<T> spec, Integer pageSize, Long cursor,
+      Function<T, R> mapper, String keyProperty) {
 
     Long startCursor;
     Long endCursor;
     Long nextPage = null;
     Long previousPage = null;
 
+    if (pageSize == null) {
+      pageSize = 10;
+    }
+
     int queryPageSize = pageSize + 1;
 
-    Sort sortAsc = Sort.by(idProperty).ascending();
-    Sort sortDesc = Sort.by(idProperty).descending();
+    Sort sortAsc = Sort.by(keyProperty).ascending();
+    Sort sortDesc = Sort.by(keyProperty).descending();
     Pageable pageAsc = PageRequest.of(0, queryPageSize, sortAsc);
     Pageable pageDesc = PageRequest.of(0, queryPageSize, sortDesc);
 
@@ -33,41 +39,40 @@ public class Pagination {
 
     if (cursor != null) {
       finalSpec = finalSpec.and(
-          (root, query, cb) -> cb.lessThanOrEqualTo(root.get(idProperty), cursor));
+          (root, query, cb) -> cb.lessThanOrEqualTo(root.get(keyProperty), cursor));
     }
 
     Page<T> currentPage = repository.findAll(finalSpec, pageDesc);
     List<T> content = new ArrayList<>(currentPage.getContent());
 
+    if (content.isEmpty()) {
+      return new PaginatedResponse<>(List.of(), null, null, null, null);
+    }
+
     if (content.size() > pageSize) {
-      nextPage = idExtractor.apply(content.getLast());
+      nextPage = content.getLast().getId();
       content.removeLast();
     }
 
     if (cursor != null) {
       Specification<T> previousPageSpec = Specification.allOf(spec)
           .and((root, query, cb) -> cb.greaterThanOrEqualTo(
-              root.get(idProperty), cursor));
+              root.get(keyProperty), cursor));
       Page<T> previousPageCheck = repository.findAll(previousPageSpec, pageAsc);
       List<T> previousPageCheckList = previousPageCheck.getContent();
 
       if (previousPageCheckList.size() > pageSize) {
-        previousPage = idExtractor.apply(
-            previousPageCheck.getContent().getLast());
+        previousPage = previousPageCheck.getContent().getLast().getId();
       }
     }
 
-    if (content.isEmpty()) {
-      return new PaginatedResponse<>(List.of(), null, null, null, null);
-    }
-
-    List<R> responseDTOs = content.stream().map(mapper).sorted(
-            Comparator.comparing(r -> idExtractor.apply(content.getFirst())))
+    List<R> response = content.stream().map(mapper).sorted(
+            Comparator.comparing(r -> content.getFirst().getId()))
         .toList();
 
-    startCursor = idExtractor.apply(content.getFirst());
-    endCursor = idExtractor.apply(content.getLast());
+    startCursor = content.getFirst().getId();
+    endCursor = content.getLast().getId();
 
-    return new PaginatedResponse<>(responseDTOs, startCursor, endCursor, nextPage, previousPage);
+    return new PaginatedResponse<>(response, startCursor, endCursor, nextPage, previousPage);
   }
 }

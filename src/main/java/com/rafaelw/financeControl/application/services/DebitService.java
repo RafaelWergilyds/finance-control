@@ -10,7 +10,6 @@ import com.rafaelw.financeControl.application.mappers.DebitMapper;
 import com.rafaelw.financeControl.application.mappers.UserMapper;
 import com.rafaelw.financeControl.application.services.exceptions.CategoryNotFoundException;
 import com.rafaelw.financeControl.application.services.exceptions.DebitNotFoundException;
-import com.rafaelw.financeControl.application.services.exceptions.ResourcesNotFound;
 import com.rafaelw.financeControl.application.services.exceptions.UserNotFoundException;
 import com.rafaelw.financeControl.application.utils.PaginatedResponse;
 import com.rafaelw.financeControl.application.utils.Pagination;
@@ -72,105 +71,17 @@ public class DebitService {
     return debitMapper.toResponse(debitPersist);
   }
 
-//  @Transactional(readOnly = true)
-//  public List<DebitResponseDTO> findAll(Long userId, DebitFilterDTO filter, PaginationDTO page) {
-//    userRepository.findById(userId)
-//        .orElseThrow(() -> new UserNotFoundException(userId));
-//
-//    Specification<DebitPersist> debitSpec = filterDebit(userId, filter);
-//    Pageable pageable = Pagination.paginate(page.pageNumber(), page.pageSize());
-//
-//    Page<DebitPersist> debitPersistFiltered = debitRepository.findAll(debitSpec, pageable);
-//
-//    return debitPersistFiltered.stream().map(debitPersist -> debitMapper.toResponse(debitPersist))
-//        .toList();
-//
-//  }
-
-//  @Transactional(readOnly = true)
-//  public PaginatedDebitsResponse findAllPage(Long userId, DebitFilterDTO filter,
-//      Integer pageSize, Long cursor) {
-//    userRepository.findById(userId)
-//        .orElseThrow(() -> new UserNotFoundException(userId));
-//
-//    Long startCursor;
-//    Long endCursor;
-//    Long nextPage = null;
-//    Long previousPage = null;
-//
-//    Sort sortAsc = Sort.by("id").ascending();
-//    Sort sortDesc = Sort.by("id").descending();
-//    Pageable pageAsc = PageRequest.of(0, pageSize + 1, sortAsc);
-//    Pageable pageDesc = PageRequest.of(0, pageSize + 1, sortDesc);
-//    Specification<DebitPersist> debitSpec = filterDebit(userId, filter);
-//
-//    if (cursor != null) {
-//      debitSpec = debitSpec.and(DebitSpecification.findLessThanDebitId(cursor));
-//      Page<DebitPersist> debitsPage = debitRepository.findAll(debitSpec, pageDesc);
-//      List<DebitPersist> debitPersist = new ArrayList<>(debitsPage.getContent());
-//
-//      Specification<DebitPersist> debitPreviousSpec = filterDebit(userId, filter);
-//      debitPreviousSpec = debitPreviousSpec.and(DebitSpecification.findGreaterThanDebitId(cursor));
-//      Page<DebitPersist> previousPaginate = debitRepository.findAll(debitPreviousSpec, pageAsc);
-//      List<DebitPersist> listPrevious = new ArrayList<>(previousPaginate.getContent());
-//
-//      if (listPrevious.size() > pageSize) {
-//        previousPage = listPrevious.getLast().getId();
-//      }
-//
-//      if (debitPersist.size() > pageSize) {
-//        nextPage = debitPersist.getLast().getId();
-//        debitPersist.removeLast();
-//      }
-//
-//      endCursor = debitPersist.getLast().getId();
-//      startCursor = debitPersist.getFirst().getId();
-//
-//      List<DebitResponseDTO> debitResponseDTOs = debitPersist.stream()
-//          .map(debits -> debitMapper.toResponse(debits)).toList();
-//
-//      return new PaginatedDebitsResponse(debitResponseDTOs, startCursor, endCursor, nextPage,
-//          previousPage);
-//    }
-//
-//    Page<DebitPersist> debitsPage = debitRepository.findAll(debitSpec, pageDesc);
-//
-//    if (debitsPage.isEmpty()) {
-//      throw new ResourcesNotFound();
-//    }
-//
-//    List<DebitPersist> debitPersist = new ArrayList<>(debitsPage.getContent());
-//
-//    if (debitPersist.size() > pageSize) {
-//      nextPage = debitPersist.getLast().getId();
-//      debitPersist.removeLast();
-//    }
-//
-//    startCursor = debitPersist.getFirst().getId();
-//    endCursor = debitPersist.getLast().getId();
-//    List<DebitResponseDTO> debitResponseDTOs = debitPersist.stream()
-//        .map(debits -> debitMapper.toResponse(debits)).toList();
-//
-//    return new PaginatedDebitsResponse(debitResponseDTOs, startCursor, endCursor, nextPage,
-//        previousPage);
-//
-//  }
 
   @Transactional(readOnly = true)
-  public PaginatedResponse<DebitResponseDTO> findAllPage(Long userId, DebitFilterDTO filter,
+  public PaginatedResponse<DebitResponseDTO> findAll(Long userId, DebitFilterDTO filter,
       Integer pageSize, Long cursor) {
     userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
     Specification<DebitPersist> spec = filterDebit(userId, filter);
-    PaginatedResponse<DebitResponseDTO> paginatedResponse = Pagination.paginate(debitRepository,
-        spec, pageSize, cursor, DebitPersist::getId, debitMapper::toResponse, "id");
 
-    if (paginatedResponse.data().isEmpty()) {
-      throw new ResourcesNotFound();
-    }
-
-    return paginatedResponse;
+    return Pagination.paginate(debitRepository,
+        spec, pageSize, cursor, debitMapper::toResponse, "id");
   }
 
   @Transactional

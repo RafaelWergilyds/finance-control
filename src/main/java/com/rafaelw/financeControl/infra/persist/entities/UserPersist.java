@@ -35,7 +35,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE users SET active = false WHERE id = ?")
 @SQLRestriction("active = true")
 @Table(name = "users")
-public class UserPersist {
+public class UserPersist implements JpaEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
