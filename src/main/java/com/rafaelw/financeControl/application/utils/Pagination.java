@@ -30,10 +30,9 @@ public class Pagination {
 
     int queryPageSize = pageSize + 1;
 
-    Sort sortAsc = Sort.by(keyProperty).ascending();
-    Sort sortDesc = Sort.by(keyProperty).descending();
-    Pageable pageAsc = PageRequest.of(0, queryPageSize, sortAsc);
-    Pageable pageDesc = PageRequest.of(0, queryPageSize, sortDesc);
+    Sort sort = Sort.by(keyProperty);
+    Pageable pageAsc = PageRequest.of(0, queryPageSize, sort.ascending());
+    Pageable pageDesc = PageRequest.of(0, queryPageSize, sort.descending());
 
     Specification<T> finalSpec = Specification.allOf(spec);
 
