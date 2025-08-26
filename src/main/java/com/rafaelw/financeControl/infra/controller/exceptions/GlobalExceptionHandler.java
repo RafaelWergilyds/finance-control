@@ -1,7 +1,7 @@
 package com.rafaelw.financeControl.infra.controller.exceptions;
 
 import com.rafaelw.financeControl.application.services.exceptions.NotFoundException;
-import com.rafaelw.financeControl.domain.service.exceptions.InvalidCredentials;
+import com.rafaelw.financeControl.domain.service.exceptions.InvalidCredentialsException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import org.springframework.http.HttpStatus;
@@ -23,8 +23,8 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(status).body(err);
   }
 
-  @ExceptionHandler(InvalidCredentials.class)
-  public ResponseEntity<StandardError> invalidCredentials(InvalidCredentials e,
+  @ExceptionHandler(InvalidCredentialsException.class)
+  public ResponseEntity<StandardError> invalidCredentials(InvalidCredentialsException e,
       HttpServletRequest request) {
     String error = "Invalid Credentials";
     HttpStatus status = HttpStatus.BAD_REQUEST;

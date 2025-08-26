@@ -40,13 +40,6 @@ public class DebitController {
     return ResponseEntity.ok().body(response);
   }
 
-//  @GetMapping
-//  public ResponseEntity<List<DebitResponseDTO>> findAllFiltered(@PathVariable Long userId,
-//      DebitFilterDTO filter, PaginationDTO page) {
-//    List<DebitResponseDTO> response = debitService.findAll(userId, filter, page);
-//    return ResponseEntity.ok().body(response);
-//  }
-
   @GetMapping("/paginated")
   public ResponseEntity<List<DebitResponseDTO>> findAllPaginate(
       @PathVariable Long userId,

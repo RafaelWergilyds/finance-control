@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.infra.config;
+package com.rafaelw.financeControl.application.config;
 
 import com.rafaelw.financeControl.domain.entities.enums.Role;
 import com.rafaelw.financeControl.infra.persist.entities.CategoryPersist;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @Profile("test")
@@ -28,9 +29,13 @@ public class TestConfig implements CommandLineRunner {
   @Autowired
   private JpaDebitRepository debitRepository;
 
+  @Autowired
+  private PasswordEncoder passwordEncoder;
+
   @Override
   public void run(String... args) throws Exception {
-    UserPersist user = new UserPersist(null, "John", "john@gmail.com", "123456", true, Role.COMMON,
+    UserPersist user = new UserPersist(null, "John", "john@gmail.com",
+        passwordEncoder.encode("123456"), true, Role.COMMON,
         null, null);
 
     CategoryPersist category = new CategoryPersist(null, "Comida", user, null);

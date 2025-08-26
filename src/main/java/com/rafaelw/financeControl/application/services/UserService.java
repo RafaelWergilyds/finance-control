@@ -13,6 +13,7 @@ import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,7 @@ public class UserService {
   private VerifyUserByEmail verifyUserByEmail;
 
   @Autowired
-  private JpaUserRepository repository;
+  private JpaUserRepository userRepository;
 
   @Autowired
   private UserMapper userMapper;
@@ -31,9 +32,12 @@ public class UserService {
   @Autowired
   private UserFactory userFactory;
 
+  @Autowired
+  private PasswordEncoder passwordEncoder;
+
   @Transactional(readOnly = true)
   public List<UserResponseDTO> findAll() {
-    List<UserPersist> userEntities = repository.findAll();
+    List<UserPersist> userEntities = userRepository.findAll();
     List<User> domainUsers = userEntities.stream().map(userPersist ->
         userMapper.toDomain(userPersist)).toList();
 
@@ -43,7 +47,7 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public UserResponseDTO findById(Long id) {
-    UserPersist userPersist = repository.findById(id)
+    UserPersist userPersist = userRepository.findById(id)
         .orElseThrow(() -> new UserNotFoundException(id));
 
     return userMapper.toResponseDTO(userPersist);
@@ -51,17 +55,18 @@ public class UserService {
 
   @Transactional
   public UserResponseDTO insert(UserRequestDTO data) {
-    User user = userFactory.create(data.name(), data.email(), data.password());
-    UserPersist userPersist = userMapper.toPersist(user);
+    User user = userFactory.create(data.name(), data.email(),
+        passwordEncoder.encode(data.password()));
 
-    repository.save(userPersist);
+    UserPersist userPersist = userMapper.toPersist(user);
+    userRepository.save(userPersist);
 
     return userMapper.toResponseDTO(userPersist);
   }
 
   @Transactional
   public UserResponseDTO update(Long userId, UserUpdateDTO data) {
-    UserPersist userPersist = repository.findById(userId)
+    UserPersist userPersist = userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
     User user = userMapper.toDomain(userPersist);
@@ -76,7 +81,7 @@ public class UserService {
     }
 
     UserPersist updatedUser = userMapper.toPersist(user);
-    repository.save(updatedUser);
+    userRepository.save(updatedUser);
 
     return userMapper.toResponseDTO(updatedUser);
 
@@ -84,11 +89,11 @@ public class UserService {
 
   @Transactional
   public void delete(Long id) {
-    Optional<UserPersist> userPersist = repository.findById(id);
+    Optional<UserPersist> userPersist = userRepository.findById(id);
     if (userPersist.isEmpty()) {
       throw new UserNotFoundException(id);
     }
-    repository.deleteById(userPersist.get().getId());
+    userRepository.deleteById(userPersist.get().getId());
   }
 
 }

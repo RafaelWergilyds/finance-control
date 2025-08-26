@@ -42,6 +42,7 @@ public class User {
   }
 
   public static User create(String name, String email, String password) {
+
     return new User(name, email, password);
   }
 
