@@ -4,10 +4,12 @@ import com.rafaelw.financeControl.application.dto.category.CategoryRequestDTO;
 import com.rafaelw.financeControl.application.dto.category.CategoryResponseDTO;
 import com.rafaelw.financeControl.application.dto.category.CategoryUpdateDTO;
 import com.rafaelw.financeControl.application.services.CategoryService;
+import com.rafaelw.financeControl.application.utils.SecurityUtils;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,44 +21,52 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping("/users/{userId}/categories")
+@RequestMapping("/categories")
 public class CategoryController {
 
   @Autowired
   private CategoryService categoryService;
 
+  @Autowired
+  private SecurityUtils securityUtils;
+
   @GetMapping("/{categoryId}")
-  public ResponseEntity<CategoryResponseDTO> findById(@PathVariable Long userId,
+  public ResponseEntity<CategoryResponseDTO> findById(Authentication authentication,
       @PathVariable Long categoryId) {
+    Long userId = securityUtils.getUserId(authentication);
     CategoryResponseDTO response = categoryService.findById(userId, categoryId);
     return ResponseEntity.ok().body(response);
   }
 
   @GetMapping
-  public ResponseEntity<List<CategoryResponseDTO>> findAllByUser(@PathVariable Long userId) {
+  public ResponseEntity<List<CategoryResponseDTO>> findAllByUser(Authentication authentication) {
+    Long userId = securityUtils.getUserId(authentication);
     List<CategoryResponseDTO> response = categoryService.findAllByUser(userId);
     return ResponseEntity.ok().body(response);
   }
 
   @PostMapping
-  public ResponseEntity<CategoryResponseDTO> createCategory(@PathVariable Long userId,
+  public ResponseEntity<CategoryResponseDTO> createCategory(Authentication authentication,
       @RequestBody CategoryRequestDTO data) {
+    Long userId = securityUtils.getUserId(authentication);
     CategoryResponseDTO response = categoryService.create(userId, data);
     URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
         .path("/{id}")
-        .buildAndExpand(userId, response.id()).toUri();
+        .buildAndExpand(response.id()).toUri();
     return ResponseEntity.created(uri).body(response);
   }
 
   @PutMapping("/{categoryId}")
-  public ResponseEntity<CategoryResponseDTO> update(@PathVariable Long userId,
+  public ResponseEntity<CategoryResponseDTO> update(Authentication authentication,
       @PathVariable Long categoryId, @RequestBody CategoryUpdateDTO data) {
+    Long userId = securityUtils.getUserId(authentication);
     CategoryResponseDTO response = categoryService.update(userId, categoryId, data);
     return ResponseEntity.ok().body(response);
   }
 
   @DeleteMapping("/{categoryId}")
-  public ResponseEntity<Void> delete(@PathVariable Long userId, @PathVariable Long categoryId) {
+  public ResponseEntity<Void> delete(Authentication authentication, @PathVariable Long categoryId) {
+    Long userId = securityUtils.getUserId(authentication);
     categoryService.delete(userId, categoryId);
     return ResponseEntity.noContent().build();
   }

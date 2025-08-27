@@ -7,12 +7,14 @@ import com.rafaelw.financeControl.application.dto.debit.DebitUpdateDTO;
 import com.rafaelw.financeControl.application.dto.debit.TotalDebitsResponse;
 import com.rafaelw.financeControl.application.services.DebitService;
 import com.rafaelw.financeControl.application.utils.PaginatedResponse;
+import com.rafaelw.financeControl.application.utils.SecurityUtils;
 import com.rafaelw.financeControl.infra.controller.headers.PaginationHeader;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping("/users/{userId}/debits")
+@RequestMapping("/debits")
 public class DebitController {
 
   @Autowired
@@ -33,17 +35,22 @@ public class DebitController {
   @Autowired
   private PaginationHeader paginationHeader;
 
+  @Autowired
+  private SecurityUtils securityUtils;
+
   @GetMapping(value = "/{debitId}")
-  public ResponseEntity<DebitResponseDTO> findById(@PathVariable Long userId,
+  public ResponseEntity<DebitResponseDTO> findById(Authentication authentication,
       @PathVariable Long debitId) {
+    Long userId = securityUtils.getUserId(authentication);
     DebitResponseDTO response = debitService.findById(userId, debitId);
     return ResponseEntity.ok().body(response);
   }
 
-  @GetMapping("/paginated")
+  @GetMapping
   public ResponseEntity<List<DebitResponseDTO>> findAllPaginate(
-      @PathVariable Long userId,
+      Authentication authentication,
       DebitFilterDTO filter, Integer pageSize, Long cursor) {
+    Long userId = securityUtils.getUserId(authentication);
     PaginatedResponse<DebitResponseDTO> response = debitService.findAll(userId, filter,
         pageSize, cursor);
     HttpHeaders responseHeaders = paginationHeader.execute(response);
@@ -51,32 +58,35 @@ public class DebitController {
   }
 
   @PostMapping
-  public ResponseEntity<DebitResponseDTO> createDebit(@PathVariable Long userId,
+  public ResponseEntity<DebitResponseDTO> createDebit(Authentication authentication,
       @RequestBody DebitRequestDTO data) {
+    Long userId = securityUtils.getUserId(authentication);
     DebitResponseDTO response = debitService.create(userId, data);
     URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{debitId}")
-        .buildAndExpand(userId, response.id()).toUri();
+        .buildAndExpand(response.id()).toUri();
     return ResponseEntity.created(uri).body(response);
-
   }
 
   @PutMapping("/{debitId}")
-  public ResponseEntity<DebitResponseDTO> update(@PathVariable Long userId,
+  public ResponseEntity<DebitResponseDTO> update(Authentication authentication,
       @PathVariable Long debitId, @RequestBody
       DebitUpdateDTO data) {
+    Long userId = securityUtils.getUserId(authentication);
     DebitResponseDTO response = debitService.update(userId, debitId, data);
     return ResponseEntity.ok().body(response);
   }
 
   @DeleteMapping("/{debitId}")
-  public ResponseEntity<Void> delete(@PathVariable Long userId, @PathVariable Long debitId) {
+  public ResponseEntity<Void> delete(Authentication authentication, @PathVariable Long debitId) {
+    Long userId = securityUtils.getUserId(authentication);
     debitService.delete(userId, debitId);
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/totalDebits")
-  public ResponseEntity<TotalDebitsResponse> getTotalDebits(@PathVariable Long userId,
+  public ResponseEntity<TotalDebitsResponse> getTotalDebits(Authentication authentication,
       DebitFilterDTO filter) {
+    Long userId = securityUtils.getUserId(authentication);
     TotalDebitsResponse response = debitService.getTotalSum(userId, filter);
     return ResponseEntity.ok().body(response);
   }
