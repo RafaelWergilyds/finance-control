@@ -7,10 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class SecurityUtils {
 
-  public Long getUserId(Authentication authentication) {
+  public static Long getUserId(Authentication authentication) {
     if (authentication == null || !(authentication.getPrincipal() instanceof Jwt jwt)) {
       throw new IllegalArgumentException("Authentication is invalid or not a JWT.");
     }
     return Long.parseLong(jwt.getSubject());
   }
+
+
 }

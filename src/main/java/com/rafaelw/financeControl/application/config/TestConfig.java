@@ -35,7 +35,7 @@ public class TestConfig implements CommandLineRunner {
   @Override
   public void run(String... args) throws Exception {
     UserPersist user = new UserPersist(null, "John", "john@gmail.com",
-        passwordEncoder.encode("123456"), true, Role.COMMON,
+        passwordEncoder.encode("123456"), true, Role.ADMIN,
         null, null);
 
     CategoryPersist category = new CategoryPersist(null, "Comida", user, null);

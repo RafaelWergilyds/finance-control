@@ -50,6 +50,7 @@ public class AuthenticationService {
         .issuer(issuer)
         .subject(user.get().getId().toString())
         .issuedAt(now)
+        .claim("role", user.get().getRole())
         .expiresAt(now.plusSeconds(expiresIn)).build();
 
     return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

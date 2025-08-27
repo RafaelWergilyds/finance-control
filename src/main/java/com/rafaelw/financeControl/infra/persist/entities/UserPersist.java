@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +24,9 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Builder
@@ -35,7 +39,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE users SET active = false WHERE id = ?")
 @SQLRestriction("active = true")
 @Table(name = "users")
-public class UserPersist implements JpaEntity {
+public class UserPersist implements JpaEntity, UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -59,4 +63,16 @@ public class UserPersist implements JpaEntity {
   @OneToMany(mappedBy = "user")
   private List<DebitPersist> debits = new ArrayList<>();
 
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    if (this.role == Role.ADMIN) {
+      return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
+    }
+    return List.of(new SimpleGrantedAuthority("ROLE_COMMON"));
+  }
+
+  @Override
+  public String getUsername() {
+    return this.email;
+  }
 }

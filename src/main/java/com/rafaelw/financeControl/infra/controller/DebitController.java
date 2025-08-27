@@ -35,13 +35,10 @@ public class DebitController {
   @Autowired
   private PaginationHeader paginationHeader;
 
-  @Autowired
-  private SecurityUtils securityUtils;
-
   @GetMapping(value = "/{debitId}")
   public ResponseEntity<DebitResponseDTO> findById(Authentication authentication,
       @PathVariable Long debitId) {
-    Long userId = securityUtils.getUserId(authentication);
+    Long userId = SecurityUtils.getUserId(authentication);
     DebitResponseDTO response = debitService.findById(userId, debitId);
     return ResponseEntity.ok().body(response);
   }
@@ -50,7 +47,7 @@ public class DebitController {
   public ResponseEntity<List<DebitResponseDTO>> findAllPaginate(
       Authentication authentication,
       DebitFilterDTO filter, Integer pageSize, Long cursor) {
-    Long userId = securityUtils.getUserId(authentication);
+    Long userId = SecurityUtils.getUserId(authentication);
     PaginatedResponse<DebitResponseDTO> response = debitService.findAll(userId, filter,
         pageSize, cursor);
     HttpHeaders responseHeaders = paginationHeader.execute(response);
@@ -60,7 +57,7 @@ public class DebitController {
   @PostMapping
   public ResponseEntity<DebitResponseDTO> createDebit(Authentication authentication,
       @RequestBody DebitRequestDTO data) {
-    Long userId = securityUtils.getUserId(authentication);
+    Long userId = SecurityUtils.getUserId(authentication);
     DebitResponseDTO response = debitService.create(userId, data);
     URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{debitId}")
         .buildAndExpand(response.id()).toUri();
@@ -71,14 +68,14 @@ public class DebitController {
   public ResponseEntity<DebitResponseDTO> update(Authentication authentication,
       @PathVariable Long debitId, @RequestBody
       DebitUpdateDTO data) {
-    Long userId = securityUtils.getUserId(authentication);
+    Long userId = SecurityUtils.getUserId(authentication);
     DebitResponseDTO response = debitService.update(userId, debitId, data);
     return ResponseEntity.ok().body(response);
   }
 
   @DeleteMapping("/{debitId}")
   public ResponseEntity<Void> delete(Authentication authentication, @PathVariable Long debitId) {
-    Long userId = securityUtils.getUserId(authentication);
+    Long userId = SecurityUtils.getUserId(authentication);
     debitService.delete(userId, debitId);
     return ResponseEntity.noContent().build();
   }
@@ -86,7 +83,7 @@ public class DebitController {
   @GetMapping("/totalDebits")
   public ResponseEntity<TotalDebitsResponse> getTotalDebits(Authentication authentication,
       DebitFilterDTO filter) {
-    Long userId = securityUtils.getUserId(authentication);
+    Long userId = SecurityUtils.getUserId(authentication);
     TotalDebitsResponse response = debitService.getTotalSum(userId, filter);
     return ResponseEntity.ok().body(response);
   }

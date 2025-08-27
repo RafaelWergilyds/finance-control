@@ -27,20 +27,17 @@ public class CategoryController {
   @Autowired
   private CategoryService categoryService;
 
-  @Autowired
-  private SecurityUtils securityUtils;
-
   @GetMapping("/{categoryId}")
   public ResponseEntity<CategoryResponseDTO> findById(Authentication authentication,
       @PathVariable Long categoryId) {
-    Long userId = securityUtils.getUserId(authentication);
+    Long userId = SecurityUtils.getUserId(authentication);
     CategoryResponseDTO response = categoryService.findById(userId, categoryId);
     return ResponseEntity.ok().body(response);
   }
 
   @GetMapping
   public ResponseEntity<List<CategoryResponseDTO>> findAllByUser(Authentication authentication) {
-    Long userId = securityUtils.getUserId(authentication);
+    Long userId = SecurityUtils.getUserId(authentication);
     List<CategoryResponseDTO> response = categoryService.findAllByUser(userId);
     return ResponseEntity.ok().body(response);
   }
@@ -48,7 +45,7 @@ public class CategoryController {
   @PostMapping
   public ResponseEntity<CategoryResponseDTO> createCategory(Authentication authentication,
       @RequestBody CategoryRequestDTO data) {
-    Long userId = securityUtils.getUserId(authentication);
+    Long userId = SecurityUtils.getUserId(authentication);
     CategoryResponseDTO response = categoryService.create(userId, data);
     URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
         .path("/{id}")
@@ -59,14 +56,14 @@ public class CategoryController {
   @PutMapping("/{categoryId}")
   public ResponseEntity<CategoryResponseDTO> update(Authentication authentication,
       @PathVariable Long categoryId, @RequestBody CategoryUpdateDTO data) {
-    Long userId = securityUtils.getUserId(authentication);
+    Long userId = SecurityUtils.getUserId(authentication);
     CategoryResponseDTO response = categoryService.update(userId, categoryId, data);
     return ResponseEntity.ok().body(response);
   }
 
   @DeleteMapping("/{categoryId}")
   public ResponseEntity<Void> delete(Authentication authentication, @PathVariable Long categoryId) {
-    Long userId = securityUtils.getUserId(authentication);
+    Long userId = SecurityUtils.getUserId(authentication);
     categoryService.delete(userId, categoryId);
     return ResponseEntity.noContent().build();
   }
