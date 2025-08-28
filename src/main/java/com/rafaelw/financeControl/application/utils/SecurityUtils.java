@@ -13,6 +13,4 @@ public class SecurityUtils {
     }
     return Long.parseLong(jwt.getSubject());
   }
-
-
 }

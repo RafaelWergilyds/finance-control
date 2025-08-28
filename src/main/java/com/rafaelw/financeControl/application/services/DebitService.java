@@ -64,13 +64,44 @@ public class DebitService {
   @Autowired
   private DebitMapper debitMapper;
 
+  private static Specification<DebitPersist> filterDebit(Long userId, DebitFilterDTO filter) {
+    Specification<DebitPersist> spec = SpecificationUtil.empty();
+    spec = spec.and(DebitSpecification.findByUserId(userId));
+
+    if (filter.categoryId() != null) {
+      spec = spec.and(DebitSpecification.findByCategoryId(filter.categoryId()));
+    }
+    if (filter.categoryName() != null) {
+      spec = spec.and(DebitSpecification.findByCategoryName(filter.categoryName()));
+    }
+    if (filter.minAmount() != null && filter.minAmount().compareTo(BigDecimal.ZERO) >= 0) {
+      spec = spec.and(
+          DebitSpecification.hasAmountGreaterThanOrEqualsTo(filter.minAmount()));
+    }
+    if (filter.maxAmount() != null && filter.maxAmount().compareTo(BigDecimal.ZERO) >= 0) {
+      spec = spec.and(DebitSpecification.hasAmountLessThanEqualsTo(filter.maxAmount()));
+    }
+    if (filter.until() != null) {
+      LocalDate localDate = LocalDate.parse(filter.until());
+      ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneOffset.UTC);
+      Instant moment = zonedDateTime.toInstant();
+      spec = spec.and(DebitSpecification.findPreviousDebitMoment(moment));
+    }
+    if (filter.since() != null) {
+      LocalDate localDate = LocalDate.parse(filter.since());
+      ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneOffset.UTC);
+      Instant moment = zonedDateTime.toInstant();
+      spec = spec.and(DebitSpecification.findNextDebitMoment(moment));
+    }
+    return spec;
+  }
+
   @Transactional(readOnly = true)
   public DebitResponseDTO findById(Long userId, Long debitId) {
     DebitPersist debitPersist = debitRepository.findByIdAndUserId(debitId, userId)
         .orElseThrow(() -> new DebitNotFoundException(debitId));
     return debitMapper.toResponse(debitPersist);
   }
-
 
   @Transactional(readOnly = true)
   public PaginatedResponse<DebitResponseDTO> findAll(Long userId, DebitFilterDTO filter,
@@ -160,38 +191,6 @@ public class DebitService {
         .orElseThrow(() -> new CategoryNotFoundException(categoryId));
     Category category = categoryMapper.toDomain(categoryPersist);
     debit.setCategory(category);
-  }
-
-  private Specification<DebitPersist> filterDebit(Long userId, DebitFilterDTO filter) {
-    Specification<DebitPersist> spec = SpecificationUtil.empty();
-    spec = spec.and(DebitSpecification.findByUserId(userId));
-
-    if (filter.categoryId() != null) {
-      spec = spec.and(DebitSpecification.findByCategoryId(filter.categoryId()));
-    }
-    if (filter.categoryName() != null) {
-      spec = spec.and(DebitSpecification.findByCategoryName(filter.categoryName()));
-    }
-    if (filter.minAmount() != null && filter.minAmount().compareTo(BigDecimal.ZERO) >= 0) {
-      spec = spec.and(
-          DebitSpecification.hasAmountGreaterThanOrEqualsTo(filter.minAmount()));
-    }
-    if (filter.maxAmount() != null && filter.maxAmount().compareTo(BigDecimal.ZERO) >= 0) {
-      spec = spec.and(DebitSpecification.hasAmountLessThanEqualsTo(filter.maxAmount()));
-    }
-    if (filter.maxMoment() != null) {
-      LocalDate localDate = LocalDate.parse(filter.maxMoment());
-      ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneOffset.UTC);
-      Instant moment = zonedDateTime.toInstant();
-      spec = spec.and(DebitSpecification.findPreviousDebitMoment(moment));
-    }
-    if (filter.minMoment() != null) {
-      LocalDate localDate = LocalDate.parse(filter.minMoment());
-      ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneOffset.UTC);
-      Instant moment = zonedDateTime.toInstant();
-      spec = spec.and(DebitSpecification.findNextDebitMoment(moment));
-    }
-    return spec;
   }
 
 }

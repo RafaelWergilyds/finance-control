@@ -7,8 +7,8 @@ public record DebitFilterDTO(
     String categoryName,
     BigDecimal maxAmount,
     BigDecimal minAmount,
-    String maxMoment,
-    String minMoment
+    String since,
+    String until
 ) {
 
 }

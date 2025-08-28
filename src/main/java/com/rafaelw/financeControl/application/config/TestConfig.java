@@ -9,7 +9,8 @@ import com.rafaelw.financeControl.infra.persist.repository.JpaDebitRepository;
 import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Arrays;
+import java.util.List;
+import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -40,134 +41,19 @@ public class TestConfig implements CommandLineRunner {
 
     CategoryPersist category = new CategoryPersist(null, "Comida", user, null);
 
-    DebitPersist debit1 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit2 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit3 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit4 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit5 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit6 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit7 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit8 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit9 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit10 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit11 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit12 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit13 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit14 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit15 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit16 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit17 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit18 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit19 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit20 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit21 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit22 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit23 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit24 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit25 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit26 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit27 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit28 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit29 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
-
-    DebitPersist debit30 = new DebitPersist(null, "Pizza", BigDecimal.valueOf(50), Instant.now(),
-        user,
-        category);
+    List<DebitPersist> debits = IntStream.range(0, 100)
+        .mapToObj(i -> new DebitPersist(
+            null,
+            "Pizza",
+            BigDecimal.valueOf(50),
+            Instant.now(),
+            user,
+            category
+        )).toList();
 
     userRepository.save(user);
     categoryRepository.save(category);
-    debitRepository.saveAll(
-        Arrays.asList(debit1, debit2, debit3, debit4, debit5, debit6, debit7, debit8, debit9,
-            debit10, debit11, debit12, debit13, debit14, debit15, debit16, debit17, debit18,
-            debit19, debit20, debit21, debit22, debit23, debit24, debit25, debit26, debit27,
-            debit28,
-            debit29, debit30));
+    debitRepository.saveAll(debits);
 
 
   }
