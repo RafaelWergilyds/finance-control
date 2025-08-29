@@ -28,6 +28,15 @@ public class Debit {
   private Category category;
 
   public Debit(User user, String name, BigDecimal amount) {
+    if (user == null) {
+      throw new IllegalArgumentException("A user is required");
+    }
+    if (name == null || name.isBlank()) {
+      throw new IllegalArgumentException("Name is required");
+    }
+    if (amount == null) {
+      throw new IllegalArgumentException("Amount is required");
+    }
     this.user = user;
     this.name = name;
     this.amount = amount;
@@ -35,6 +44,19 @@ public class Debit {
   }
 
   public Debit(User user, String name, BigDecimal amount, Category category) {
+    if (user == null) {
+      throw new IllegalArgumentException("A user is required");
+    }
+    if (name == null || name.isBlank()) {
+      throw new IllegalArgumentException("Name is required");
+    }
+    if (amount == null) {
+      throw new IllegalArgumentException("Amount is required");
+    }
+    if (category == null) {
+      throw new IllegalArgumentException("A category is required");
+    }
+    
     this.user = user;
     this.name = name;
     this.amount = amount;

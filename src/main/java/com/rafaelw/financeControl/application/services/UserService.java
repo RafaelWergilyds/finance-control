@@ -74,7 +74,8 @@ public class UserService {
       user.changeName(data.name());
     }
     if (data.email() != null) {
-      user.changeEmail(data.email(), verifyUserByEmail);
+      verifyUserByEmail.execute(data.email());
+      user.changeEmail(data.email());
     }
     if (data.password() != null) {
       user.changePassword(data.password());

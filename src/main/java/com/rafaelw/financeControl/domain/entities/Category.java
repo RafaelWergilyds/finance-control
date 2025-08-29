@@ -1,6 +1,5 @@
 package com.rafaelw.financeControl.domain.entities;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -27,14 +26,10 @@ public class Category {
   private List<Debit> debits = new ArrayList<>();
 
   public Category(String name) {
-    this.name = name;
-  }
-
-  public BigDecimal SumTotalDebits() {
-    if (debits == null || debits.isEmpty()) {
-      return BigDecimal.ZERO;
+    if (name == null || name.isBlank()) {
+      throw new IllegalArgumentException("Name is required");
     }
-    return debits.stream().map(Debit::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+    this.name = name;
   }
 
 }

@@ -36,10 +36,11 @@ public class TestConfig implements CommandLineRunner {
   @Override
   public void run(String... args) throws Exception {
     UserPersist user = new UserPersist(null, "John", "john@gmail.com",
-        passwordEncoder.encode("123456"), true, Role.ADMIN,
+        passwordEncoder.encode("12345678"), true, Role.ADMIN,
         null, null);
 
     CategoryPersist category = new CategoryPersist(null, "Comida", user, null);
+    CategoryPersist category2 = new CategoryPersist(null, "Mensais", user, null);
 
     List<DebitPersist> debits = IntStream.range(0, 100)
         .mapToObj(i -> new DebitPersist(
@@ -51,9 +52,21 @@ public class TestConfig implements CommandLineRunner {
             category
         )).toList();
 
+    List<DebitPersist> debits2 = IntStream.range(0, 50)
+        .mapToObj(i -> new DebitPersist(
+            null,
+            "Compras",
+            BigDecimal.valueOf(150),
+            Instant.now(),
+            user,
+            category2
+        )).toList();
+
     userRepository.save(user);
     categoryRepository.save(category);
+    categoryRepository.save(category2);
     debitRepository.saveAll(debits);
+    debitRepository.saveAll(debits2);
 
 
   }

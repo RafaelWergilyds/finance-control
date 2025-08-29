@@ -1,10 +1,8 @@
 package com.rafaelw.financeControl.domain.entities;
 
 import com.rafaelw.financeControl.domain.entities.enums.Role;
-import com.rafaelw.financeControl.domain.service.VerifyUserByEmail;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -45,7 +43,15 @@ public class User {
   }
 
   public static User create(String name, String email, String password) {
-
+    if (name == null || name.isBlank()) {
+      throw new IllegalArgumentException("Name is required");
+    }
+    if (email == null || !email.contains("@")) {
+      throw new IllegalArgumentException("Invalid email");
+    }
+    if (password == null || password.length() < 8) {
+      throw new IllegalArgumentException("Password must be at least 8 characters long");
+    }
     return new User(name, email, password);
   }
 
@@ -53,25 +59,35 @@ public class User {
     if (this.name.equals(name)) {
       return;
     }
+    if (name == null || name.isBlank()) {
+      throw new IllegalArgumentException("Name is required");
+    }
     this.name = name;
   }
 
-  public void changeEmail(String email, VerifyUserByEmail verifyUserByEmail) {
+  public void changeEmail(String email) {
     if (this.email.equals(email)) {
       return;
     }
-    verifyUserByEmail.execute(email);
+    if (email == null || !email.contains("@")) {
+      throw new IllegalArgumentException("Invalid email");
+    }
+
     this.email = email;
   }
 
   public void changePassword(String password) {
+    if (password == null || password.length() < 8) {
+      throw new IllegalArgumentException("Password must be at least 8 characters long");
+    }
     this.password = password;
   }
 
-  public BigDecimal getTotalSumDebits() {
-    if (debits == null || debits.isEmpty()) {
-      return BigDecimal.ZERO;
-    }
-    return debits.stream().map(Debit::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+  public void activateUser() {
+    this.active = true;
+  }
+
+  public void deactivateUser() {
+    this.active = false;
   }
 }
