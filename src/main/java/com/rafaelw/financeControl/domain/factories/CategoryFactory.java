@@ -13,6 +13,6 @@ public class CategoryFactory {
   private UserCreateCategory userCreateCategory;
 
   public Category create(User user, String name) {
-    return userCreateCategory.execute(user, name);
+    return new Category(user, name);
   }
 }
