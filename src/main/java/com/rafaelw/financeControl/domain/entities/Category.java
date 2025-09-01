@@ -26,10 +26,23 @@ public class Category {
   private List<Debit> debits = new ArrayList<>();
 
   public Category(User user, String name) {
+    if (user == null) {
+      throw new IllegalArgumentException("A user is required");
+    }
     if (name == null || name.isBlank()) {
       throw new IllegalArgumentException("Name is required");
     }
     this.user = user;
+    this.name = name;
+  }
+
+  public void changeName(String name) {
+    if (this.name.equals(name)) {
+      return;
+    }
+    if (name == null || name.isBlank()) {
+      throw new IllegalArgumentException("Name is required");
+    }
     this.name = name;
   }
 

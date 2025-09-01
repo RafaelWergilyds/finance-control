@@ -144,10 +144,10 @@ public class DebitService {
     Debit debit = debitMapper.toDomain(debitPersist);
 
     if (data.name() != null) {
-      debit.setName(data.name());
+      debit.changeName(data.name());
     }
     if (data.amount() != null) {
-      debit.setAmount(data.amount());
+      debit.changeAmount(data.amount());
     }
     if (data.categoryId() != null) {
       addCategoryToDebit(debit, userId, data.categoryId());

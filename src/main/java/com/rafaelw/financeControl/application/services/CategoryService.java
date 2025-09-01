@@ -89,7 +89,7 @@ public class CategoryService {
         .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
     Category category = categoryMapper.toDomain(categoryPersist);
-    category.setName(data.name());
+    category.changeName(data.name());
 
     CategoryPersist updatedCategory = categoryMapper.toPersist(category);
     jpaCategoryRepository.save(updatedCategory);
