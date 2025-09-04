@@ -1,8 +1,6 @@
 package com.rafaelw.financeControl.domain.entities;
 
 import com.rafaelw.financeControl.domain.entities.enums.Role;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +28,6 @@ public class User {
   private String password;
   private boolean active = true;
 
-  @Enumerated(EnumType.STRING)
   private Role role;
   private Set<Category> categories = new HashSet<>();
   private List<Debit> debits = new ArrayList<>();

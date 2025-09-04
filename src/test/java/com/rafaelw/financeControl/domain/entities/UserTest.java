@@ -11,7 +11,7 @@ class UserTest {
 
   @Test
   @DisplayName("Should be create a domain user successfully")
-  void createUserSuccess() {
+  void createUser() {
     User user = User.create("Joel", "joel@gmail.com", "12345678");
 
     assertThat(user.getName()).isEqualTo("Joel");

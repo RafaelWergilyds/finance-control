@@ -35,6 +35,5 @@ class CategoryTest {
       new Category(user, "");
     }).isInstanceOf(IllegalArgumentException.class).hasMessage("Name is required");
   }
-
-
+  
 }

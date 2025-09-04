@@ -37,12 +37,10 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public List<UserResponseDTO> findAll() {
-    List<UserPersist> userEntities = userRepository.findAll();
-    List<User> domainUsers = userEntities.stream().map(userPersist ->
-        userMapper.toDomain(userPersist)).toList();
+    List<UserPersist> userPersists = userRepository.findAll();
 
-    return domainUsers.stream().map(domainUser ->
-        userMapper.toResponseDTO(domainUser)).toList();
+    return userPersists.stream().map(userPersist ->
+        userMapper.toResponseDTO(userPersist)).toList();
   }
 
   @Transactional(readOnly = true)
@@ -55,13 +53,14 @@ public class UserService {
 
   @Transactional
   public UserResponseDTO insert(UserRequestDTO data) {
+    verifyUserByEmail.execute(data.email());
     User user = userFactory.create(data.name(), data.email(),
         passwordEncoder.encode(data.password()));
 
     UserPersist userPersist = userMapper.toPersist(user);
-    userRepository.save(userPersist);
+    UserPersist savedUser = userRepository.save(userPersist);
 
-    return userMapper.toResponseDTO(userPersist);
+    return userMapper.toResponseDTO(savedUser);
   }
 
   @Transactional
