@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -12,13 +13,14 @@ import static org.mockito.Mockito.when;
 
 import com.rafaelw.financeControl.application.dto.user.UserRequestDTO;
 import com.rafaelw.financeControl.application.dto.user.UserResponseDTO;
+import com.rafaelw.financeControl.application.dto.user.UserUpdateDTO;
 import com.rafaelw.financeControl.application.mappers.UserMapper;
 import com.rafaelw.financeControl.application.services.exceptions.UserNotFoundException;
 import com.rafaelw.financeControl.domain.entities.User;
 import com.rafaelw.financeControl.domain.entities.enums.Role;
 import com.rafaelw.financeControl.domain.factories.UserFactory;
 import com.rafaelw.financeControl.domain.service.VerifyUserByEmail;
-import com.rafaelw.financeControl.domain.service.exceptions.UserAlreadyExistsException;
+import com.rafaelw.financeControl.domain.service.exceptions.EmailAlreadyExistsException;
 import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
 import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
 import java.util.List;
@@ -91,11 +93,11 @@ class UserServiceTest {
   @DisplayName("Should not be able create a user with same email")
   void createUserWithSameEmail() {
     UserRequestDTO newUserRequest = new UserRequestDTO("Joel", "joel@gmail.com", "12345678");
-    doThrow(new UserAlreadyExistsException(newUserRequest.email()))
+    doThrow(new EmailAlreadyExistsException(newUserRequest.email()))
         .when(verifyUserByEmail).execute(newUserRequest.email());
 
     assertThatThrownBy(() -> service.insert(newUserRequest))
-        .isInstanceOf(UserAlreadyExistsException.class)
+        .isInstanceOf(EmailAlreadyExistsException.class)
         .hasMessage("User with e-mail joel@gmail.com already exist");
 
     verify(verifyUserByEmail, times(1)).execute(any());
@@ -167,4 +169,124 @@ class UserServiceTest {
     verify(userRepository, times(1)).findById(userId);
   }
 
+  @Test
+  @DisplayName("Should be able to update a user")
+  void updateUser() {
+    Long userId = 1L;
+    UserPersist userToBeUpdate = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
+        true,
+        Role.COMMON, null, null);
+    User domainUser = new User(userId, "Joel", "joel@gmail.com", "12345678", true,
+        Role.COMMON, null, null);
+    UserUpdateDTO userUpdateData = new UserUpdateDTO("Marcos", "marcos@gmail.com", "87654321",
+        null);
+    UserPersist updatedUser = new UserPersist(userId, "Marcos", "marcos@gmail.com",
+        "newHashedPassword",
+        true,
+        Role.COMMON, null, null);
+    UserResponseDTO updatedUserResponse = new UserResponseDTO(userId, "Marcos", "marcos@gmail.com",
+        Role.COMMON, true);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(userToBeUpdate));
+    when(userMapper.toDomain(userToBeUpdate)).thenReturn(domainUser);
+    when(passwordEncoder.encode(userUpdateData.password())).thenReturn("newHashedPassword");
+    when(userMapper.toPersist(domainUser)).thenReturn(updatedUser);
+    when(userMapper.toResponseDTO(updatedUser)).thenReturn(updatedUserResponse);
+
+    UserResponseDTO response = service.update(userId, userUpdateData);
+
+    assertNotNull(response);
+    assertThat(response.name()).isEqualTo("Marcos");
+    assertThat(response.email()).isEqualTo("marcos@gmail.com");
+
+    verify(userRepository, times(1)).findById(userId);
+    verify(passwordEncoder, times(1)).encode(any(String.class));
+    verify(userMapper, times(1)).toDomain(any(UserPersist.class));
+    verify(userMapper, times(1)).toPersist(any(User.class));
+    verify(userMapper, times(1)).toResponseDTO(any(UserPersist.class));
+
+  }
+
+  @Test
+  @DisplayName("Should not be able to update a unexist user")
+  void updateUnexistUser() {
+    Long userId = 1L;
+    UserUpdateDTO userUpdateData = new UserUpdateDTO("Marcos", "marcos@gmail.com", "87654321",
+        null);
+
+    when(userRepository.findById(1L)).thenThrow(new UserNotFoundException(userId));
+
+    assertThatThrownBy(() -> {
+      service.update(userId, userUpdateData);
+    }).isInstanceOf(UserNotFoundException.class).hasMessage("User with id 1 not found");
+
+    verify(userRepository, times(1)).findById(userId);
+    verify(verifyUserByEmail, times(0)).execute(any());
+    verify(userMapper, times(0)).toPersist(any());
+    verify(userMapper, times(0)).toDomain(any());
+    verify(userMapper, times(0)).toResponseDTO(any(UserPersist.class));
+    verify(passwordEncoder, times(0)).encode(any());
+
+  }
+
+  @Test
+  @DisplayName("Should not be able to update a user with an existing email")
+  void updateUserWithExistingEmail() {
+    Long userId = 1L;
+    UserPersist userToBeUpdate = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
+        true,
+        Role.COMMON, null, null);
+    User domainUser = new User(userId, "Joel", "joel@gmail.com", "12345678", true,
+        Role.COMMON, null, null);
+    UserUpdateDTO userUpdateData = new UserUpdateDTO("Marcos", "marcos@gmail.com", "87654321",
+        null);
+    when(userRepository.findById(userId)).thenReturn(Optional.of(userToBeUpdate));
+    when(userMapper.toDomain(userToBeUpdate)).thenReturn(domainUser);
+    doThrow(new EmailAlreadyExistsException(userUpdateData.email())).when(verifyUserByEmail)
+        .execute(userUpdateData.email());
+
+    assertThatThrownBy(() -> {
+      service.update(userId, userUpdateData);
+    }).isInstanceOf(EmailAlreadyExistsException.class)
+        .hasMessage("User with e-mail marcos@gmail.com already exist");
+
+    verify(userRepository, times(1)).findById(userId);
+    verify(passwordEncoder, times(0)).encode(any(String.class));
+    verify(userMapper, times(1)).toDomain(any(UserPersist.class));
+    verify(userMapper, times(0)).toPersist(any(User.class));
+    verify(userMapper, times(0)).toResponseDTO(any(UserPersist.class));
+
+  }
+
+  @Test
+  @DisplayName("Should be able to delete a user by id")
+  void deleteUser() {
+    Long userId = 1L;
+
+    UserPersist userToDelete = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
+        true,
+        Role.COMMON, null, null);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(userToDelete));
+    doNothing().when(userRepository).deleteById(userId);
+
+    service.delete(userId);
+
+    verify(userRepository, times(1)).deleteById(userId);
+  }
+
+  @Test
+  @DisplayName("Should not be able to delete a unexist user by id")
+  void deleteUnexistingUser() {
+    Long userId = 1L;
+
+    when(userRepository.findById(userId)).thenThrow(new UserNotFoundException(userId));
+
+    assertThatThrownBy(() -> {
+      service.delete(userId);
+    }).isInstanceOf(UserNotFoundException.class).hasMessage("User with id 1 not found");
+
+    verify(userRepository, times(0)).deleteById(userId);
+  }
 }
+

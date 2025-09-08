@@ -77,7 +77,7 @@ public class UserService {
       user.changeEmail(data.email());
     }
     if (data.password() != null) {
-      user.changePassword(data.password());
+      user.changePassword(passwordEncoder.encode(data.password()));
     }
 
     UserPersist updatedUser = userMapper.toPersist(user);
