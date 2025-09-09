@@ -160,7 +160,7 @@ class UserServiceTest {
   void findUnexistUserId() {
     Long userId = 1L;
 
-    when(userRepository.findById(userId)).thenThrow(new UserNotFoundException(userId));
+    when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> {
       service.findById(userId);
@@ -214,7 +214,7 @@ class UserServiceTest {
     UserUpdateDTO userUpdateData = new UserUpdateDTO("Marcos", "marcos@gmail.com", "87654321",
         null);
 
-    when(userRepository.findById(1L)).thenThrow(new UserNotFoundException(userId));
+    when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> {
       service.update(userId, userUpdateData);
