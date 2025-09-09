@@ -13,6 +13,7 @@ import com.rafaelw.financeControl.application.mappers.CategoryMapper;
 import com.rafaelw.financeControl.application.mappers.DebitMapper;
 import com.rafaelw.financeControl.application.mappers.UserMapper;
 import com.rafaelw.financeControl.application.services.exceptions.CategoryNotFoundException;
+import com.rafaelw.financeControl.application.services.exceptions.DebitNotFoundException;
 import com.rafaelw.financeControl.domain.entities.Category;
 import com.rafaelw.financeControl.domain.entities.Debit;
 import com.rafaelw.financeControl.domain.entities.User;
@@ -119,9 +120,10 @@ class DebitServiceTest {
     Long userId = 1L;
     Long categoryId = 1L;
     Long debitId = 1L;
+    BigDecimal amount = BigDecimal.valueOf(50.00);
     Instant moment = Instant.parse("2025-10-10T10:00:00Z");
 
-    DebitRequestDTO debitRequest = new DebitRequestDTO("Pizza", BigDecimal.valueOf(50.00),
+    DebitRequestDTO debitRequest = new DebitRequestDTO("Pizza", amount,
         categoryId);
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
@@ -135,11 +137,11 @@ class DebitServiceTest {
     userPersist.setCategories(Set.of(categoryPersist));
     domainUser.setCategories(Set.of(domainCategory));
 
-    Debit createdDebit = new Debit(domainUser, "Pizza", BigDecimal.valueOf(50.00), domainCategory);
-    DebitPersist debitPersist = new DebitPersist(debitId, "Pizza", BigDecimal.valueOf(50.00),
+    Debit createdDebit = new Debit(domainUser, "Pizza", amount, domainCategory);
+    DebitPersist debitPersist = new DebitPersist(debitId, "Pizza", amount,
         moment, userPersist, categoryPersist);
     DebitResponseDTO debitResponse = new DebitResponseDTO(debitId, "Pizza",
-        BigDecimal.valueOf(50.00),
+        amount,
         moment, categoryId);
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(userPersist));
@@ -156,7 +158,7 @@ class DebitServiceTest {
 
     assertThat(response.id()).isEqualTo(debitId);
     assertThat(response.name()).isEqualTo("Pizza");
-    assertThat(response.amount()).isEqualTo(BigDecimal.valueOf(50.00));
+    assertThat(response.amount()).isEqualTo(amount);
     assertThat(response.moment()).isEqualTo(moment);
     assertThat(response.categoryId()).isEqualTo(categoryId);
 
@@ -196,6 +198,57 @@ class DebitServiceTest {
     verify(debitMapper, times(0)).toPersist(any(Debit.class));
     verify(debitMapper, times(0)).toResponse(any(DebitPersist.class));
     verify(debitRepository, times(0)).save(any(DebitPersist.class));
+
+  }
+
+  @Test
+  @DisplayName("Should be able to find a debit with id")
+  void findDebitById() {
+    Long userId = 1L;
+    Long debitId = 1L;
+    String name = "Pizza";
+    BigDecimal amount = BigDecimal.valueOf(50.00);
+    Instant moment = Instant.parse("2025-10-10T10:00:00Z");
+
+    UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
+        true,
+        Role.COMMON, null, null);
+
+    DebitPersist foundedDebit = new DebitPersist(debitId, name, amount,
+        moment, userPersist, null);
+    DebitResponseDTO debitResponse = new DebitResponseDTO(debitId, name,
+        amount, moment, null);
+
+    when(debitRepository.findByIdAndUserId(debitId, userId)).thenReturn(Optional.of(foundedDebit));
+    when(debitMapper.toResponse(foundedDebit)).thenReturn(debitResponse);
+
+    DebitResponseDTO response = service.findById(userId, debitId);
+
+    assertThat(response.id()).isEqualTo(debitId);
+    assertThat(response.name()).isEqualTo(name);
+    assertThat(response.amount()).isEqualTo(amount);
+    assertThat(response.moment()).isEqualTo(moment);
+    assertThat(response.categoryId()).isNull();
+
+    verify(debitRepository, times(1)).findByIdAndUserId(debitId, userId);
+    verify(debitMapper, times(1)).toResponse(any(DebitPersist.class));
+
+  }
+
+  @Test
+  @DisplayName("Should not be able to find a unexist debit")
+  void findUnexistDebitById() {
+    Long userId = 1L;
+    Long debitId = 1L;
+
+    when(debitRepository.findByIdAndUserId(debitId, userId)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> {
+      service.findById(userId, debitId);
+    }).isInstanceOf(
+        DebitNotFoundException.class).hasMessage("Debit with id 1 not found");
+
+    verify(debitMapper, times(0)).toResponse(any(DebitPersist.class));
 
   }
 

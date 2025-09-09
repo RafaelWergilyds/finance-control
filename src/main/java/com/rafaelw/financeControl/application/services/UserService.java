@@ -52,7 +52,7 @@ public class UserService {
   }
 
   @Transactional
-  public UserResponseDTO insert(UserRequestDTO data) {
+  public UserResponseDTO create(UserRequestDTO data) {
     verifyUserByEmail.execute(data.email());
     User user = userFactory.create(data.name(), data.email(),
         passwordEncoder.encode(data.password()));

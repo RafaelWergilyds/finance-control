@@ -75,7 +75,7 @@ class UserServiceTest {
     when(userRepository.save(userPersist)).thenReturn(userPersist);
     when(userMapper.toResponseDTO(userPersist)).thenReturn(expectedResponse);
 
-    UserResponseDTO createdUser = service.insert(newUserRequest);
+    UserResponseDTO createdUser = service.create(newUserRequest);
 
     assertNotNull(createdUser);
     assertEquals(expectedResponse.id(), createdUser.id());
@@ -96,7 +96,7 @@ class UserServiceTest {
     doThrow(new EmailAlreadyExistsException(newUserRequest.email()))
         .when(verifyUserByEmail).execute(newUserRequest.email());
 
-    assertThatThrownBy(() -> service.insert(newUserRequest))
+    assertThatThrownBy(() -> service.create(newUserRequest))
         .isInstanceOf(EmailAlreadyExistsException.class)
         .hasMessage("User with e-mail joel@gmail.com already exist");
 
