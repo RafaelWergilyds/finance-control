@@ -93,6 +93,7 @@ class UserServiceTest {
   @DisplayName("Should not be able create a user with same email")
   void createUserWithSameEmail() {
     UserRequestDTO newUserRequest = new UserRequestDTO("Joel", "joel@gmail.com", "12345678");
+
     doThrow(new EmailAlreadyExistsException(newUserRequest.email()))
         .when(verifyUserByEmail).execute(newUserRequest.email());
 
