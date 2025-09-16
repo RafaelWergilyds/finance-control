@@ -3,6 +3,7 @@ package com.rafaelw.financeControl.application.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -10,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.rafaelw.financeControl.application.dto.debit.DebitFilterDTO;
 import com.rafaelw.financeControl.application.dto.debit.DebitRequestDTO;
 import com.rafaelw.financeControl.application.dto.debit.DebitResponseDTO;
+import com.rafaelw.financeControl.application.dto.debit.DebitUpdateDTO;
 import com.rafaelw.financeControl.application.mappers.CategoryMapper;
 import com.rafaelw.financeControl.application.mappers.DebitMapper;
 import com.rafaelw.financeControl.application.mappers.UserMapper;
@@ -371,4 +373,127 @@ class DebitServiceTest {
     verify(userRepository, times(1)).findById(userId);
     verify(debitRepository, times(1)).findAll(any(Specification.class), any(Pageable.class));
   }
+
+  @Test
+  @DisplayName("Should be able to update a debit")
+  void updateDebit() {
+    Long userId = 1L;
+    Long debitId = 1L;
+    BigDecimal amount = BigDecimal.valueOf(50.00);
+    Instant moment = Instant.parse("2025-10-10T10:00:00Z");
+
+    UserPersist persistUser = new UserPersist(userId, "Joel", "joel@gmail.com",
+        "hashedPassword", true, Role.ADMIN,
+        null, null);
+    User domainUser = new User(userId, "Joel", "joel@gmail.com",
+        "hashedPassword", true, Role.ADMIN,
+        null, null);
+
+    DebitUpdateDTO debitUpdateDTO = new DebitUpdateDTO("Parmigiana", null, null);
+
+    DebitPersist persistDebit = new DebitPersist(debitId, "Pizza", amount,
+        moment, persistUser, null);
+    Debit domainDebit = new Debit(debitId, "Pizza", amount,
+        moment, domainUser, null);
+    DebitPersist debitUpdated = new DebitPersist(debitId, "Parmigiana", amount,
+        moment, persistUser, null);
+    DebitResponseDTO debitResponse = new DebitResponseDTO(debitId, "Parmigiana", amount, moment,
+        null);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(persistUser));
+    when(debitRepository.findByIdAndUserId(debitId, userId)).thenReturn(Optional.of(persistDebit));
+    when(debitMapper.toDomain(persistDebit)).thenReturn(domainDebit);
+    when(debitMapper.toPersist(domainDebit)).thenReturn(debitUpdated);
+    when(debitRepository.save(debitUpdated)).thenReturn(debitUpdated);
+    when(debitMapper.toResponse(debitUpdated)).thenReturn(debitResponse);
+
+    DebitResponseDTO response = service.update(userId, debitId, debitUpdateDTO);
+
+    assertThat(response).isNotNull();
+    assertThat(response.name()).isEqualTo("Parmigiana");
+
+    verify(userRepository, times(1)).findById(userId);
+    verify(debitRepository, times(1)).findByIdAndUserId(debitId, userId);
+    verify(debitMapper, times(1)).toDomain(any(DebitPersist.class));
+    verify(debitMapper, times(1)).toPersist(any(Debit.class));
+    verify(debitMapper, times(1)).toResponse(any(DebitPersist.class));
+    verify(debitRepository, times(1)).save(any(DebitPersist.class));
+  }
+
+  @Test
+  @DisplayName("Should not be able to update a unexist debit")
+  void updateUnexistDebit() {
+    Long userId = 1L;
+    Long debitId = 1L;
+
+    UserPersist persistUser = new UserPersist(userId, "Joel", "joel@gmail.com",
+        "hashedPassword", true, Role.ADMIN,
+        null, null);
+    User domainUser = new User(userId, "Joel", "joel@gmail.com",
+        "hashedPassword", true, Role.ADMIN,
+        null, null);
+
+    DebitUpdateDTO debitUpdateDTO = new DebitUpdateDTO("Parmigiana", null, null);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(persistUser));
+
+    when(debitRepository.findByIdAndUserId(debitId, userId)).thenThrow(
+        new DebitNotFoundException(debitId));
+
+    assertThatThrownBy(() -> {
+      service.update(userId, debitId, debitUpdateDTO);
+    }).isInstanceOf(DebitNotFoundException.class).hasMessage("Debit with id 1 not found");
+
+    verify(userRepository, times(1)).findById(userId);
+    verify(debitRepository, times(1)).findByIdAndUserId(debitId, userId);
+    verify(debitRepository, times(0)).save(any(DebitPersist.class));
+  }
+
+  @Test
+  @DisplayName("Should be able to delete a debit")
+  void deleteDebit() {
+
+    Long userId = 1L;
+    Long debitId = 1L;
+
+    UserPersist persistUser = new UserPersist(userId, "Joel", "joel@gmail.com",
+        "hashedPassword", true, Role.ADMIN,
+        null, null);
+    DebitPersist debitToBeDeleted = new DebitPersist(debitId, "Pizza", BigDecimal.valueOf(50.00),
+        Instant.now(), persistUser, null);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(persistUser));
+    when(debitRepository.findByIdAndUserId(debitId, userId)).thenReturn(
+        Optional.of(debitToBeDeleted));
+    doNothing().when(debitRepository).deleteById(debitId);
+
+    service.delete(userId, debitId);
+
+    verify(debitRepository, times(1)).deleteById(debitId);
+  }
+
+  @Test
+  @DisplayName("Should not be able to delete a unexist debit")
+  void deleteUnexistDebit() {
+
+    Long userId = 1L;
+    Long debitId = 1L;
+
+    UserPersist persistUser = new UserPersist(userId, "Joel", "joel@gmail.com",
+        "hashedPassword", true, Role.ADMIN,
+        null, null);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(persistUser));
+    when(debitRepository.findByIdAndUserId(debitId, userId)).thenThrow(
+        new DebitNotFoundException(debitId));
+
+    assertThatThrownBy(() -> {
+      service.delete(userId, debitId);
+
+    }).isInstanceOf(DebitNotFoundException.class).hasMessage("Debit with id 1 not found");
+
+    verify(debitRepository, times(0)).deleteById(debitId);
+  }
+
+
 }

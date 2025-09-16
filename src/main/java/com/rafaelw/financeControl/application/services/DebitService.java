@@ -123,9 +123,9 @@ public class DebitService {
     }
 
     DebitPersist debitUpdated = debitMapper.toPersist(debit);
-    debitRepository.save(debitUpdated);
+    DebitPersist savedUpdated = debitRepository.save(debitUpdated);
 
-    return debitMapper.toResponse(debitUpdated);
+    return debitMapper.toResponse(savedUpdated);
 
   }
 
