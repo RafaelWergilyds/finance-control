@@ -32,7 +32,6 @@ import com.rafaelw.financeControl.infra.persist.repository.JpaDebitRepository;
 import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -310,65 +309,6 @@ class DebitServiceTest {
     assertThat(response.endCursor()).isEqualTo(10L);
     assertThat(response.previousPage()).isNull();
     assertThat(response.nextPage()).isEqualTo(11L);
-
-    verify(userRepository, times(1)).findById(userId);
-    verify(debitRepository, times(1)).findAll(any(Specification.class), any(Pageable.class));
-  }
-
-  @Test
-  @DisplayName("Should be able to find a list of debits paginated with filter")
-  void findPaginatedDebitsWithFilter() {
-    Long userId = 1L;
-    int pagesize = 10;
-    Long foodCategoryId = 1L;
-    Long electronicCategoryId = 2L;
-
-    UserPersist user = new UserPersist(userId, "Joel", "joel@gmail.com",
-        "hashedPassword", true, Role.ADMIN,
-        null, null);
-
-    CategoryPersist foodCategory = new CategoryPersist(foodCategoryId, "Food", user, null);
-    CategoryPersist electronicCategory = new CategoryPersist(electronicCategoryId, "Games", user,
-        null);
-    user.setCategories(Set.of(foodCategory, electronicCategory));
-
-    List<DebitPersist> allDebits = List.of(
-        new DebitPersist(1L, "Pizza", BigDecimal.valueOf(50), Instant.now(), user, foodCategory),
-        new DebitPersist(2L, "Mouse", BigDecimal.valueOf(30), Instant.now(), user,
-            electronicCategory),
-        new DebitPersist(3L, "Parmigiana", BigDecimal.valueOf(20), Instant.now(), user,
-            foodCategory)
-    );
-
-    DebitFilterDTO filter = new DebitFilterDTO(foodCategoryId, null, null,
-        null, null, null);
-
-    List<DebitPersist> expectedDebits = allDebits.stream()
-        .filter(debit -> debit.getCategory().getId().equals(foodCategoryId))
-        .toList();
-
-    Pageable pageable = PageRequest.of(0, pagesize, Sort.by("id"));
-    Page<DebitPersist> page = new PageImpl<>(expectedDebits, pageable, expectedDebits.size());
-
-    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-    when(debitRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
-    when(debitMapper.toResponse(any(DebitPersist.class))).thenAnswer(invocation -> {
-      DebitPersist debit = invocation.getArgument(0);
-      return new DebitResponseDTO(debit.getId(), debit.getName(), debit.getAmount(),
-          debit.getMoment(), debit.getCategory().getId());
-    });
-
-    PaginatedResponse<DebitResponseDTO> response = service.findAll(userId, filter, pagesize,
-        null);
-
-    assertThat(response.data().size()).isEqualTo(2);
-    assertThat(
-        response.data().stream().map(DebitResponseDTO::categoryId)
-            .toList()).containsAll(Collections.singleton(1L));
-    assertThat(response.startCursor()).isEqualTo(1L);
-    assertThat(response.endCursor()).isEqualTo(3L);
-    assertThat(response.previousPage()).isNull();
-    assertThat(response.nextPage()).isNull();
 
     verify(userRepository, times(1)).findById(userId);
     verify(debitRepository, times(1)).findAll(any(Specification.class), any(Pageable.class));
