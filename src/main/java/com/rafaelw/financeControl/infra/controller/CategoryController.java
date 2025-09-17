@@ -38,7 +38,7 @@ public class CategoryController {
   @GetMapping
   public ResponseEntity<List<CategoryResponseDTO>> findAllByUser(Authentication authentication) {
     Long userId = SecurityUtils.getUserId(authentication);
-    List<CategoryResponseDTO> response = categoryService.findAllByUser(userId);
+    List<CategoryResponseDTO> response = categoryService.findAll(userId);
     return ResponseEntity.ok().body(response);
   }
 

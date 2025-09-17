@@ -91,10 +91,12 @@ class DebitServiceTest {
     Instant moment = Instant.parse("2025-10-10T10:00:00Z");
 
     DebitRequestDTO debitRequest = new DebitRequestDTO("Pizza", BigDecimal.valueOf(50.00), null);
+
     UserPersist userPersist = new UserPersist(1L, "Joel", "joel@gmail.com", "hashedPassword", true,
         Role.COMMON, null, null);
     User domainUser = new User(1L, "Joel", "joel@gmail.com", "hashedPassword", true,
         Role.COMMON, null, null);
+
     Debit createdDebit = new Debit(domainUser, "Pizza", BigDecimal.valueOf(50.00));
     DebitPersist debitPersist = new DebitPersist(1L, "Pizza", BigDecimal.valueOf(50.00),
         moment, userPersist, null);

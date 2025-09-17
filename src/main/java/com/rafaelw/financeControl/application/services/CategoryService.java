@@ -55,14 +55,13 @@ public class CategoryService {
   }
 
   @Transactional(readOnly = true)
-  public List<CategoryResponseDTO> findAllByUser(Long userId) {
+  public List<CategoryResponseDTO> findAll(Long userId) {
     userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
     List<CategoryPersist> categoriesPersistList = jpaCategoryRepository.findAllByUserId(userId);
 
     return categoriesPersistList.stream()
-        .map(categoryPersist -> categoryMapper.toDomain(categoryPersist))
         .map(category -> categoryMapper.toResponseDTO(category)).toList();
 
   }
@@ -73,12 +72,12 @@ public class CategoryService {
         .orElseThrow(() -> new UserNotFoundException(userId));
 
     User user = userMapper.toDomain(userPersist);
+
     Category category = categoryFactory.create(user, data.name());
     CategoryPersist categoryPersist = categoryMapper.toPersist(category);
+    CategoryPersist savedCategory = jpaCategoryRepository.save(categoryPersist);
 
-    jpaCategoryRepository.save(categoryPersist);
-
-    return categoryMapper.toResponseDTO(categoryPersist);
+    return categoryMapper.toResponseDTO(savedCategory);
   }
 
   @Transactional
