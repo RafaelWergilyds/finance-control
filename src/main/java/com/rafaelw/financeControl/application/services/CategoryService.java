@@ -26,10 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
 
   @Autowired
-  private JpaDebitRepository jpaDebitRepository;
+  private JpaDebitRepository debitRepository;
 
   @Autowired
-  private JpaCategoryRepository jpaCategoryRepository;
+  private JpaCategoryRepository categoryRepository;
 
   @Autowired
   private JpaUserRepository userRepository;
@@ -48,7 +48,7 @@ public class CategoryService {
 
   @Transactional(readOnly = true)
   public CategoryResponseDTO findById(Long userId, Long categoryId) {
-    CategoryPersist categoryPersist = jpaCategoryRepository.findByIdAndUserId(categoryId, userId)
+    CategoryPersist categoryPersist = categoryRepository.findByIdAndUserId(categoryId, userId)
         .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
     return categoryMapper.toResponseDTO(categoryPersist);
@@ -59,7 +59,7 @@ public class CategoryService {
     userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
-    List<CategoryPersist> categoriesPersistList = jpaCategoryRepository.findAllByUserId(userId);
+    List<CategoryPersist> categoriesPersistList = categoryRepository.findAllByUserId(userId);
 
     return categoriesPersistList.stream()
         .map(category -> categoryMapper.toResponseDTO(category)).toList();
@@ -75,7 +75,7 @@ public class CategoryService {
 
     Category category = categoryFactory.create(user, data.name());
     CategoryPersist categoryPersist = categoryMapper.toPersist(category);
-    CategoryPersist savedCategory = jpaCategoryRepository.save(categoryPersist);
+    CategoryPersist savedCategory = categoryRepository.save(categoryPersist);
 
     return categoryMapper.toResponseDTO(savedCategory);
   }
@@ -84,30 +84,30 @@ public class CategoryService {
   public CategoryResponseDTO update(Long userId, Long categoryId, CategoryUpdateDTO data) {
     userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
-    CategoryPersist categoryPersist = jpaCategoryRepository.findByIdAndUserId(categoryId, userId)
+    CategoryPersist categoryPersist = categoryRepository.findByIdAndUserId(categoryId, userId)
         .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
     Category category = categoryMapper.toDomain(categoryPersist);
     category.changeName(data.name());
 
     CategoryPersist updatedCategory = categoryMapper.toPersist(category);
-    jpaCategoryRepository.save(updatedCategory);
+    CategoryPersist savedCategory = categoryRepository.save(updatedCategory);
 
-    return categoryMapper.toResponseDTO(updatedCategory);
+    return categoryMapper.toResponseDTO(savedCategory);
 
   }
 
   @Transactional
   public void delete(Long userId, Long categoryId) {
-    jpaCategoryRepository.findByIdAndUserId(categoryId, userId)
+    categoryRepository.findByIdAndUserId(categoryId, userId)
         .orElseThrow(() -> new CategoryNotFoundException(categoryId));
-    List<DebitPersist> associatedDebits = jpaDebitRepository.findAllByCategoryId(categoryId);
+    List<DebitPersist> associatedDebits = debitRepository.findAllByCategoryId(categoryId);
 
     for (DebitPersist debit : associatedDebits) {
       debit.setCategory(null);
     }
 
-    jpaCategoryRepository.deleteById(categoryId);
+    categoryRepository.deleteById(categoryId);
   }
 
 }

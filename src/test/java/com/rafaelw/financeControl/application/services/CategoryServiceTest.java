@@ -3,6 +3,7 @@ package com.rafaelw.financeControl.application.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -10,6 +11,7 @@ import static org.mockito.MockitoAnnotations.openMocks;
 
 import com.rafaelw.financeControl.application.dto.category.CategoryRequestDTO;
 import com.rafaelw.financeControl.application.dto.category.CategoryResponseDTO;
+import com.rafaelw.financeControl.application.dto.category.CategoryUpdateDTO;
 import com.rafaelw.financeControl.application.mappers.CategoryMapper;
 import com.rafaelw.financeControl.application.mappers.DebitMapper;
 import com.rafaelw.financeControl.application.mappers.UserMapper;
@@ -179,6 +181,91 @@ class CategoryServiceTest {
     verify(categoryRepository, times(1)).findAllByUserId(userId);
     verify(categoryMapper, times(2)).toResponseDTO(any(CategoryPersist.class));
 
+  }
+
+  @Test
+  @DisplayName("Should be able to update a category")
+  void updateCategory() {
+    Long userId = 1L;
+    Long categoryId = 1L;
+
+    UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
+        true,
+        Role.COMMON, null, null);
+    User domainUser = new User(userId, "Joel", "joel@gmail.com", "hashedPassword",
+        true,
+        Role.COMMON, null, null);
+
+    CategoryUpdateDTO categoryUpdateDTO = new CategoryUpdateDTO("Health");
+    CategoryPersist categoryPersist = new CategoryPersist(categoryId, "Food", userPersist, null);
+    Category domainCategory = new Category(categoryId, "Food", domainUser, null);
+    CategoryPersist updatedCategory = new CategoryPersist(categoryId, "Health", userPersist, null);
+    CategoryResponseDTO categoryUpdatedResponse = new CategoryResponseDTO(categoryId, "Health");
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(userPersist));
+    when(categoryRepository.findByIdAndUserId(categoryId, userId)).thenReturn(
+        Optional.of(categoryPersist));
+    when(categoryMapper.toDomain(categoryPersist)).thenReturn(domainCategory);
+    when(categoryMapper.toPersist(domainCategory)).thenReturn(updatedCategory);
+    when(categoryRepository.save(updatedCategory)).thenReturn(updatedCategory);
+    when(categoryMapper.toResponseDTO(updatedCategory)).thenReturn(categoryUpdatedResponse);
+
+    CategoryResponseDTO response = service.update(userId, categoryId, categoryUpdateDTO);
+
+    assertThat(response).isNotNull();
+    assertThat(response.name()).isEqualTo("Health");
+
+    verify(userRepository, times(1)).findById(userId);
+    verify(categoryRepository, times(1)).findByIdAndUserId(userId, categoryId);
+    verify(categoryMapper, times(1)).toDomain(any(CategoryPersist.class));
+    verify(categoryMapper, times(1)).toPersist(any(Category.class));
+    verify(categoryRepository, times(1)).save(any(CategoryPersist.class));
+    verify(categoryMapper, times(1)).toResponseDTO(any(CategoryPersist.class));
+
+  }
+
+  @Test
+  @DisplayName("Should be able to delete a category")
+  void deleteCategory() {
+    Long userId = 1L;
+    Long categoryId = 1L;
+
+    UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
+        true,
+        Role.COMMON, null, null);
+
+    CategoryPersist categoryPersist = new CategoryPersist(categoryId, "Food", userPersist, null);
+
+    when(categoryRepository.findByIdAndUserId(categoryId, userId)).thenReturn(
+        Optional.of(categoryPersist));
+    doNothing().when(categoryRepository).deleteById(categoryId);
+
+    service.delete(userId, categoryId);
+
+    verify(categoryRepository, times(1)).findByIdAndUserId(categoryId, userId);
+    verify(categoryRepository, times(1)).deleteById(categoryId);
+  }
+
+  @Test
+  @DisplayName("Should not be able to delete a unexist category")
+  void deleteUnexistCategory() {
+    Long userId = 1L;
+    Long categoryId = 1L;
+
+    UserPersist userPersist = new UserPersist(1L, "Joel", "joel@gmail.com", "hashedPassword",
+        true,
+        Role.COMMON, null, null);
+
+    when(categoryRepository.findByIdAndUserId(categoryId, userId)).thenThrow(
+        new CategoryNotFoundException(categoryId));
+
+    doNothing().when(categoryRepository).deleteById(categoryId);
+
+    assertThatThrownBy(() -> {
+      service.delete(userId, categoryId);
+    }).isInstanceOf(CategoryNotFoundException.class).hasMessage("Category with id 1 not found");
+
+    verify(categoryRepository, times(1)).findByIdAndUserId(categoryId, userId);
   }
 
 }
