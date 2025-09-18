@@ -39,8 +39,8 @@ public class TestConfig implements CommandLineRunner {
         passwordEncoder.encode("12345678"), true, Role.ADMIN,
         null, null);
 
-    CategoryPersist category = new CategoryPersist(null, "Comida", user, null);
-    CategoryPersist category2 = new CategoryPersist(null, "Mensais", user, null);
+    CategoryPersist category = new CategoryPersist(null, "Food", user, null);
+    CategoryPersist category2 = new CategoryPersist(null, "Monthly", user, null);
 
     List<DebitPersist> debits = IntStream.range(0, 100)
         .mapToObj(i -> new DebitPersist(
@@ -55,8 +55,8 @@ public class TestConfig implements CommandLineRunner {
     List<DebitPersist> debits2 = IntStream.range(0, 50)
         .mapToObj(i -> new DebitPersist(
             null,
-            "Compras",
-            BigDecimal.valueOf(150),
+            "Bills",
+            BigDecimal.valueOf(20),
             Instant.now(),
             user,
             category2

@@ -35,3 +35,5 @@ build/
 ### KEYS ###
 src/main/resources/app.key
 src/main/resources/app.pub
+src/test/resources/test.pem
+src/test/resources/test.pub

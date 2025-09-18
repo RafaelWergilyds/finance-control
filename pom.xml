@@ -109,6 +109,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <artifactId>rest-assured</artifactId>
+      <groupId>io.rest-assured</groupId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <artifactId>mapstruct</artifactId>
       <groupId>org.mapstruct</groupId>
       <version>1.6.3</version>
@@ -128,7 +133,7 @@
     <artifactId>spring-boot-starter-parent</artifactId>
     <groupId>org.springframework.boot</groupId>
     <relativePath/>
-    <version>3.5.4</version> <!-- lookup parent from repository -->
+    <version>3.5.4</version>
   </parent>
   <properties>
     <java.version>21</java.version>
