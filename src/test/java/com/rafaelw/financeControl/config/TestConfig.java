@@ -20,13 +20,10 @@ public class TestConfig {
 
   @Autowired
   private JpaUserRepository userRepository;
-
   @Autowired
   private JpaCategoryRepository categoryRepository;
-
   @Autowired
   private JpaDebitRepository debitRepository;
-
   @Autowired
   private PasswordEncoder passwordEncoder;
 

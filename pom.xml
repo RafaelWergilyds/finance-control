@@ -109,6 +109,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <artifactId>postgresql</artifactId>
+      <groupId>org.testcontainers</groupId>
+      <scope>test</scope>
+      <version>1.19.8</version>
+    </dependency>
+    <dependency>
       <artifactId>rest-assured</artifactId>
       <groupId>io.rest-assured</groupId>
       <scope>test</scope>

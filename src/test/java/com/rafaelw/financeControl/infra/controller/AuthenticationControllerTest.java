@@ -1,9 +1,10 @@
-package com.rafaelw.financeControl.e2e;
+package com.rafaelw.financeControl.infra.controller;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.notNullValue;
 
 import com.rafaelw.financeControl.application.dto.auth.AuthenticationRequest;
+import com.rafaelw.financeControl.config.DBContainer;
 import com.rafaelw.financeControl.config.TestConfig;
 import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
 import io.restassured.RestAssured;
@@ -12,16 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class AuthenticationControllerTest {
+public class AuthenticationControllerTest extends DBContainer {
 
   @LocalServerPort
   private int port;
@@ -31,7 +26,7 @@ public class AuthenticationControllerTest {
 
   @Autowired
   private JpaUserRepository userRepository;
-
+  
   @Autowired
   private TestConfig testConfig;
 
