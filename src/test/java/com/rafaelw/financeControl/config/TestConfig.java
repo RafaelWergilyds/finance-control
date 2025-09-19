@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.application.config;
+package com.rafaelw.financeControl.config;
 
 import com.rafaelw.financeControl.domain.entities.enums.Role;
 import com.rafaelw.financeControl.infra.persist.entities.CategoryPersist;
@@ -12,14 +12,11 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
-@Configuration
-@Profile("test")
-public class TestConfig implements CommandLineRunner {
+@Component
+public class TestConfig {
 
   @Autowired
   private JpaUserRepository userRepository;
@@ -33,9 +30,8 @@ public class TestConfig implements CommandLineRunner {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
-  @Override
-  public void run(String... args) throws Exception {
-    UserPersist user = new UserPersist(null, "John", "john@gmail.com",
+  public void setup() {
+    UserPersist user = new UserPersist(null, "Joel", "joel@gmail.com",
         passwordEncoder.encode("12345678"), true, Role.ADMIN,
         null, null);
 
