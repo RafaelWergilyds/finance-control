@@ -23,7 +23,7 @@ import com.rafaelw.financeControl.domain.entities.Debit;
 import com.rafaelw.financeControl.domain.entities.User;
 import com.rafaelw.financeControl.domain.entities.enums.Role;
 import com.rafaelw.financeControl.domain.factories.DebitFactory;
-import com.rafaelw.financeControl.domain.service.GetTotalSumDebits;
+import com.rafaelw.financeControl.domain.services.GetTotalSumDebits;
 import com.rafaelw.financeControl.infra.persist.entities.CategoryPersist;
 import com.rafaelw.financeControl.infra.persist.entities.DebitPersist;
 import com.rafaelw.financeControl.infra.persist.entities.UserPersist;

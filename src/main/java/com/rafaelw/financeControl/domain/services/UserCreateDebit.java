@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.domain.service;
+package com.rafaelw.financeControl.domain.services;
 
 import com.rafaelw.financeControl.domain.entities.Debit;
 import com.rafaelw.financeControl.domain.entities.User;

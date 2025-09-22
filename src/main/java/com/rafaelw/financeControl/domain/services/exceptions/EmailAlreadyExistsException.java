@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.domain.service.exceptions;
+package com.rafaelw.financeControl.domain.services.exceptions;
 
 public class EmailAlreadyExistsException extends InvalidCredentialsException {
 

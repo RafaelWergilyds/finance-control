@@ -35,7 +35,7 @@ public class TestConfig {
     CategoryPersist category = new CategoryPersist(null, "Food", user, null);
     CategoryPersist category2 = new CategoryPersist(null, "Monthly", user, null);
 
-    List<DebitPersist> debits = IntStream.range(0, 100)
+    List<DebitPersist> debits = IntStream.range(0, 10)
         .mapToObj(i -> new DebitPersist(
             null,
             "Pizza",
@@ -45,7 +45,7 @@ public class TestConfig {
             category
         )).toList();
 
-    List<DebitPersist> debits2 = IntStream.range(0, 50)
+    List<DebitPersist> debits2 = IntStream.range(0, 5)
         .mapToObj(i -> new DebitPersist(
             null,
             "Bills",
@@ -60,8 +60,7 @@ public class TestConfig {
     categoryRepository.save(category2);
     debitRepository.saveAll(debits);
     debitRepository.saveAll(debits2);
-
-
+    
   }
 
 }

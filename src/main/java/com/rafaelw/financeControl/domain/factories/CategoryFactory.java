@@ -2,7 +2,7 @@ package com.rafaelw.financeControl.domain.factories;
 
 import com.rafaelw.financeControl.domain.entities.Category;
 import com.rafaelw.financeControl.domain.entities.User;
-import com.rafaelw.financeControl.domain.service.UserCreateCategory;
+import com.rafaelw.financeControl.domain.services.UserCreateCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -26,7 +26,7 @@ public class AuthenticationControllerTest extends DBContainer {
 
   @Autowired
   private JpaUserRepository userRepository;
-  
+
   @Autowired
   private TestConfig testConfig;
 

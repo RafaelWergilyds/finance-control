@@ -7,7 +7,7 @@ import com.rafaelw.financeControl.application.mappers.UserMapper;
 import com.rafaelw.financeControl.application.services.exceptions.UserNotFoundException;
 import com.rafaelw.financeControl.domain.entities.User;
 import com.rafaelw.financeControl.domain.factories.UserFactory;
-import com.rafaelw.financeControl.domain.service.VerifyUserByEmail;
+import com.rafaelw.financeControl.domain.services.VerifyUserByEmail;
 import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
 import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
 import java.util.List;

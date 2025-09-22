@@ -1,7 +1,7 @@
 package com.rafaelw.financeControl.infra.controller.exceptions;
 
 import com.rafaelw.financeControl.application.services.exceptions.NotFoundException;
-import com.rafaelw.financeControl.domain.service.exceptions.InvalidCredentialsException;
+import com.rafaelw.financeControl.domain.services.exceptions.InvalidCredentialsException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import org.springframework.http.HttpStatus;

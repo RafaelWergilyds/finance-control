@@ -45,13 +45,15 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
             .requestMatchers(HttpMethod.POST, "/users").permitAll()
+            .requestMatchers(HttpMethod.GET, "/users/profile").authenticated()
             .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
             .requestMatchers(HttpMethod.GET, "/users/{id}").hasRole("ADMIN")
             .requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
             .anyRequest().authenticated())
         .csrf(AbstractHttpConfigurer::disable)
         .oauth2ResourceServer(
-            oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+            oauth2 -> oauth2.jwt(
+                jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     return http.build();

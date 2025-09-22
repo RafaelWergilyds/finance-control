@@ -4,11 +4,13 @@ import com.rafaelw.financeControl.application.dto.user.UserRequestDTO;
 import com.rafaelw.financeControl.application.dto.user.UserResponseDTO;
 import com.rafaelw.financeControl.application.dto.user.UserUpdateDTO;
 import com.rafaelw.financeControl.application.services.UserService;
+import com.rafaelw.financeControl.application.utils.SecurityUtils;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,7 +42,7 @@ public class UserController {
   }
 
   @PostMapping
-  public ResponseEntity<UserResponseDTO> insert(@Valid @RequestBody UserRequestDTO data) {
+  public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserRequestDTO data) {
     UserResponseDTO response = service.create(data);
     URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
         .buildAndExpand(response).toUri();
@@ -58,6 +60,21 @@ public class UserController {
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     service.delete(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/profile")
+  public ResponseEntity<UserResponseDTO> getProfile(Authentication authentication) {
+    Long userId = SecurityUtils.getUserId(authentication);
+    UserResponseDTO response = service.findById(userId);
+    return ResponseEntity.ok().body(response);
+  }
+
+  @PutMapping("/profile")
+  public ResponseEntity<UserResponseDTO> updateProfile(Authentication authentication,
+      @Valid @RequestBody UserUpdateDTO data) {
+    Long userId = SecurityUtils.getUserId(authentication);
+    UserResponseDTO response = service.update(userId, data);
+    return ResponseEntity.ok().body(response);
   }
 
 }

@@ -19,8 +19,8 @@ import com.rafaelw.financeControl.application.services.exceptions.UserNotFoundEx
 import com.rafaelw.financeControl.domain.entities.User;
 import com.rafaelw.financeControl.domain.entities.enums.Role;
 import com.rafaelw.financeControl.domain.factories.UserFactory;
-import com.rafaelw.financeControl.domain.service.VerifyUserByEmail;
-import com.rafaelw.financeControl.domain.service.exceptions.EmailAlreadyExistsException;
+import com.rafaelw.financeControl.domain.services.VerifyUserByEmail;
+import com.rafaelw.financeControl.domain.services.exceptions.EmailAlreadyExistsException;
 import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
 import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
 import java.util.List;

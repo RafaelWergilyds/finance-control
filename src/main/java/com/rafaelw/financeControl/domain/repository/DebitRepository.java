@@ -6,8 +6,6 @@ import java.util.Optional;
 
 public interface DebitRepository {
 
-  List<DebitPersist> findAllByUserId(Long id);
-
   Optional<DebitPersist> findByIdAndUserId(Long debitId, Long userId);
 
   List<DebitPersist> findAllByCategoryId(Long id);

@@ -1,7 +1,7 @@
-package com.rafaelw.financeControl.domain.service;
+package com.rafaelw.financeControl.domain.services;
 
 import com.rafaelw.financeControl.domain.repository.UserRepository;
-import com.rafaelw.financeControl.domain.service.exceptions.EmailAlreadyExistsException;
+import com.rafaelw.financeControl.domain.services.exceptions.EmailAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
