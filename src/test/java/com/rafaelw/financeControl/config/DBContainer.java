@@ -1,8 +1,12 @@
 package com.rafaelw.financeControl.config;
 
+import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -19,6 +23,10 @@ public abstract class DBContainer {
 
   @Container
   static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
+  @LocalServerPort
+  private int port;
+  @Autowired
+  private TestConfig testConfig;
 
   @BeforeAll
   static void beforeAll() {
@@ -35,5 +43,11 @@ public abstract class DBContainer {
     registry.add("spring.datasource.url", postgres::getJdbcUrl);
     registry.add("spring.datasource.username", postgres::getUsername);
     registry.add("spring.datasource.password", postgres::getPassword);
+  }
+
+  @BeforeEach
+  void setUp() {
+    RestAssured.port = port;
+    testConfig.setup();
   }
 }
