@@ -32,6 +32,10 @@ public class TestConfig {
         passwordEncoder.encode("12345678"), true, Role.ADMIN,
         null, null);
 
+    UserPersist user2 = new UserPersist(null, "Lucas", "lucas@gmail.com",
+        passwordEncoder.encode("12345678"), true, Role.ADMIN,
+        null, null);
+
     CategoryPersist category = new CategoryPersist(null, "Food", user, null);
     CategoryPersist category2 = new CategoryPersist(null, "Monthly", user, null);
 
@@ -56,11 +60,11 @@ public class TestConfig {
         )).toList();
 
     userRepository.save(user);
+    userRepository.save(user2);
     categoryRepository.save(category);
     categoryRepository.save(category2);
     debitRepository.saveAll(debits);
     debitRepository.saveAll(debits2);
-    
   }
 
 }
