@@ -5,23 +5,31 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import com.rafaelw.financeControl.application.dto.auth.AuthenticationRequest;
 import com.rafaelw.financeControl.config.DBContainer;
-import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
+import com.rafaelw.financeControl.config.TestConfig;
+import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.boot.test.web.server.LocalServerPort;
 
 public class AuthenticationControllerTest extends DBContainer {
 
-  @Autowired
-  private PasswordEncoder encoder;
+  @LocalServerPort
+  private int port;
 
   @Autowired
-  private JpaUserRepository userRepository;
+  private TestConfig testConfig;
+
+  @BeforeEach
+  void setUp() {
+    RestAssured.port = port;
+    testConfig.setup();
+  }
 
   @Test
-  @DisplayName("Should be to authenticate successfully with valid credentials")
+  @DisplayName("Should be able to authenticate successfully with valid credentials")
   void authenticate() {
     AuthenticationRequest authRequest = new AuthenticationRequest("joel@gmail.com", "12345678");
 
