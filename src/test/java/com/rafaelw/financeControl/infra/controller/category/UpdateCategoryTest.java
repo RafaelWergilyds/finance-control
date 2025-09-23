@@ -1,10 +1,10 @@
-package com.rafaelw.financeControl.infra.controller.user;
+package com.rafaelw.financeControl.infra.controller.category;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
 import com.rafaelw.financeControl.application.dto.auth.AuthenticationRequest;
-import com.rafaelw.financeControl.application.dto.user.UserUpdateDTO;
+import com.rafaelw.financeControl.application.dto.category.CategoryUpdateDTO;
 import com.rafaelw.financeControl.config.DBContainer;
 import com.rafaelw.financeControl.config.TestConfig;
 import io.restassured.RestAssured;
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-public class UpdateUserTest extends DBContainer {
+public class UpdateCategoryTest extends DBContainer {
 
   @LocalServerPort
   private int port;
@@ -30,20 +30,20 @@ public class UpdateUserTest extends DBContainer {
   }
 
   @Test
-  @DisplayName("Should be able to update a user")
-  void updates() {
+  @DisplayName("Should be able to update a category")
+  void update() {
     AuthenticationRequest login = new AuthenticationRequest("joel@gmail.com", "12345678");
 
     String token = given().contentType(ContentType.JSON).body(login).when().post("/auth/login")
         .then().statusCode(200).extract().path("accessToken");
 
-    UserUpdateDTO updateRequest = new UserUpdateDTO("William", "william@gmail.com", null, null);
+    CategoryUpdateDTO updateRequest = new CategoryUpdateDTO("Gym");
 
-    given().header("Authorization", "Bearer " + token).contentType(ContentType.JSON)
-        .body(updateRequest).put("/users/1").then()
-        .statusCode(200)
-        .body("name", is("William"),
-            "email", is("william@gmail.com")
-        );
+    given()
+        .header("Authorization", "Bearer " + token)
+        .contentType(ContentType.JSON)
+        .body(updateRequest)
+        .put("/categories/1").then().statusCode(200)
+        .body("name", is("Gym"));
   }
 }

@@ -7,7 +7,6 @@ import static org.hamcrest.Matchers.is;
 import com.rafaelw.financeControl.application.dto.user.UserRequestDTO;
 import com.rafaelw.financeControl.config.DBContainer;
 import com.rafaelw.financeControl.config.TestConfig;
-import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,14 +17,11 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 
 public class CreateUserTest extends DBContainer {
 
-  @Autowired
-  private JpaUserRepository userRepository;
+  @LocalServerPort
+  private int port;
 
   @Autowired
   private TestConfig testConfig;
-
-  @LocalServerPort
-  private int port;
 
   @BeforeEach
   void setUp() {
@@ -46,7 +42,7 @@ public class CreateUserTest extends DBContainer {
         .then()
         .statusCode(201)
         .body(
-            "id", equalTo(2),
+            "id", equalTo(3),
             "email", is("maria@gmail.com")
         );
   }

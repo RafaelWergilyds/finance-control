@@ -5,7 +5,6 @@ import static io.restassured.RestAssured.given;
 import com.rafaelw.financeControl.application.dto.auth.AuthenticationRequest;
 import com.rafaelw.financeControl.config.DBContainer;
 import com.rafaelw.financeControl.config.TestConfig;
-import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,9 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 public class DeleteUserTest extends DBContainer {
-
-  @Autowired
-  private JpaUserRepository userRepository;
 
   @LocalServerPort
   private int port;
@@ -33,7 +29,7 @@ public class DeleteUserTest extends DBContainer {
 
   @Test
   @DisplayName("Should be able to delete a user")
-  void DeleteUser() {
+  void delete() {
     AuthenticationRequest login = new AuthenticationRequest("joel@gmail.com", "12345678");
 
     String token = given().contentType(ContentType.JSON).body(login).when().post("/auth/login")
