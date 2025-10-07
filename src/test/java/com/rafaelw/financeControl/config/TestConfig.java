@@ -30,14 +30,15 @@ public class TestConfig {
   public void setup() {
     UserPersist user = new UserPersist(null, "Joel", "joel@gmail.com",
         passwordEncoder.encode("12345678"), true, Role.ADMIN,
-        null, null);
+        null, null, Instant.now(), Instant.now());
 
     UserPersist user2 = new UserPersist(null, "Lucas", "lucas@gmail.com",
         passwordEncoder.encode("12345678"), true, Role.ADMIN,
-        null, null);
+        null, null, Instant.now(), Instant.now());
 
-    CategoryPersist category = new CategoryPersist(null, "Food", user, null);
-    CategoryPersist category2 = new CategoryPersist(null, "Monthly", user, null);
+    CategoryPersist category = new CategoryPersist(null, "Food", user, null, Instant.now(), null);
+    CategoryPersist category2 = new CategoryPersist(null, "Monthly", user, null, Instant.now(),
+        null);
 
     List<DebitPersist> debits = IntStream.range(0, 10)
         .mapToObj(i -> new DebitPersist(
@@ -46,7 +47,7 @@ public class TestConfig {
             BigDecimal.valueOf(50),
             Instant.now(),
             user,
-            category
+            category, Instant.now(), Instant.now()
         )).toList();
 
     List<DebitPersist> debits2 = IntStream.range(0, 5)
@@ -56,7 +57,7 @@ public class TestConfig {
             BigDecimal.valueOf(20),
             Instant.now(),
             user,
-            category2
+            category2, Instant.now(), Instant.now()
         )).toList();
 
     userRepository.save(user);

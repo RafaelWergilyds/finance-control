@@ -93,13 +93,13 @@ class DebitServiceTest {
     DebitRequestDTO debitRequest = new DebitRequestDTO("Pizza", BigDecimal.valueOf(50.00), null);
 
     UserPersist userPersist = new UserPersist(1L, "Joel", "joel@gmail.com", "hashedPassword", true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
     User domainUser = new User(1L, "Joel", "joel@gmail.com", "hashedPassword", true,
         Role.COMMON, null, null);
 
     Debit createdDebit = new Debit(domainUser, "Pizza", BigDecimal.valueOf(50.00));
     DebitPersist debitPersist = new DebitPersist(1L, "Pizza", BigDecimal.valueOf(50.00),
-        moment, userPersist, null);
+        moment, userPersist, null, Instant.now(), null);
     DebitResponseDTO debitResponse = new DebitResponseDTO(1L, "Pizza", BigDecimal.valueOf(50.00),
         moment, null);
 
@@ -141,11 +141,12 @@ class DebitServiceTest {
         categoryId);
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), null);
     User domainUser = new User(userId, "Joel", "joel@gmail.com", "hashedPassword", true,
         Role.COMMON, null, null);
 
-    CategoryPersist categoryPersist = new CategoryPersist(categoryId, "Food", userPersist, null);
+    CategoryPersist categoryPersist = new CategoryPersist(categoryId, "Food", userPersist, null,
+        Instant.now(), Instant.now());
     Category domainCategory = new Category(categoryId, "Food", domainUser, null);
 
     userPersist.setCategories(Set.of(categoryPersist));
@@ -153,7 +154,7 @@ class DebitServiceTest {
 
     Debit createdDebit = new Debit(domainUser, "Pizza", amount, domainCategory);
     DebitPersist debitPersist = new DebitPersist(debitId, "Pizza", amount,
-        moment, userPersist, categoryPersist);
+        moment, userPersist, categoryPersist, Instant.now(), Instant.now());
     DebitResponseDTO debitResponse = new DebitResponseDTO(debitId, "Pizza",
         amount,
         moment, categoryId);
@@ -197,7 +198,7 @@ class DebitServiceTest {
 
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
     User domainUser = new User(userId, "Joel", "joel@gmail.com", "hashedPassword", true,
         Role.COMMON, null, null);
 
@@ -226,10 +227,10 @@ class DebitServiceTest {
 
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
 
     DebitPersist foundedDebit = new DebitPersist(debitId, name, amount,
-        moment, userPersist, null);
+        moment, userPersist, null, Instant.now(), Instant.now());
     DebitResponseDTO debitResponse = new DebitResponseDTO(debitId, name,
         amount, moment, null);
 
@@ -274,9 +275,10 @@ class DebitServiceTest {
 
     UserPersist user = new UserPersist(userId, "Joel", "joel@gmail.com",
         "hashedPassword", true, Role.ADMIN,
-        null, null);
+        null, null, Instant.now(), Instant.now());
 
-    CategoryPersist category = new CategoryPersist(1L, "Food", user, null);
+    CategoryPersist category = new CategoryPersist(1L, "Food", user, null, Instant.now(),
+        Instant.now());
     user.setCategories(Set.of(category));
     DebitFilterDTO filter = new DebitFilterDTO(null, null, null, null, null, null);
 
@@ -287,7 +289,7 @@ class DebitServiceTest {
             BigDecimal.valueOf(50),
             Instant.now(),
             user,
-            category
+            category, Instant.now(), null
         )).toList();
 
     Pageable pageable = PageRequest.of(0, pagesize, Sort.by("id"));
@@ -326,7 +328,7 @@ class DebitServiceTest {
 
     UserPersist persistUser = new UserPersist(userId, "Joel", "joel@gmail.com",
         "hashedPassword", true, Role.ADMIN,
-        null, null);
+        null, null, Instant.now(), null);
     User domainUser = new User(userId, "Joel", "joel@gmail.com",
         "hashedPassword", true, Role.ADMIN,
         null, null);
@@ -334,11 +336,11 @@ class DebitServiceTest {
     DebitUpdateDTO debitUpdateDTO = new DebitUpdateDTO("Parmigiana", null, null);
 
     DebitPersist persistDebit = new DebitPersist(debitId, "Pizza", amount,
-        moment, persistUser, null);
+        moment, persistUser, null, Instant.now(), Instant.now());
     Debit domainDebit = new Debit(debitId, "Pizza", amount,
         moment, domainUser, null);
     DebitPersist debitUpdated = new DebitPersist(debitId, "Parmigiana", amount,
-        moment, persistUser, null);
+        moment, persistUser, null, Instant.now(), Instant.now());
     DebitResponseDTO debitResponse = new DebitResponseDTO(debitId, "Parmigiana", amount, moment,
         null);
 
@@ -370,7 +372,7 @@ class DebitServiceTest {
 
     UserPersist persistUser = new UserPersist(userId, "Joel", "joel@gmail.com",
         "hashedPassword", true, Role.ADMIN,
-        null, null);
+        null, null, Instant.now(), null);
     User domainUser = new User(userId, "Joel", "joel@gmail.com",
         "hashedPassword", true, Role.ADMIN,
         null, null);
@@ -400,9 +402,9 @@ class DebitServiceTest {
 
     UserPersist persistUser = new UserPersist(userId, "Joel", "joel@gmail.com",
         "hashedPassword", true, Role.ADMIN,
-        null, null);
+        null, null, Instant.now(), Instant.now());
     DebitPersist debitToBeDeleted = new DebitPersist(debitId, "Pizza", BigDecimal.valueOf(50.00),
-        Instant.now(), persistUser, null);
+        Instant.now(), persistUser, null, Instant.now(), Instant.now());
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(persistUser));
     when(debitRepository.findByIdAndUserId(debitId, userId)).thenReturn(
@@ -423,7 +425,7 @@ class DebitServiceTest {
 
     UserPersist persistUser = new UserPersist(userId, "Joel", "joel@gmail.com",
         "hashedPassword", true, Role.ADMIN,
-        null, null);
+        null, null, Instant.now(), Instant.now());
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(persistUser));
     when(debitRepository.findByIdAndUserId(debitId, userId)).thenThrow(

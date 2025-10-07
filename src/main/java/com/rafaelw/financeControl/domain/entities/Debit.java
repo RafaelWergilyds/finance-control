@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Builder
 @Getter
@@ -16,8 +16,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode(of = "id")
-public class Debit {
+public class Debit extends AbstractAggregateRoot<Debit> {
 
   private Long id;
   private String name;

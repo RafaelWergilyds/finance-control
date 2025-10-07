@@ -9,7 +9,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,6 +25,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
@@ -54,7 +58,8 @@ public class UserPersist implements JpaEntity, UserDetails {
   private boolean active = true;
 
   @Enumerated(value = EnumType.STRING)
-  @Column(columnDefinition = "varchar(20) default 'COMMON'")
+  @Column(length = 20)
+  @ColumnDefault("'COMMON'")
   private Role role = Role.COMMON;
 
   @OneToMany(mappedBy = "user")
@@ -62,6 +67,22 @@ public class UserPersist implements JpaEntity, UserDetails {
 
   @OneToMany(mappedBy = "user")
   private List<DebitPersist> debits = new ArrayList<>();
+
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private Instant createdAt;
+
+  @Column(name = "updated_at", nullable = false)
+  private Instant updatedAt;
+
+  @PrePersist
+  protected void onCreate() {
+    updatedAt = createdAt = Instant.now();
+  }
+
+  @PreUpdate
+  protected void onUpdate() {
+    updatedAt = Instant.now();
+  }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

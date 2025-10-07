@@ -25,6 +25,7 @@ import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
 import com.rafaelw.financeControl.infra.persist.repository.JpaCategoryRepository;
 import com.rafaelw.financeControl.infra.persist.repository.JpaDebitRepository;
 import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,14 +74,14 @@ class CategoryServiceTest {
 
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
     User domainUser = new User(userId, "Joel", "joel@gmail.com", "hashedPassword", true,
         Role.COMMON, null, null);
 
     CategoryRequestDTO categoryRequestDTO = new CategoryRequestDTO(categoryName);
     Category domainCategory = new Category(categoryId, categoryName, domainUser, null);
     CategoryPersist categoryPersist = new CategoryPersist(categoryId, categoryName, userPersist,
-        null);
+        null, Instant.now(), Instant.now());
     CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO(categoryId, categoryName);
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(userPersist));
@@ -113,10 +114,10 @@ class CategoryServiceTest {
 
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
 
     CategoryPersist categoryPersist = new CategoryPersist(categoryId, "Food", userPersist,
-        null);
+        null, Instant.now(), Instant.now());
     CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO(categoryId, "Food");
 
     when(categoryRepository.findByIdAndUserId(userId, categoryId)).thenReturn(
@@ -157,10 +158,12 @@ class CategoryServiceTest {
 
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
 
-    CategoryPersist category1 = new CategoryPersist(1L, "Food", userPersist, null);
-    CategoryPersist category2 = new CategoryPersist(2L, "Health", userPersist, null);
+    CategoryPersist category1 = new CategoryPersist(1L, "Food", userPersist, null, Instant.now(),
+        Instant.now());
+    CategoryPersist category2 = new CategoryPersist(2L, "Health", userPersist, null, Instant.now(),
+        Instant.now());
     List<CategoryPersist> categoryList = List.of(category1, category2);
 
     CategoryResponseDTO categoryResponseDTO1 = new CategoryResponseDTO(1L, "Food");
@@ -191,15 +194,17 @@ class CategoryServiceTest {
 
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), null);
     User domainUser = new User(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
         Role.COMMON, null, null);
 
     CategoryUpdateDTO categoryUpdateDTO = new CategoryUpdateDTO("Health");
-    CategoryPersist categoryPersist = new CategoryPersist(categoryId, "Food", userPersist, null);
+    CategoryPersist categoryPersist = new CategoryPersist(categoryId, "Food", userPersist, null,
+        Instant.now(), Instant.now());
     Category domainCategory = new Category(categoryId, "Food", domainUser, null);
-    CategoryPersist updatedCategory = new CategoryPersist(categoryId, "Health", userPersist, null);
+    CategoryPersist updatedCategory = new CategoryPersist(categoryId, "Health", userPersist, null,
+        Instant.now(), Instant.now());
     CategoryResponseDTO categoryUpdatedResponse = new CategoryResponseDTO(categoryId, "Health");
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(userPersist));
@@ -232,9 +237,10 @@ class CategoryServiceTest {
 
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
 
-    CategoryPersist categoryPersist = new CategoryPersist(categoryId, "Food", userPersist, null);
+    CategoryPersist categoryPersist = new CategoryPersist(categoryId, "Food", userPersist, null,
+        Instant.now(), Instant.now());
 
     when(categoryRepository.findByIdAndUserId(categoryId, userId)).thenReturn(
         Optional.of(categoryPersist));
@@ -254,7 +260,7 @@ class CategoryServiceTest {
 
     UserPersist userPersist = new UserPersist(1L, "Joel", "joel@gmail.com", "hashedPassword",
         true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
 
     when(categoryRepository.findByIdAndUserId(categoryId, userId)).thenThrow(
         new CategoryNotFoundException(categoryId));

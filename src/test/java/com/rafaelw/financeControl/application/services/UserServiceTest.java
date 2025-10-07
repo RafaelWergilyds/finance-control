@@ -23,6 +23,7 @@ import com.rafaelw.financeControl.domain.services.VerifyUserByEmail;
 import com.rafaelw.financeControl.domain.services.exceptions.EmailAlreadyExistsException;
 import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
 import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,7 +65,7 @@ class UserServiceTest {
     UserRequestDTO newUserRequest = new UserRequestDTO("Joel", "joel@gmail.com", "12345678");
     User domainUser = new User("Joel", "joel@gmail.com", "hashedPassword");
     UserPersist userPersist = new UserPersist(1L, "Joel", "joel@gmail.com", "hashedPassword", true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
     UserResponseDTO expectedResponse = new UserResponseDTO(1L, "Joel", "joel@gmail.com",
         Role.COMMON, true);
 
@@ -111,9 +112,9 @@ class UserServiceTest {
   @DisplayName("Should be able to find all users")
   void findAllUsers() {
     UserPersist userPersist1 = new UserPersist(1L, "Joel", "joel@gmail.com", "12345678", true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
     UserPersist userPersist2 = new UserPersist(2L, "Maria", "maria@gmail.com", "12345678", true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
     List<UserPersist> usersPersist = List.of(userPersist1, userPersist2);
 
     UserResponseDTO responseDTO1 = new UserResponseDTO(1L, "Joel", "joel@gmail.com", Role.COMMON,
@@ -141,7 +142,7 @@ class UserServiceTest {
   void findUserById() {
     Long userId = 1L;
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "12345678", true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
     UserResponseDTO userResponseDTO = new UserResponseDTO(userId, "Joel", "joel@gmail.com",
         Role.COMMON, true);
 
@@ -176,7 +177,7 @@ class UserServiceTest {
     Long userId = 1L;
     UserPersist userToBeUpdate = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
     User domainUser = new User(userId, "Joel", "joel@gmail.com", "12345678", true,
         Role.COMMON, null, null);
     UserUpdateDTO userUpdateData = new UserUpdateDTO("Marcos", "marcos@gmail.com", "87654321",
@@ -184,7 +185,7 @@ class UserServiceTest {
     UserPersist updatedUser = new UserPersist(userId, "Marcos", "marcos@gmail.com",
         "newHashedPassword",
         true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
     UserResponseDTO updatedUserResponse = new UserResponseDTO(userId, "Marcos", "marcos@gmail.com",
         Role.COMMON, true);
 
@@ -236,7 +237,7 @@ class UserServiceTest {
     Long userId = 1L;
     UserPersist userToBeUpdate = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
     User domainUser = new User(userId, "Joel", "joel@gmail.com", "12345678", true,
         Role.COMMON, null, null);
     UserUpdateDTO userUpdateData = new UserUpdateDTO("Marcos", "marcos@gmail.com", "87654321",
@@ -266,7 +267,7 @@ class UserServiceTest {
 
     UserPersist userToDelete = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
-        Role.COMMON, null, null);
+        Role.COMMON, null, null, Instant.now(), Instant.now());
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(userToDelete));
     doNothing().when(userRepository).deleteById(userId);
