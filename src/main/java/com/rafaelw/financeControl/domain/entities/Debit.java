@@ -1,5 +1,6 @@
 package com.rafaelw.financeControl.domain.entities;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import org.springframework.data.domain.AbstractAggregateRoot;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Debit extends AbstractAggregateRoot<Debit> {
+public class Debit extends AbstractAggregateRoot<Debit>, Serializable {
 
   private Long id;
   private String name;
