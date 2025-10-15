@@ -32,8 +32,10 @@ build/
 ### VS Code ###
 .vscode/
 
-### KEYS ###
+### Properties ###
 src/main/resources/application.properties
+
+### KEYS ###
 src/main/resources/app.key
 src/main/resources/app.pub
 src/test/resources/test.pem
