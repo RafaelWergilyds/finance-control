@@ -50,6 +50,8 @@ public class AuthenticationService {
         .issuer(issuer)
         .subject(user.get().getId().toString())
         .issuedAt(now)
+        .claim("name", user.get().getName())
+        .claim("email", user.get().getEmail())
         .claim("role", user.get().getRole())
         .expiresAt(now.plusSeconds(expiresIn)).build();
 
