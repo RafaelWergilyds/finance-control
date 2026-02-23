@@ -2,17 +2,17 @@ version: '3.8'
 
 services:
   postgresql:
-    image: bitnami/postgresql:16
-    container_name: bitnami-postgres-fCtrl
+    image: postgres:16-alpine
+    container_name: postgres-fCtrl
     restart: always
     environment:
-      - POSTGRESQL_USERNAME=docker
-      - POSTGRESQL_PASSWORD=docker
-      - POSTGRESQL_DATABASE=financeControl
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=financeControl
     ports:
       - "5432:5432"
     volumes:
-      - postgresql_data:/bitnami/postgresql
+      - postgresql_data:/var/lib/postgresql/data
 
   api:
     build: .
@@ -25,6 +25,13 @@ services:
       - SPRING_DATASOURCE_USERNAME=docker
       - SPRING_DATASOURCE_PASSWORD=docker
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - JWT_APP_ISSUER=my-app
+      - JWT_EXPIRATION_TIME=3600
+      - JWT_PUBLIC_KEY=file:/app/keys/app.pub
+      - JWT_PRIVATE_KEY=file:/app/keys/app.key
+    volumes:
+      - ./src/main/resources/app.pub:/app/keys/app.pub
+      - ./src/main/resources/app.key:/app/keys/app.key
     depends_on:
       - postgresql
 
