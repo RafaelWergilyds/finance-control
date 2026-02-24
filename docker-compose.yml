@@ -1,40 +1,21 @@
 version: '3.8'
 
 services:
-  postgresql:
-    image: postgres:16-alpine
-    container_name: postgres-fCtrl
-    restart: always
-    environment:
-      - POSTGRES_USER=docker
-      - POSTGRES_PASSWORD=docker
-      - POSTGRES_DB=financeControl
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgresql_data:/var/lib/postgresql/data
-
   api:
-    build: .
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/finance-control-api:latest
     container_name: api-finance-control
     restart: on-failure
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/financeControl
-      - SPRING_DATASOURCE_USERNAME=docker
-      - SPRING_DATASOURCE_PASSWORD=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_ENDPOINT}:5432/financeControl
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - JWT_APP_ISSUER=my-app
       - JWT_EXPIRATION_TIME=3600
       - JWT_PUBLIC_KEY=file:/app/keys/app.pub
       - JWT_PRIVATE_KEY=file:/app/keys/app.key
     volumes:
-      - ./src/main/resources/app.pub:/app/keys/app.pub
-      - ./src/main/resources/app.key:/app/keys/app.key
-    depends_on:
-      - postgresql
-
-volumes:
-  postgresql_data:
+      - /home/ec2-user/app/keys:/app/keys:ro
 
