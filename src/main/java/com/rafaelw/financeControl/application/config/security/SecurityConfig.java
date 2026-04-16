@@ -55,6 +55,11 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
             .requestMatchers(HttpMethod.GET, "/users/{id}").hasRole("ADMIN")
             .requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
+                .requestMatchers("/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/swagger-resources/**",
+                        "/webjars/**").permitAll()
             .anyRequest().authenticated())
         .csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults())

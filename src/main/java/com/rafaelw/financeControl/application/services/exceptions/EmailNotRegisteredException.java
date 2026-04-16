@@ -1,6 +1,8 @@
 package com.rafaelw.financeControl.application.services.exceptions;
 
-public class EmailNotRegisteredException extends RuntimeException {
+import com.rafaelw.financeControl.domain.services.exceptions.InvalidCredentialsException;
+
+public class EmailNotRegisteredException extends InvalidCredentialsException {
 
   public EmailNotRegisteredException() {
     super("Email Not Registered");
