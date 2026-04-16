@@ -1,33 +1,42 @@
 package com.rafaelw.financeControl.application.mappers;
 
+import com.rafaelw.financeControl.application.dto.user.UserRequestDTO;
 import com.rafaelw.financeControl.application.dto.user.UserResponseDTO;
-import com.rafaelw.financeControl.application.mappers.struct.AvoidContext;
-import com.rafaelw.financeControl.application.mappers.struct.UserMapperStruct;
 import com.rafaelw.financeControl.domain.entities.User;
 import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
 
-  @Autowired
-  private UserMapperStruct mapperStruct;
+    public User toDomain(UserRequestDTO requestDTO){
+        User user = new User();
 
-  public UserResponseDTO toResponseDTO(UserPersist userPersist) {
-    return mapperStruct.toResponseDTO(userPersist);
-  }
+        user.setName(requestDTO.name());
+        user.setEmail(requestDTO.email());
+        user.setPassword(requestDTO.password());
+        return user;
+    }
 
-  public UserResponseDTO toResponseDTO(User user) {
-    return mapperStruct.toResponseDTO(user);
-  }
+    public User toDomain(UserPersist userPersist){
+        User user = new User();
 
-  public User toDomain(UserPersist userPersist) {
-    return mapperStruct.toDomain(userPersist, new AvoidContext());
-  }
+        userPersist.setName(user.getName());
+        userPersist.setEmail(user.getEmail());
+        userPersist.setPassword(user.getEmail());
+        return user;
+    }
 
-  public UserPersist toPersist(User user) {
-    return mapperStruct.toPersist(user, new AvoidContext());
-  }
+    public UserPersist toPersist(User user){
+        UserPersist userPersist = new UserPersist();
 
+        userPersist.setName(user.getName());
+        userPersist.setEmail(user.getEmail());
+        userPersist.setPassword(user.getEmail());
+        return userPersist;
+    }
+
+    public UserResponseDTO toResponseDTO(UserPersist userPersist){
+        return new UserResponseDTO(userPersist.getId(), userPersist.getName(), userPersist.getEmail(), userPersist.getRole(), userPersist.isActive());
+    }
 }

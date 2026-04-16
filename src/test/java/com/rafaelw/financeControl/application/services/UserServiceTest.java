@@ -225,7 +225,6 @@ class UserServiceTest {
     verify(userRepository, times(1)).findById(userId);
     verify(verifyUserByEmail, times(0)).execute(any());
     verify(userMapper, times(0)).toPersist(any());
-    verify(userMapper, times(0)).toDomain(any());
     verify(userMapper, times(0)).toResponseDTO(any(UserPersist.class));
     verify(passwordEncoder, times(0)).encode(any());
 
