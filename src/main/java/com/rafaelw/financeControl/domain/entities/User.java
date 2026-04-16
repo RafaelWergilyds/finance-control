@@ -27,8 +27,6 @@ public class User{
   private boolean active = true;
 
   private Role role;
-  private Set<Category> categories = new HashSet<>();
-  private List<Debit> debits = new ArrayList<>();
 
   public User(String name, String email, String password) {
     this.name = name;

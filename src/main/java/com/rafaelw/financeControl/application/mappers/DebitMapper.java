@@ -1,18 +1,13 @@
 package com.rafaelw.financeControl.application.mappers;
 
 import com.rafaelw.financeControl.application.dto.debit.DebitResponseDTO;
-import com.rafaelw.financeControl.application.mappers.struct.AvoidContext;
-import com.rafaelw.financeControl.application.mappers.struct.DebitMapperStruct;
 import com.rafaelw.financeControl.domain.entities.Category;
 import com.rafaelw.financeControl.domain.entities.Debit;
-import com.rafaelw.financeControl.domain.entities.User;
 import com.rafaelw.financeControl.infra.persist.entities.CategoryPersist;
 import com.rafaelw.financeControl.infra.persist.entities.DebitPersist;
+import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class DebitMapper {
@@ -21,7 +16,9 @@ public class DebitMapper {
   private UserMapper userMapper;
 
   public DebitResponseDTO toResponse(DebitPersist debitPersist) {
-    return new DebitResponseDTO(debitPersist.getId(), debitPersist.getName(), debitPersist.getAmount(), debitPersist.getMoment(), debitPersist.getCategory().getId());
+    Long categoryId = debitPersist.getCategory() != null ? debitPersist.getCategory().getId() : null;
+
+    return new DebitResponseDTO(debitPersist.getId(), debitPersist.getName(), debitPersist.getAmount(), debitPersist.getMoment(), categoryId);
   }
 
   public Debit toDomain(DebitPersist debitPersist) {
@@ -31,13 +28,13 @@ public class DebitMapper {
     debit.setName(debitPersist.getName());
     debit.setAmount(debitPersist.getAmount());
     debit.setMoment(debitPersist.getMoment());
-    debit.setUser(userMapper.toDomain(debitPersist.getUser()));
+    debit.setUserId(debitPersist.getUser().getId());
 
     if(debitPersist.getCategory() != null){
       Category category = new Category();
       category.setId(debitPersist.getCategory().getId());
       category.setName(debitPersist.getCategory().getName());
-      category.setUser(debit.getUser());
+      category.setUserId(debit.getUserId());
     }
 
     return debit;
@@ -49,13 +46,18 @@ public class DebitMapper {
     debitPersist.setId(debit.getId());
     debitPersist.setName(debit.getName());
     debitPersist.setAmount(debit.getAmount());
-    debitPersist.setUser(userMapper.toPersist(debit.getUser()));
+    debitPersist.setMoment(debit.getMoment());
 
-    if(debit.getCategory() != null){
+    if(debit.getUserId() != null){
+      UserPersist userPersist = new UserPersist();
+      userPersist.setId(debit.getUserId());
+      debitPersist.setUser(userPersist);
+    }
+
+    if(debit.getCategoryId() != null){
       CategoryPersist categoryPersist = new CategoryPersist();
-      categoryPersist.setId(debit.getId());
-      categoryPersist.setName(debit.getCategory().getName());
-      categoryPersist.setUser(debitPersist.getUser());
+      categoryPersist.setId(debit.getCategoryId());
+      debitPersist.setCategory(categoryPersist);
     }
 
     return debitPersist;

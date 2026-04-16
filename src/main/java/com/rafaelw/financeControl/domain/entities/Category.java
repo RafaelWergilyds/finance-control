@@ -20,17 +20,16 @@ public class Category {
   private Long id;
   private String name;
 
-  private User user;
-  private List<Debit> debits = new ArrayList<>();
+  private Long userId;
 
-  public Category(User user, String name) {
-    if (user == null) {
+  public Category(Long userId, String name) {
+    if (userId == null) {
       throw new IllegalArgumentException("A user is required");
     }
     if (name == null || name.isBlank()) {
       throw new IllegalArgumentException("Name is required");
     }
-    this.user = user;
+    this.userId = userId;
     this.name = name;
   }
 

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DebitFactory {
 
-  public Debit create(User user, String name, BigDecimal amount) {
-    return new Debit(user, name, amount);
+  public Debit create(Long userId, String name, BigDecimal amount) {
+    return new Debit(userId, name, amount);
   }
 }

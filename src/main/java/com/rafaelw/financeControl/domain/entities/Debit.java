@@ -22,11 +22,11 @@ public class Debit{
   private BigDecimal amount;
   private Instant moment;
 
-  private User user;
-  private Category category;
+  private Long userId;
+  private Long categoryId;
 
-  public Debit(User user, String name, BigDecimal amount) {
-    if (user == null) {
+  public Debit(Long userId, String name, BigDecimal amount) {
+    if (userId == null) {
       throw new IllegalArgumentException("A user is required");
     }
     if (name == null || name.isBlank()) {
@@ -35,14 +35,14 @@ public class Debit{
     if (amount == null) {
       throw new IllegalArgumentException("Amount is required");
     }
-    this.user = user;
+    this.userId = userId;
     this.name = name;
     this.amount = amount;
     this.moment = Instant.now();
   }
 
-  public Debit(User user, String name, BigDecimal amount, Category category) {
-    if (user == null) {
+  public Debit(Long userId, String name, BigDecimal amount, Long categoryId) {
+    if (userId == null) {
       throw new IllegalArgumentException("A user is required");
     }
     if (name == null || name.isBlank()) {
@@ -51,15 +51,15 @@ public class Debit{
     if (amount == null) {
       throw new IllegalArgumentException("Amount is required");
     }
-    if (category == null) {
+    if (categoryId == null) {
       throw new IllegalArgumentException("A category is required");
     }
 
-    this.user = user;
+    this.userId = userId;
     this.name = name;
     this.amount = amount;
     this.moment = Instant.now();
-    this.category = category;
+    this.categoryId = categoryId;
   }
 
   public void changeName(String name) {

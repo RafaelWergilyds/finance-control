@@ -73,7 +73,7 @@ public class CategoryService {
 
     User user = userMapper.toDomain(userPersist);
 
-    Category category = categoryFactory.create(user, data.name());
+    Category category = categoryFactory.create(user.getId(), data.name());
     CategoryPersist categoryPersist = categoryMapper.toPersist(category);
     CategoryPersist savedCategory = categoryRepository.save(categoryPersist);
 
@@ -82,8 +82,6 @@ public class CategoryService {
 
   @Transactional
   public CategoryResponseDTO update(Long userId, Long categoryId, CategoryUpdateDTO data) {
-    userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
     CategoryPersist categoryPersist = categoryRepository.findByIdAndUserId(categoryId, userId)
         .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 

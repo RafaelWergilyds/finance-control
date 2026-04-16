@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserCreateDebit {
 
-  public Debit execute(User user, String name, BigDecimal amount) {
-    return new Debit(user, name, amount);
+  public Debit execute(Long userId, String name, BigDecimal amount) {
+    return new Debit(userId, name, amount);
   }
 
 }

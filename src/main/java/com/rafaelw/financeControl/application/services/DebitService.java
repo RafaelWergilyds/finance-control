@@ -90,7 +90,7 @@ public class DebitService {
         .orElseThrow(() -> new UserNotFoundException(userId));
 
     User user = userMapper.toDomain(userPersist);
-    Debit debit = debitFactory.create(user, data.name(), data.amount());
+    Debit debit = debitFactory.create(user.getId(), data.name(), data.amount());
 
     if (data.categoryId() != null) {
       addCategoryToDebit(debit, userId, data.categoryId());
@@ -158,8 +158,9 @@ public class DebitService {
     CategoryPersist categoryPersist = categoryRepository.findByIdAndUserId(categoryId,
             userId)
         .orElseThrow(() -> new CategoryNotFoundException(categoryId));
+
     Category category = categoryMapper.toDomain(categoryPersist);
-    debit.setCategory(category);
+    debit.setCategoryId(category.getId());
   }
 
   private Specification<DebitPersist> filterDebit(Long userId, DebitFilterDTO filter) {

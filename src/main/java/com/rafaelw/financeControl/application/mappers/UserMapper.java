@@ -21,9 +21,10 @@ public class UserMapper {
     public User toDomain(UserPersist userPersist){
         User user = new User();
 
-        userPersist.setName(user.getName());
-        userPersist.setEmail(user.getEmail());
-        userPersist.setPassword(user.getEmail());
+        user.setId(userPersist.getId());
+        user.setName(userPersist.getName());
+        user.setEmail(userPersist.getEmail());
+        user.setPassword(userPersist.getPassword());
         return user;
     }
 
@@ -33,7 +34,7 @@ public class UserMapper {
         userPersist.setId(user.getId());
         userPersist.setName(user.getName());
         userPersist.setEmail(user.getEmail());
-        userPersist.setPassword(user.getEmail());
+        userPersist.setPassword(user.getPassword());
         return userPersist;
     }
 

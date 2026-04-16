@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CategoryFactory {
 
-  public Category create(User user, String name) {
-    return new Category(user, name);
+  public Category create(Long userId, String name) {
+    return new Category(userId, name);
   }
 }
