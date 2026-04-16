@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Builder
 @Getter
@@ -16,7 +15,7 @@ import org.springframework.data.domain.AbstractAggregateRoot;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Category extends AbstractAggregateRoot<User> {
+public class Category {
 
   private Long id;
   private String name;

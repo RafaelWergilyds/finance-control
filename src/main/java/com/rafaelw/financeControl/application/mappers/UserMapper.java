@@ -30,6 +30,7 @@ public class UserMapper {
     public UserPersist toPersist(User user){
         UserPersist userPersist = new UserPersist();
 
+        userPersist.setId(user.getId());
         userPersist.setName(user.getName());
         userPersist.setEmail(user.getEmail());
         userPersist.setPassword(user.getEmail());
