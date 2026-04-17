@@ -1,10 +1,7 @@
 package com.rafaelw.financeControl.domain.entities;
 
 import com.rafaelw.financeControl.domain.entities.enums.Role;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.rafaelw.financeControl.domain.valueObjects.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +19,7 @@ public class User{
 
   private Long id;
   private String name;
-  private String email;
+  private Email email;
   private String password;
   private boolean active = true;
 
@@ -30,7 +27,7 @@ public class User{
 
   public User(String name, String email, String password) {
     this.name = name;
-    this.email = email;
+    this.email = new Email(email);
     this.password = password;
     this.role = Role.COMMON;
   }
@@ -38,9 +35,6 @@ public class User{
   public static User create(String name, String email, String password) {
     if (name == null || name.isBlank()) {
       throw new IllegalArgumentException("Name is required");
-    }
-    if (email == null || !email.contains("@")) {
-      throw new IllegalArgumentException("Invalid email");
     }
     if (password == null || password.length() < 8) {
       throw new IllegalArgumentException("Password must be at least 8 characters long");
@@ -59,14 +53,11 @@ public class User{
   }
 
   public void changeEmail(String email) {
-    if (this.email.equals(email)) {
+    if (this.email != null && this.email.getEmail().equals(email)){
       return;
     }
-    if (email == null || !email.contains("@")) {
-      throw new IllegalArgumentException("Invalid email");
-    }
 
-    this.email = email;
+    this.email = new Email(email);
   }
 
   public void changePassword(String password) {
@@ -74,6 +65,10 @@ public class User{
       throw new IllegalArgumentException("Password must be at least 8 characters long");
     }
     this.password = password;
+  }
+
+  public String getEmail(){
+    return this.email.getEmail();
   }
 
   public void activateUser() {
