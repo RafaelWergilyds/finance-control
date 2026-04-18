@@ -12,34 +12,34 @@ class DebitTest {
   @Test
   @DisplayName("Should be able create a debit with a category")
   void createDebitWithCategory() {
-    User user = User.create("Joel", "joel@gmail.com", "12345678");
-    Category category = new Category(user, "Food");
+    Long userId = 1L;
+    Long categoryId = 2L;
 
-    Debit debit = new Debit(user, "Pizza", BigDecimal.valueOf(50.00), category);
+    Debit debit = new Debit(userId, "Pizza", BigDecimal.valueOf(50.00), categoryId);
 
-    assertThat(debit.getUser()).isEqualTo(user);
+    assertThat(debit.getUserId()).isEqualTo(userId);
     assertThat(debit.getName()).isEqualTo("Pizza");
-    assertThat(debit.getCategory()).isEqualTo(category);
+    assertThat(debit.getCategoryId()).isEqualTo(categoryId);
   }
 
   @Test
   @DisplayName("Should be able create a debit without a category")
   void createDebitWithoutCategory() {
-    User user = User.create("Joel", "joel@gmail.com", "12345678");
-    Debit debit = new Debit(user, "Pizza", BigDecimal.valueOf(50.00));
+    Long userId = 1L;
+    Debit debit = new Debit(userId, "Pizza", BigDecimal.valueOf(50.00));
 
-    assertThat(debit.getUser()).isEqualTo(user);
+    assertThat(debit.getUserId()).isEqualTo(userId);
     assertThat(debit.getName()).isEqualTo("Pizza");
-    assertThat(debit.getCategory()).isEqualTo(null);
+    assertThat(debit.getCategoryId()).isNull();
   }
 
   @Test
   @DisplayName("Should not be able create a debit with a invalid name")
   void createDebitWithoutName() {
-    User user = User.create("Joel", "joel@gmail.com", "12345678");
+    Long userId = 1L;
 
     assertThatThrownBy(() -> {
-      new Debit(user, "", BigDecimal.valueOf(50.00));
+      new Debit(userId, "", BigDecimal.valueOf(50.00));
     }).isInstanceOf(IllegalArgumentException.class).hasMessage("Name is required");
 
   }
@@ -57,10 +57,10 @@ class DebitTest {
   @Test
   @DisplayName("Should not be able create a debit with a invalid amount")
   void createDebitWithoutAmount() {
-    User user = User.create("Joel", "joel@gmail.com", "12345678");
+    Long userId = 1L;
 
     assertThatThrownBy(() -> {
-      new Debit(user, "Pizza", null);
+      new Debit(userId, "Pizza", null);
     }).isInstanceOf(IllegalArgumentException.class).hasMessage("Amount is required");
 
   }
@@ -68,10 +68,8 @@ class DebitTest {
   @Test
   @DisplayName("Should be able to change debit name")
   void changeDebitName() {
-    User user = User.create("Joel", "joel@gmail.com", "12345678");
-    Category category = new Category(user, "Food");
-
-    Debit debit = new Debit(user, "Pizza", BigDecimal.valueOf(50.00), category);
+    Long userId = 1L;
+    Debit debit = new Debit(userId, "Pizza", BigDecimal.valueOf(50.00));
     debit.changeName("Pastel");
 
     assertThat(debit.getName()).isEqualTo("Pastel");
@@ -81,8 +79,8 @@ class DebitTest {
   @Test
   @DisplayName("Should not be able to change a debit name with a invalid name")
   void changeDebitNameWithInvalidName() {
-    User user = User.create("Joel", "joel@gmail.com", "12345678");
-    Debit debit = new Debit(user, "Pizza", BigDecimal.valueOf(50.00));
+    Long userId = 1L;
+    Debit debit = new Debit(userId, "Pizza", BigDecimal.valueOf(50.00));
 
     assertThatThrownBy(() -> {
       debit.changeName("");
@@ -93,9 +91,8 @@ class DebitTest {
   @Test
   @DisplayName("Should be able to change debit amount")
   void changeDebitAmount() {
-    User user = User.create("Joel", "joel@gmail.com", "12345678");
-
-    Debit debit = new Debit(user, "Pizza", BigDecimal.valueOf(50.00));
+    Long userId = 1L;
+    Debit debit = new Debit(userId, "Pizza", BigDecimal.valueOf(50.00));
     debit.changeAmount(BigDecimal.valueOf(30.00));
 
     assertThat(debit.getAmount()).isEqualTo(BigDecimal.valueOf(30.00));
@@ -105,15 +102,12 @@ class DebitTest {
   @Test
   @DisplayName("Should not be able to change debit amount with invalid amount")
   void changeDebitAmountWithInvalidAmount() {
-    User user = User.create("Joel", "joel@gmail.com", "12345678");
-
-    Debit debit = new Debit(user, "Pizza", BigDecimal.valueOf(50.00));
+    Long userId = 1L;
+    Debit debit = new Debit(userId, "Pizza", BigDecimal.valueOf(50.00));
+    
     assertThatThrownBy(() -> {
       debit.changeAmount(null);
     }).isInstanceOf(IllegalArgumentException.class).hasMessage("Amount is required");
-
-
   }
-
 
 }

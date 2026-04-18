@@ -21,6 +21,8 @@ import com.rafaelw.financeControl.domain.entities.enums.Role;
 import com.rafaelw.financeControl.domain.factories.UserFactory;
 import com.rafaelw.financeControl.domain.services.VerifyUserByEmail;
 import com.rafaelw.financeControl.domain.services.exceptions.EmailAlreadyExistsException;
+import com.rafaelw.financeControl.domain.valueObjects.Email;
+import com.rafaelw.financeControl.domain.valueObjects.Password;
 import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
 import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
 import java.time.Instant;
@@ -31,6 +33,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -44,9 +48,6 @@ class UserServiceTest {
 
   @Mock
   private UserMapper userMapper;
-
-  @Mock
-  private UserFactory userFactory;
 
   @Mock
   private PasswordEncoder passwordEncoder;
@@ -63,31 +64,36 @@ class UserServiceTest {
   @DisplayName("Should be able create a user")
   void createUser() {
     UserRequestDTO newUserRequest = new UserRequestDTO("Joel", "joel@gmail.com", "12345678");
-    User domainUser = new User("Joel", "joel@gmail.com", "hashedPassword");
+    User domainUser = User.builder()
+            .name("Joel")
+            .email(new Email("joel@gmail.com"))
+            .password(new Password("hashedPassword"))
+            .role(Role.COMMON)
+            .build();
     UserPersist userPersist = new UserPersist(1L, "Joel", "joel@gmail.com", "hashedPassword", true,
         Role.COMMON, null, null, Instant.now(), Instant.now());
     UserResponseDTO expectedResponse = new UserResponseDTO(1L, "Joel", "joel@gmail.com",
         Role.COMMON, true);
 
-    when(userFactory.create(newUserRequest.name(), newUserRequest.email(),
-        "hashedPassword")).thenReturn(domainUser);
-    when(passwordEncoder.encode(newUserRequest.password())).thenReturn("hashedPassword");
-    when(userMapper.toPersist(domainUser)).thenReturn(userPersist);
-    when(userRepository.save(userPersist)).thenReturn(userPersist);
-    when(userMapper.toResponseDTO(userPersist)).thenReturn(expectedResponse);
+    try (MockedStatic<UserFactory> userFactoryMock = Mockito.mockStatic(UserFactory.class)) {
+      userFactoryMock.when(() -> UserFactory.create(newUserRequest.name(), newUserRequest.email(),
+          newUserRequest.password(), passwordEncoder)).thenReturn(domainUser);
+      when(userMapper.toPersist(domainUser)).thenReturn(userPersist);
+      when(userRepository.save(userPersist)).thenReturn(userPersist);
+      when(userMapper.toResponseDTO(userPersist)).thenReturn(expectedResponse);
 
-    UserResponseDTO createdUser = service.create(newUserRequest);
+      UserResponseDTO createdUser = service.create(newUserRequest);
 
-    assertNotNull(createdUser);
-    assertEquals(expectedResponse.id(), createdUser.id());
-    assertEquals(expectedResponse.name(), createdUser.name());
-    assertEquals(expectedResponse.email(), createdUser.email());
+      assertNotNull(createdUser);
+      assertEquals(expectedResponse.id(), createdUser.id());
+      assertEquals(expectedResponse.name(), createdUser.name());
+      assertEquals(expectedResponse.email(), createdUser.email());
 
-    verify(passwordEncoder, times(1)).encode("12345678");
-    verify(userRepository, times(1)).save(any(UserPersist.class));
-    verify(userFactory, times(1)).create("Joel", "joel@gmail.com", "hashedPassword");
-    verify(userMapper, times(1)).toPersist(domainUser);
-    verify(userMapper, times(1)).toResponseDTO(userPersist);
+      userFactoryMock.verify(() -> UserFactory.create("Joel", "joel@gmail.com", "12345678", passwordEncoder), times(1));
+      verify(userRepository, times(1)).save(any(UserPersist.class));
+      verify(userMapper, times(1)).toPersist(domainUser);
+      verify(userMapper, times(1)).toResponseDTO(userPersist);
+    }
   }
 
   @Test
@@ -104,7 +110,6 @@ class UserServiceTest {
 
     verify(verifyUserByEmail, times(1)).execute(any());
     verify(passwordEncoder, times(0)).encode(any());
-    verify(userFactory, times(0)).create(any(), any(), any());
     verify(userRepository, times(0)).save(any());
   }
 
@@ -178,8 +183,14 @@ class UserServiceTest {
     UserPersist userToBeUpdate = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
         Role.COMMON, null, null, Instant.now(), Instant.now());
-    User domainUser = new User(userId, "Joel", "joel@gmail.com", "12345678", true,
-        Role.COMMON, null, null);
+    User domainUser = User.builder()
+            .id(userId)
+            .name("Joel")
+            .email(new Email("joel@gmail.com"))
+            .password(new Password("hashedPassword"))
+            .active(true)
+            .role(Role.COMMON)
+            .build();
     UserUpdateDTO userUpdateData = new UserUpdateDTO("Marcos", "marcos@gmail.com", "87654321",
         null);
     UserPersist updatedUser = new UserPersist(userId, "Marcos", "marcos@gmail.com",
@@ -237,8 +248,14 @@ class UserServiceTest {
     UserPersist userToBeUpdate = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
         Role.COMMON, null, null, Instant.now(), Instant.now());
-    User domainUser = new User(userId, "Joel", "joel@gmail.com", "12345678", true,
-        Role.COMMON, null, null);
+    User domainUser = User.builder()
+            .id(userId)
+            .name("Joel")
+            .email(new Email("joel@gmail.com"))
+            .password(new Password("hashedPassword"))
+            .active(true)
+            .role(Role.COMMON)
+            .build();
     UserUpdateDTO userUpdateData = new UserUpdateDTO("Marcos", "marcos@gmail.com", "87654321",
         null);
     when(userRepository.findById(userId)).thenReturn(Optional.of(userToBeUpdate));

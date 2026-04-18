@@ -11,10 +11,10 @@ class CategoryTest {
   @Test
   @DisplayName("Should be able create a category")
   void createCategory() {
-    User user = User.create("Joel", "joel@gmail.com", "12345678");
-    Category category = new Category(user, "Food");
+    Long userId = 1L;
+    Category category = new Category(userId, "Food");
 
-    assertThat(category.getUser()).isEqualTo(user);
+    assertThat(category.getUserId()).isEqualTo(userId);
     assertThat(category.getName()).isEqualTo("Food");
   }
 
@@ -29,11 +29,21 @@ class CategoryTest {
   @Test
   @DisplayName("Should not be able create a category with a invalid name")
   void createCategoryWithoutName() {
-    User user = User.create("Joel", "joel@gmail.com", "12345678");
+    Long userId = 1L;
 
     assertThatThrownBy(() -> {
-      new Category(user, "");
+      new Category(userId, "");
     }).isInstanceOf(IllegalArgumentException.class).hasMessage("Name is required");
   }
-  
+
+  @Test
+  @DisplayName("Should be able to change category name")
+  void changeCategoryName() {
+    Long userId = 1L;
+    Category category = new Category(userId, "Food");
+    category.changeName("Transport");
+
+    assertThat(category.getName()).isEqualTo("Transport");
+  }
+
 }

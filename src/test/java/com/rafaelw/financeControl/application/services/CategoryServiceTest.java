@@ -20,6 +20,8 @@ import com.rafaelw.financeControl.domain.entities.Category;
 import com.rafaelw.financeControl.domain.entities.User;
 import com.rafaelw.financeControl.domain.entities.enums.Role;
 import com.rafaelw.financeControl.domain.factories.CategoryFactory;
+import com.rafaelw.financeControl.domain.valueObjects.Email;
+import com.rafaelw.financeControl.domain.valueObjects.Password;
 import com.rafaelw.financeControl.infra.persist.entities.CategoryPersist;
 import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
 import com.rafaelw.financeControl.infra.persist.repository.JpaCategoryRepository;
@@ -75,18 +77,28 @@ class CategoryServiceTest {
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
         Role.COMMON, null, null, Instant.now(), Instant.now());
-    User domainUser = new User(userId, "Joel", "joel@gmail.com", "hashedPassword",
-null, null);
+    User domainUser = User.builder()
+            .id(userId)
+            .name("Joel")
+            .email(new Email("joel@gmail.com"))
+            .password(new Password("hashedPassword"))
+            .active(true)
+            .role(Role.COMMON)
+            .build();
 
     CategoryRequestDTO categoryRequestDTO = new CategoryRequestDTO(categoryName);
-    Category domainCategory = new Category(categoryId, categoryName, domainUser, null);
+    Category domainCategory = Category.builder()
+            .id(categoryId)
+            .name(categoryName)
+            .userId(userId)
+            .build();
     CategoryPersist categoryPersist = new CategoryPersist(categoryId, categoryName, userPersist,
         null, Instant.now(), Instant.now());
     CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO(categoryId, categoryName);
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(userPersist));
     when(userMapper.toDomain(userPersist)).thenReturn(domainUser);
-    when(categoryFactory.create(domainUser, categoryName)).thenReturn(domainCategory);
+    when(categoryFactory.create(userId, categoryName)).thenReturn(domainCategory);
     when(categoryMapper.toPersist(domainCategory)).thenReturn(categoryPersist);
     when(categoryRepository.save(categoryPersist)).thenReturn(categoryPersist);
     when(categoryMapper.toResponseDTO(categoryPersist)).thenReturn(categoryResponseDTO);
@@ -98,7 +110,7 @@ null, null);
 
     verify(userRepository, times(1)).findById(userId);
     verify(userMapper, times(1)).toDomain(any(UserPersist.class));
-    verify(categoryFactory, times(1)).create(any(), any());
+    verify(categoryFactory, times(1)).create(userId, categoryName);
     verify(categoryMapper, times(1)).toPersist(any(Category.class));
     verify(categoryRepository, times(1)).save(any(CategoryPersist.class));
     verify(categoryMapper, times(1)).toResponseDTO(any(CategoryPersist.class));
@@ -195,14 +207,15 @@ null, null);
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
         Role.COMMON, null, null, Instant.now(), null);
-    User domainUser = new User(userId, "Joel", "joel@gmail.com", "hashedPassword",
-        true,
-        Role.COMMON, null, null);
 
     CategoryUpdateDTO categoryUpdateDTO = new CategoryUpdateDTO("Health");
     CategoryPersist categoryPersist = new CategoryPersist(categoryId, "Food", userPersist, null,
         Instant.now(), Instant.now());
-    Category domainCategory = new Category(categoryId, "Food", domainUser, null);
+    Category domainCategory = Category.builder()
+            .id(categoryId)
+            .name("Food")
+            .userId(userId)
+            .build();
     CategoryPersist updatedCategory = new CategoryPersist(categoryId, "Health", userPersist, null,
         Instant.now(), Instant.now());
     CategoryResponseDTO categoryUpdatedResponse = new CategoryResponseDTO(categoryId, "Health");
@@ -220,7 +233,6 @@ null, null);
     assertThat(response).isNotNull();
     assertThat(response.name()).isEqualTo("Health");
 
-    verify(userRepository, times(1)).findById(userId);
     verify(categoryRepository, times(1)).findByIdAndUserId(userId, categoryId);
     verify(categoryMapper, times(1)).toDomain(any(CategoryPersist.class));
     verify(categoryMapper, times(1)).toPersist(any(Category.class));
@@ -273,5 +285,6 @@ null, null);
 
     verify(categoryRepository, times(1)).findByIdAndUserId(categoryId, userId);
   }
+
 
 }

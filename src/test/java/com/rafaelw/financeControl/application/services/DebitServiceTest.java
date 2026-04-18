@@ -24,6 +24,8 @@ import com.rafaelw.financeControl.domain.entities.User;
 import com.rafaelw.financeControl.domain.entities.enums.Role;
 import com.rafaelw.financeControl.domain.factories.DebitFactory;
 import com.rafaelw.financeControl.domain.services.GetTotalSumDebits;
+import com.rafaelw.financeControl.domain.valueObjects.Email;
+import com.rafaelw.financeControl.domain.valueObjects.Password;
 import com.rafaelw.financeControl.infra.persist.entities.CategoryPersist;
 import com.rafaelw.financeControl.infra.persist.entities.DebitPersist;
 import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
@@ -94,10 +96,20 @@ class DebitServiceTest {
 
     UserPersist userPersist = new UserPersist(1L, "Joel", "joel@gmail.com", "hashedPassword", true,
         Role.COMMON, null, null, Instant.now(), Instant.now());
-    User domainUser = new User(1L, "Joel", "joel@gmail.com", "hashedPassword", true,
-        Role.COMMON, null, null);
+    User domainUser = User.builder()
+            .id(userId)
+            .name("Joel")
+            .email(new Email("joel@gmail.com"))
+            .password(new Password("hashedPassword"))
+            .active(true)
+            .role(Role.COMMON)
+            .build();
 
-    Debit createdDebit = new Debit(domainUser, "Pizza", BigDecimal.valueOf(50.00));
+    Debit createdDebit = Debit.builder()
+            .userId(userId)
+            .name("Pizza")
+            .amount(BigDecimal.valueOf(50.00))
+            .build();
     DebitPersist debitPersist = new DebitPersist(1L, "Pizza", BigDecimal.valueOf(50.00),
         moment, userPersist, null, Instant.now(), null);
     DebitResponseDTO debitResponse = new DebitResponseDTO(1L, "Pizza", BigDecimal.valueOf(50.00),
@@ -105,7 +117,7 @@ class DebitServiceTest {
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(userPersist));
     when(userMapper.toDomain(userPersist)).thenReturn(domainUser);
-    when(debitFactory.create(domainUser, debitRequest.name(), debitRequest.amount())).thenReturn(
+    when(debitFactory.create(userId, debitRequest.name(), debitRequest.amount())).thenReturn(
         createdDebit);
     when(debitMapper.toPersist(createdDebit)).thenReturn(debitPersist);
     when(debitRepository.save(debitPersist)).thenReturn(debitPersist);
@@ -121,7 +133,7 @@ class DebitServiceTest {
 
     verify(userRepository, times(1)).findById(userId);
     verify(userMapper, times(1)).toDomain(any(UserPersist.class));
-    verify(debitFactory, times(1)).create(any(), any(), any());
+    verify(debitFactory, times(1)).create(userId, debitRequest.name(), debitRequest.amount());
     verify(debitMapper, times(1)).toPersist(any(Debit.class));
     verify(debitMapper, times(1)).toResponse(any(DebitPersist.class));
     verify(debitRepository, times(1)).save(any(DebitPersist.class));
@@ -142,17 +154,30 @@ class DebitServiceTest {
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
         Role.COMMON, null, null, Instant.now(), null);
-    User domainUser = new User(userId, "Joel", "joel@gmail.com", "hashedPassword", true,
-        Role.COMMON, null, null);
+    User domainUser = User.builder()
+            .id(userId)
+            .name("Joel")
+            .email(new Email("joel@gmail.com"))
+            .password(new Password("hashedPassword"))
+            .active(true)
+            .role(Role.COMMON)
+            .build();
 
     CategoryPersist categoryPersist = new CategoryPersist(categoryId, "Food", userPersist, null,
         Instant.now(), Instant.now());
-    Category domainCategory = new Category(categoryId, "Food", domainUser, null);
+    Category domainCategory = Category.builder()
+            .id(categoryId)
+            .name("Food")
+            .userId(userId)
+            .build();
 
     userPersist.setCategories(Set.of(categoryPersist));
-    domainUser.setCategories(Set.of(domainCategory));
 
-    Debit createdDebit = new Debit(domainUser, "Pizza", amount, domainCategory);
+    Debit createdDebit = Debit.builder()
+            .userId(userId)
+            .name("Pizza")
+            .amount(amount)
+            .build();
     DebitPersist debitPersist = new DebitPersist(debitId, "Pizza", amount,
         moment, userPersist, categoryPersist, Instant.now(), Instant.now());
     DebitResponseDTO debitResponse = new DebitResponseDTO(debitId, "Pizza",
@@ -161,10 +186,11 @@ class DebitServiceTest {
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(userPersist));
     when(userMapper.toDomain(userPersist)).thenReturn(domainUser);
-    when(debitFactory.create(domainUser, debitRequest.name(), debitRequest.amount())).thenReturn(
+    when(debitFactory.create(userId, debitRequest.name(), debitRequest.amount())).thenReturn(
         createdDebit);
     when(categoryRepository.findByIdAndUserId(categoryId, userId)).thenReturn(
         Optional.of(categoryPersist));
+    when(categoryMapper.toDomain(categoryPersist)).thenReturn(domainCategory);
     when(debitMapper.toPersist(createdDebit)).thenReturn(debitPersist);
     when(debitRepository.save(debitPersist)).thenReturn(debitPersist);
     when(debitMapper.toResponse(debitPersist)).thenReturn(debitResponse);
@@ -179,7 +205,7 @@ class DebitServiceTest {
 
     verify(userRepository, times(1)).findById(userId);
     verify(userMapper, times(1)).toDomain(any(UserPersist.class));
-    verify(debitFactory, times(1)).create(any(), any(), any());
+    verify(debitFactory, times(1)).create(userId, debitRequest.name(), debitRequest.amount());
     verify(categoryRepository, times(1)).findByIdAndUserId(any(), any());
     verify(debitMapper, times(1)).toPersist(any(Debit.class));
     verify(debitMapper, times(1)).toResponse(any(DebitPersist.class));
@@ -199,8 +225,14 @@ class DebitServiceTest {
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
         Role.COMMON, null, null, Instant.now(), Instant.now());
-    User domainUser = new User(userId, "Joel", "joel@gmail.com", "hashedPassword", true,
-        Role.COMMON, null, null);
+    User domainUser = User.builder()
+            .id(userId)
+            .name("Joel")
+            .email(new Email("joel@gmail.com"))
+            .password(new Password("hashedPassword"))
+            .active(true)
+            .role(Role.COMMON)
+            .build();
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(userPersist));
     when(userMapper.toDomain(userPersist)).thenReturn(domainUser);
@@ -329,16 +361,18 @@ class DebitServiceTest {
     UserPersist persistUser = new UserPersist(userId, "Joel", "joel@gmail.com",
         "hashedPassword", true, Role.ADMIN,
         null, null, Instant.now(), null);
-    User domainUser = new User(userId, "Joel", "joel@gmail.com",
-        "hashedPassword", true, Role.ADMIN,
-        null, null);
 
     DebitUpdateDTO debitUpdateDTO = new DebitUpdateDTO("Parmigiana", null, null);
 
     DebitPersist persistDebit = new DebitPersist(debitId, "Pizza", amount,
         moment, persistUser, null, Instant.now(), Instant.now());
-    Debit domainDebit = new Debit(debitId, "Pizza", amount,
-        moment, domainUser, null);
+    Debit domainDebit = Debit.builder()
+            .id(debitId)
+            .name("Pizza")
+            .amount(amount)
+            .moment(moment)
+            .userId(userId)
+            .build();
     DebitPersist debitUpdated = new DebitPersist(debitId, "Parmigiana", amount,
         moment, persistUser, null, Instant.now(), Instant.now());
     DebitResponseDTO debitResponse = new DebitResponseDTO(debitId, "Parmigiana", amount, moment,
@@ -373,9 +407,6 @@ class DebitServiceTest {
     UserPersist persistUser = new UserPersist(userId, "Joel", "joel@gmail.com",
         "hashedPassword", true, Role.ADMIN,
         null, null, Instant.now(), null);
-    User domainUser = new User(userId, "Joel", "joel@gmail.com",
-        "hashedPassword", true, Role.ADMIN,
-        null, null);
 
     DebitUpdateDTO debitUpdateDTO = new DebitUpdateDTO("Parmigiana", null, null);
 
@@ -398,6 +429,7 @@ class DebitServiceTest {
   void deleteDebit() {
 
     Long userId = 1L;
+    Long categoryId = 1L;
     Long debitId = 1L;
 
     UserPersist persistUser = new UserPersist(userId, "Joel", "joel@gmail.com",
