@@ -75,8 +75,8 @@ class CategoryServiceTest {
     UserPersist userPersist = new UserPersist(userId, "Joel", "joel@gmail.com", "hashedPassword",
         true,
         Role.COMMON, null, null, Instant.now(), Instant.now());
-    User domainUser = new User(userId, "Joel", "joel@gmail.com", "hashedPassword", true,
-        Role.COMMON, null, null);
+    User domainUser = new User(userId, "Joel", "joel@gmail.com", "hashedPassword",
+null, null);
 
     CategoryRequestDTO categoryRequestDTO = new CategoryRequestDTO(categoryName);
     Category domainCategory = new Category(categoryId, categoryName, domainUser, null);

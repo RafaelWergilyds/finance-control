@@ -4,15 +4,10 @@ import com.rafaelw.financeControl.application.dto.category.CategoryResponseDTO;
 import com.rafaelw.financeControl.domain.entities.Category;
 import com.rafaelw.financeControl.infra.persist.entities.CategoryPersist;
 import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
-import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CategoryMapper {
-
-  @Autowired
-  private JpaUserRepository userRepository;
 
   public CategoryResponseDTO toResponseDTO(CategoryPersist categoryPersist) {
     return new CategoryResponseDTO(categoryPersist.getId(), categoryPersist.getName());

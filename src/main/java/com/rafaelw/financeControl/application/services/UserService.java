@@ -30,9 +30,6 @@ public class UserService {
   private UserMapper userMapper;
 
   @Autowired
-  private UserFactory userFactory;
-
-  @Autowired
   private PasswordEncoder passwordEncoder;
 
   @Transactional(readOnly = true)
@@ -54,8 +51,7 @@ public class UserService {
   @Transactional
   public UserResponseDTO create(UserRequestDTO data) {
     verifyUserByEmail.execute(data.email());
-    User user = userFactory.create(data.name(), data.email(),
-        passwordEncoder.encode(data.password()));
+    User user = UserFactory.create(data.name(), data.email(), data.password(), passwordEncoder);
 
     UserPersist userPersist = userMapper.toPersist(user);
     UserPersist savedUser = userRepository.save(userPersist);

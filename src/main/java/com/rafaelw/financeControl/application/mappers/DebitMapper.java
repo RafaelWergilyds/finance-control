@@ -6,14 +6,10 @@ import com.rafaelw.financeControl.domain.entities.Debit;
 import com.rafaelw.financeControl.infra.persist.entities.CategoryPersist;
 import com.rafaelw.financeControl.infra.persist.entities.DebitPersist;
 import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DebitMapper {
-
-  @Autowired
-  private UserMapper userMapper;
 
   public DebitResponseDTO toResponse(DebitPersist debitPersist) {
     Long categoryId = debitPersist.getCategory() != null ? debitPersist.getCategory().getId() : null;

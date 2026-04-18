@@ -9,22 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper {
 
-    public User toDomain(UserRequestDTO requestDTO){
-        User user = new User();
-
-        user.setName(requestDTO.name());
-        user.changeEmail(requestDTO.email());
-        user.setPassword(requestDTO.password());
-        return user;
-    }
-
     public User toDomain(UserPersist userPersist){
         User user = new User();
 
         user.setId(userPersist.getId());
         user.setName(userPersist.getName());
         user.changeEmail(userPersist.getEmail());
-        user.setPassword(userPersist.getPassword());
+        user.changePassword(userPersist.getPassword());
         return user;
     }
 

@@ -2,6 +2,7 @@ package com.rafaelw.financeControl.domain.entities;
 
 import com.rafaelw.financeControl.domain.entities.enums.Role;
 import com.rafaelw.financeControl.domain.valueObjects.Email;
+import com.rafaelw.financeControl.domain.valueObjects.Password;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,26 +21,16 @@ public class User{
   private Long id;
   private String name;
   private Email email;
-  private String password;
+  private Password password;
   private boolean active = true;
 
   private Role role;
 
-  public User(String name, String email, String password) {
+  public User(String name, Email email, Password password) {
     this.name = name;
-    this.email = new Email(email);
+    this.email = email;
     this.password = password;
     this.role = Role.COMMON;
-  }
-
-  public static User create(String name, String email, String password) {
-    if (name == null || name.isBlank()) {
-      throw new IllegalArgumentException("Name is required");
-    }
-    if (password == null || password.length() < 8) {
-      throw new IllegalArgumentException("Password must be at least 8 characters long");
-    }
-    return new User(name, email, password);
   }
 
   public void changeName(String name) {
@@ -53,23 +44,25 @@ public class User{
   }
 
   public void changeEmail(String email) {
-    if (this.email != null && this.email.getEmail().equals(email)){
+    if (this.email != null && this.email.email().equals(email)){
       return;
     }
 
     this.email = new Email(email);
   }
 
-  public void changePassword(String password) {
-    if (password == null || password.length() < 8) {
-      throw new IllegalArgumentException("Password must be at least 8 characters long");
-    }
-    this.password = password;
+  public String getEmail(){
+    return this.email.email();
   }
 
-  public String getEmail(){
-    return this.email.getEmail();
+  public String getPassword(){
+    return this.password.hashedPassword();
   }
+
+  public void changePassword(String newPassword) {
+    this.password = new Password(newPassword);
+  }
+
 
   public void activateUser() {
     this.active = true;
