@@ -40,3 +40,7 @@ O projeto segue alguns **princípios de DDD (Domain-Driven Design)**, com foco e
 O projeto conta com:
 - **Testes unitários**, para validar regras de negócio isoladamente;  
 - **Testes de integração e E2E**, garantindo o correto funcionamento entre os módulos e endpoints
+
+Para iniciar o ambiente de desenvolvimento, execute o comando abaixo:
+```bash
+docker-compose -f docker-compose.dev.yml up -d
