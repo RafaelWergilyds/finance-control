@@ -13,19 +13,19 @@ import com.rafaelw.financeControl.application.services.exceptions.DebitNotFoundE
 import com.rafaelw.financeControl.application.services.exceptions.UserNotFoundException;
 import com.rafaelw.financeControl.application.utils.PaginatedResponse;
 import com.rafaelw.financeControl.application.utils.Pagination;
-import com.rafaelw.financeControl.domain.entities.Category;
-import com.rafaelw.financeControl.domain.entities.Debit;
-import com.rafaelw.financeControl.domain.entities.User;
+import com.rafaelw.financeControl.domain.model.entities.Category;
+import com.rafaelw.financeControl.domain.model.entities.Debit;
+import com.rafaelw.financeControl.domain.model.entities.User;
 import com.rafaelw.financeControl.domain.factories.DebitFactory;
 import com.rafaelw.financeControl.domain.services.GetTotalSumDebits;
-import com.rafaelw.financeControl.infra.persist.entities.CategoryPersist;
-import com.rafaelw.financeControl.infra.persist.entities.DebitPersist;
-import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
-import com.rafaelw.financeControl.infra.persist.repository.JpaCategoryRepository;
-import com.rafaelw.financeControl.infra.persist.repository.JpaDebitRepository;
-import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
-import com.rafaelw.financeControl.infra.persist.repository.specifications.DebitSpecification;
-import com.rafaelw.financeControl.infra.persist.repository.specifications.SpecificationUtil;
+import com.rafaelw.financeControl.infra.persistence.entities.CategoryPersist;
+import com.rafaelw.financeControl.infra.persistence.entities.DebitPersist;
+import com.rafaelw.financeControl.infra.persistence.entities.UserPersist;
+import com.rafaelw.financeControl.infra.persistence.repository.JpaCategoryRepository;
+import com.rafaelw.financeControl.infra.persistence.repository.JpaDebitRepository;
+import com.rafaelw.financeControl.infra.persistence.repository.JpaUserRepository;
+import com.rafaelw.financeControl.infra.persistence.repository.specifications.DebitSpecification;
+import com.rafaelw.financeControl.infra.persistence.repository.specifications.SpecificationUtil;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -78,7 +78,10 @@ public class DebitService {
     userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
-    Specification<DebitPersist> spec = filterDebit(userId, filter);
+    Specification<DebitPersist> spec = (root, query, cb) ->
+            cb.equal(root.get("user").get("id"), userId);
+
+    spec = spec.and(DebitSpecification.addFilter(filter));
 
     return Pagination.paginate(debitRepository,
         spec, pageSize, cursor, debitMapper::toResponse, "id");
@@ -145,9 +148,12 @@ public class DebitService {
     userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
-    Specification<DebitPersist> debitSpec = filterDebit(userId, filter);
+    Specification<DebitPersist> spec = (root, query, cb) ->
+            cb.equal(root.get("user").get("id"), userId);
 
-    List<DebitPersist> debitPersists = debitRepository.findAll(debitSpec);
+    spec = spec.and(DebitSpecification.addFilter(filter));
+
+    List<DebitPersist> debitPersists = debitRepository.findAll(spec);
     List<Debit> debits = debitPersists.stream()
         .map(debitPersist -> debitMapper.toDomain(debitPersist)).toList();
 
@@ -161,38 +167,6 @@ public class DebitService {
 
     Category category = categoryMapper.toDomain(categoryPersist);
     debit.setCategoryId(category.getId());
-  }
-
-  private Specification<DebitPersist> filterDebit(Long userId, DebitFilterDTO filter) {
-    Specification<DebitPersist> spec = SpecificationUtil.empty();
-    spec = spec.and(DebitSpecification.findByUserId(userId));
-
-    if (filter.categoryId() != null) {
-      spec = spec.and(DebitSpecification.findByCategoryId(filter.categoryId()));
-    }
-    if (filter.categoryName() != null) {
-      spec = spec.and(DebitSpecification.findByCategoryName(filter.categoryName()));
-    }
-    if (filter.minAmount() != null && filter.minAmount().compareTo(BigDecimal.ZERO) >= 0) {
-      spec = spec.and(
-          DebitSpecification.hasAmountGreaterThanOrEqualsTo(filter.minAmount()));
-    }
-    if (filter.maxAmount() != null && filter.maxAmount().compareTo(BigDecimal.ZERO) >= 0) {
-      spec = spec.and(DebitSpecification.hasAmountLessThanEqualsTo(filter.maxAmount()));
-    }
-    if (filter.until() != null) {
-      LocalDate localDate = LocalDate.parse(filter.until());
-      ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneOffset.UTC);
-      Instant moment = zonedDateTime.toInstant();
-      spec = spec.and(DebitSpecification.findPreviousDebitMoment(moment));
-    }
-    if (filter.since() != null) {
-      LocalDate localDate = LocalDate.parse(filter.since());
-      ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneOffset.UTC);
-      Instant moment = zonedDateTime.toInstant();
-      spec = spec.and(DebitSpecification.findNextDebitMoment(moment));
-    }
-    return spec;
   }
 
 }

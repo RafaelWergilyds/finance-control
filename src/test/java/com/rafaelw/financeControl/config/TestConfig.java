@@ -1,12 +1,12 @@
 package com.rafaelw.financeControl.config;
 
-import com.rafaelw.financeControl.domain.entities.enums.Role;
-import com.rafaelw.financeControl.infra.persist.entities.CategoryPersist;
-import com.rafaelw.financeControl.infra.persist.entities.DebitPersist;
-import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
-import com.rafaelw.financeControl.infra.persist.repository.JpaCategoryRepository;
-import com.rafaelw.financeControl.infra.persist.repository.JpaDebitRepository;
-import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
+import com.rafaelw.financeControl.domain.model.entities.enums.Role;
+import com.rafaelw.financeControl.infra.persistence.entities.CategoryPersist;
+import com.rafaelw.financeControl.infra.persistence.entities.DebitPersist;
+import com.rafaelw.financeControl.infra.persistence.entities.UserPersist;
+import com.rafaelw.financeControl.infra.persistence.repository.JpaCategoryRepository;
+import com.rafaelw.financeControl.infra.persistence.repository.JpaDebitRepository;
+import com.rafaelw.financeControl.infra.persistence.repository.JpaUserRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.rafaelw.financeControl.domain.services;
 
-import com.rafaelw.financeControl.domain.entities.Debit;
+import com.rafaelw.financeControl.domain.model.entities.Debit;
 import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Service;

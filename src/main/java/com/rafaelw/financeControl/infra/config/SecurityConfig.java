@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.application.config.security;
+package com.rafaelw.financeControl.infra.config;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;

@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+
+import com.rafaelw.financeControl.domain.model.entities.Debit;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

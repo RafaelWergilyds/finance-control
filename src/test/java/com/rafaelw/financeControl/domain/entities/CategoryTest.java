@@ -3,6 +3,7 @@ package com.rafaelw.financeControl.domain.entities;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.rafaelw.financeControl.domain.model.entities.Category;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

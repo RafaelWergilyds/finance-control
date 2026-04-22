@@ -2,8 +2,8 @@ package com.rafaelw.financeControl.application.services;
 
 import com.rafaelw.financeControl.application.services.exceptions.EmailNotRegisteredException;
 import com.rafaelw.financeControl.application.services.exceptions.WrongPasswordException;
-import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
-import com.rafaelw.financeControl.infra.persist.repository.JpaUserRepository;
+import com.rafaelw.financeControl.infra.persistence.entities.UserPersist;
+import com.rafaelw.financeControl.infra.persistence.repository.JpaUserRepository;
 import java.time.Instant;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;

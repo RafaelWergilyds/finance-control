@@ -3,9 +3,10 @@ package com.rafaelw.financeControl.domain.entities;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.rafaelw.financeControl.domain.entities.enums.Role;
-import com.rafaelw.financeControl.domain.valueObjects.Email;
-import com.rafaelw.financeControl.domain.valueObjects.Password;
+import com.rafaelw.financeControl.domain.model.entities.User;
+import com.rafaelw.financeControl.domain.model.entities.enums.Role;
+import com.rafaelw.financeControl.domain.model.valueObjects.Email;
+import com.rafaelw.financeControl.domain.model.valueObjects.Password;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

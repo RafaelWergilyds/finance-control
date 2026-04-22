@@ -1,6 +1,6 @@
-package com.rafaelw.financeControl.infra.persist.entities;
+package com.rafaelw.financeControl.infra.persistence.entities;
 
-import com.rafaelw.financeControl.domain.entities.enums.Role;
+import com.rafaelw.financeControl.domain.model.entities.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

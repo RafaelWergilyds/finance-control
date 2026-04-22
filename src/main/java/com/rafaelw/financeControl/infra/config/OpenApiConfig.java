@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.application.config.security;
+package com.rafaelw.financeControl.infra.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

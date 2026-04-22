@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.infra.persist.entities;
+package com.rafaelw.financeControl.infra.persistence.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

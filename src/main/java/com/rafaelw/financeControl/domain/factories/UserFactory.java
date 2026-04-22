@@ -1,8 +1,8 @@
 package com.rafaelw.financeControl.domain.factories;
 
-import com.rafaelw.financeControl.domain.entities.User;
-import com.rafaelw.financeControl.domain.valueObjects.Email;
-import com.rafaelw.financeControl.domain.valueObjects.Password;
+import com.rafaelw.financeControl.domain.model.entities.User;
+import com.rafaelw.financeControl.domain.model.valueObjects.Email;
+import com.rafaelw.financeControl.domain.model.valueObjects.Password;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

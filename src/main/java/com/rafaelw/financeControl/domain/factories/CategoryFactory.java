@@ -1,7 +1,6 @@
 package com.rafaelw.financeControl.domain.factories;
 
-import com.rafaelw.financeControl.domain.entities.Category;
-import com.rafaelw.financeControl.domain.entities.User;
+import com.rafaelw.financeControl.domain.model.entities.Category;
 import org.springframework.stereotype.Component;
 
 @Component

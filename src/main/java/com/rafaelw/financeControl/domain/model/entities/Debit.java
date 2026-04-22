@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.domain.entities;
+package com.rafaelw.financeControl.domain.model.entities;
 
 import java.math.BigDecimal;
 import java.time.Instant;

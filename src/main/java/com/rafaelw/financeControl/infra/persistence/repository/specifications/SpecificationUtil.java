@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.infra.persist.repository.specifications;
+package com.rafaelw.financeControl.infra.persistence.repository.specifications;
 
 import org.springframework.data.jpa.domain.Specification;
 

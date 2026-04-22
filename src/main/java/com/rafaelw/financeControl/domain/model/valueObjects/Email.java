@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.domain.valueObjects;
+package com.rafaelw.financeControl.domain.model.valueObjects;
 
 import lombok.*;
 

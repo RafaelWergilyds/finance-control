@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.domain.valueObjects;
+package com.rafaelw.financeControl.domain.model.valueObjects;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public record Password(String hashedPassword) {

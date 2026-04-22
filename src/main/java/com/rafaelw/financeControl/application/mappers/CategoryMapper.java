@@ -1,9 +1,9 @@
 package com.rafaelw.financeControl.application.mappers;
 
 import com.rafaelw.financeControl.application.dto.category.CategoryResponseDTO;
-import com.rafaelw.financeControl.domain.entities.Category;
-import com.rafaelw.financeControl.infra.persist.entities.CategoryPersist;
-import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
+import com.rafaelw.financeControl.domain.model.entities.Category;
+import com.rafaelw.financeControl.infra.persistence.entities.CategoryPersist;
+import com.rafaelw.financeControl.infra.persistence.entities.UserPersist;
 import org.springframework.stereotype.Component;
 
 @Component

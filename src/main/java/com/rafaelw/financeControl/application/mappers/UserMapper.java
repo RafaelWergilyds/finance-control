@@ -1,9 +1,8 @@
 package com.rafaelw.financeControl.application.mappers;
 
-import com.rafaelw.financeControl.application.dto.user.UserRequestDTO;
 import com.rafaelw.financeControl.application.dto.user.UserResponseDTO;
-import com.rafaelw.financeControl.domain.entities.User;
-import com.rafaelw.financeControl.infra.persist.entities.UserPersist;
+import com.rafaelw.financeControl.domain.model.entities.User;
+import com.rafaelw.financeControl.infra.persistence.entities.UserPersist;
 import org.springframework.stereotype.Component;
 
 @Component
