@@ -2,7 +2,6 @@ package com.rafaelw.financeControl.infra.persistence.repository.specifications;
 
 import com.rafaelw.financeControl.application.dto.debit.DebitFilterDTO;
 import com.rafaelw.financeControl.infra.persistence.entities.DebitPersist;
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
