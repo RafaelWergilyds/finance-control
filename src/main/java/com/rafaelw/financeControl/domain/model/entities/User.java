@@ -63,7 +63,6 @@ public class User{
     this.password = new Password(newPassword);
   }
 
-
   public void activateUser() {
     this.active = true;
   }

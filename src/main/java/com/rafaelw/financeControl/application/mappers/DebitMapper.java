@@ -1,11 +1,11 @@
 package com.rafaelw.financeControl.application.mappers;
 
-import com.rafaelw.financeControl.application.dto.debit.DebitResponseDTO;
+import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.DebitResponseDTO;
 import com.rafaelw.financeControl.domain.model.entities.Category;
 import com.rafaelw.financeControl.domain.model.entities.Debit;
-import com.rafaelw.financeControl.infra.persistence.entities.CategoryPersist;
-import com.rafaelw.financeControl.infra.persistence.entities.DebitPersist;
-import com.rafaelw.financeControl.infra.persistence.entities.UserPersist;
+import com.rafaelw.financeControl.infra.outbound.persistence.entities.CategoryPersist;
+import com.rafaelw.financeControl.infra.outbound.persistence.entities.DebitPersist;
+import com.rafaelw.financeControl.infra.outbound.persistence.entities.UserPersist;
 import org.springframework.stereotype.Component;
 
 @Component

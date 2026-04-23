@@ -1,6 +1,6 @@
 package com.rafaelw.financeControl.domain.repository;
 
-import com.rafaelw.financeControl.infra.persistence.entities.UserPersist;
+import com.rafaelw.financeControl.infra.outbound.persistence.entities.UserPersist;
 import java.util.Optional;
 
 public interface UserRepository {

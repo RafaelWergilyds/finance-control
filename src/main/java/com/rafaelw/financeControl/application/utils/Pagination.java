@@ -1,6 +1,6 @@
 package com.rafaelw.financeControl.application.utils;
 
-import com.rafaelw.financeControl.infra.persistence.entities.JpaEntity;
+import com.rafaelw.financeControl.infra.outbound.persistence.entities.JpaEntity;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

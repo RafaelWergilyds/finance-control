@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
-import com.rafaelw.financeControl.application.dto.auth.AuthenticationRequest;
+import com.rafaelw.financeControl.infra.inbound.rest.dto.auth.AuthenticationRequest;
 import com.rafaelw.financeControl.config.DBContainer;
 import com.rafaelw.financeControl.config.TestConfig;
 import io.restassured.RestAssured;

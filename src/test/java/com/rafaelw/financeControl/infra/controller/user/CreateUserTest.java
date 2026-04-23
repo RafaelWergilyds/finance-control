@@ -4,7 +4,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-import com.rafaelw.financeControl.application.dto.user.UserRequestDTO;
+import com.rafaelw.financeControl.infra.inbound.rest.dto.user.UserRequestDTO;
 import com.rafaelw.financeControl.config.DBContainer;
 import com.rafaelw.financeControl.config.TestConfig;
 import io.restassured.RestAssured;

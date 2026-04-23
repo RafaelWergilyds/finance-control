@@ -1,8 +1,7 @@
 package com.rafaelw.financeControl.application.mappers;
 
-import com.rafaelw.financeControl.application.dto.user.UserResponseDTO;
 import com.rafaelw.financeControl.domain.model.entities.User;
-import com.rafaelw.financeControl.infra.persistence.entities.UserPersist;
+import com.rafaelw.financeControl.infra.outbound.persistence.entities.UserPersist;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +14,7 @@ public class UserMapper {
         user.setName(userPersist.getName());
         user.changeEmail(userPersist.getEmail());
         user.changePassword(userPersist.getPassword());
+        user.setRole(userPersist.getRole());
         return user;
     }
 
@@ -25,10 +25,7 @@ public class UserMapper {
         userPersist.setName(user.getName());
         userPersist.setEmail(user.getEmail());
         userPersist.setPassword(user.getPassword());
+        userPersist.setRole(user.getRole());
         return userPersist;
-    }
-
-    public UserResponseDTO toResponseDTO(UserPersist userPersist){
-        return new UserResponseDTO(userPersist.getId(), userPersist.getName(), userPersist.getEmail(), userPersist.getRole(), userPersist.isActive());
     }
 }

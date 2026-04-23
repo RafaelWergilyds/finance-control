@@ -3,8 +3,8 @@ package com.rafaelw.financeControl.infra.controller.category;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
-import com.rafaelw.financeControl.application.dto.auth.AuthenticationRequest;
-import com.rafaelw.financeControl.application.dto.category.CategoryUpdateDTO;
+import com.rafaelw.financeControl.infra.inbound.rest.dto.auth.AuthenticationRequest;
+import com.rafaelw.financeControl.infra.inbound.rest.dto.category.CategoryUpdateDTO;
 import com.rafaelw.financeControl.config.DBContainer;
 import com.rafaelw.financeControl.config.TestConfig;
 import io.restassured.RestAssured;
