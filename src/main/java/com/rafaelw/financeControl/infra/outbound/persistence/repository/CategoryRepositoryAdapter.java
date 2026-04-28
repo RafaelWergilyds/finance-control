@@ -1,6 +1,6 @@
 package com.rafaelw.financeControl.infra.outbound.persistence.repository;
 
-import com.rafaelw.financeControl.application.mappers.CategoryMapper;
+import com.rafaelw.financeControl.infra.outbound.persistence.repository.mappers.CategoryMapper;
 import com.rafaelw.financeControl.application.ports.out.CategoryRepositoryPort;
 import com.rafaelw.financeControl.domain.model.entities.Category;
 import com.rafaelw.financeControl.infra.outbound.persistence.entities.CategoryPersist;
@@ -31,7 +31,7 @@ public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
     }
 
     @Override
-    public Optional<Category> findByIdAndUserId(Long userId, Long id) {
+    public Optional<Category> findByIdAndUserId(Long id, Long userId) {
         return jpaCategoryRepository.findByIdAndUserId(id, userId).map(categoryMapper::toDomain);
     }
 

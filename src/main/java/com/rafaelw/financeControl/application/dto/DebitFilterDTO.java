@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.infra.inbound.rest.dto.debit;
+package com.rafaelw.financeControl.application.dto;
 
 import java.math.BigDecimal;
 

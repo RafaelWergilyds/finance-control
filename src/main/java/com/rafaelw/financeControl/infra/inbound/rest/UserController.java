@@ -4,7 +4,7 @@ import com.rafaelw.financeControl.infra.inbound.rest.dto.user.UserRequestDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.user.UserResponseDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.user.UserUpdateDTO;
 import com.rafaelw.financeControl.application.service.UserServiceImpl;
-import com.rafaelw.financeControl.application.utils.SecurityUtils;
+import com.rafaelw.financeControl.infra.inbound.rest.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,6 +29,13 @@ public class UserController {
   @Autowired
   private UserServiceImpl userService;
 
+  @Operation(summary = "Create User", description = "Create a user with name, email and password")
+  @PostMapping
+  public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserRequestDTO data) {
+    var user = userService.create(data.name(), data.email(), data.password());
+    return ResponseEntity.ok(UserResponseDTO.fromDomain(user));
+  }
+
   @Operation(summary = "Find Users", description = "Search for all users in the system")
   @GetMapping
   public ResponseEntity<List<UserResponseDTO>> findAll() {
@@ -45,12 +52,6 @@ public class UserController {
             .orElse(ResponseEntity.notFound().build());
   }
 
-  @Operation(summary = "Create User", description = "Create a user with name, email and password")
-  @PostMapping
-  public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserRequestDTO data) {
-    var user = userService.create(data.name(), data.email(), data.password());
-    return ResponseEntity.ok(UserResponseDTO.fromDomain(user));
-  }
 
   @Operation(summary = "Update User", description = "Update the fields of an existing user by id ")
   @PutMapping("/{id}")

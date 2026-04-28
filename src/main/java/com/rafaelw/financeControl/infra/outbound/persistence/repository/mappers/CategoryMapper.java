@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.application.mappers;
+package com.rafaelw.financeControl.infra.outbound.persistence.repository.mappers;
 
 import com.rafaelw.financeControl.infra.inbound.rest.dto.category.CategoryResponseDTO;
 import com.rafaelw.financeControl.domain.model.entities.Category;

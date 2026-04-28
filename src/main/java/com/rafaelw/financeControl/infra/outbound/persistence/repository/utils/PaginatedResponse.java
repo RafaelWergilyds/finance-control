@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.application.utils;
+package com.rafaelw.financeControl.infra.outbound.persistence.repository.utils;
 
 import java.util.List;
 

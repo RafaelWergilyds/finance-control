@@ -5,7 +5,7 @@ import com.rafaelw.financeControl.infra.inbound.rest.dto.category.CategoryReques
 import com.rafaelw.financeControl.infra.inbound.rest.dto.category.CategoryResponseDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.category.CategoryUpdateDTO;
 import com.rafaelw.financeControl.application.service.CategoryServiceImpl;
-import com.rafaelw.financeControl.application.utils.SecurityUtils;
+import com.rafaelw.financeControl.infra.inbound.rest.utils.SecurityUtils;
 import java.util.List;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +29,16 @@ public class CategoryController {
   @Autowired
   private CategoryServiceImpl categoryService;
 
+  @Operation(summary = "Create Category", description = "Creates a new category for the authenticated user")
+  @PostMapping
+  public ResponseEntity<CategoryResponseDTO> create(Authentication authentication,
+                                                    @RequestBody CategoryRequestDTO data) {
+    Long userId = SecurityUtils.getUserId(authentication);
+    Category category = categoryService.create(userId, data.name());
+
+    return ResponseEntity.ok().body(CategoryResponseDTO.fromDomain(category));
+  }
+
   @Operation(summary = "Find Category by ID", description = "Finds a category by its ID for the authenticated user")
   @GetMapping("/{categoryId}")
   public ResponseEntity<CategoryResponseDTO> findById(Authentication authentication,
@@ -50,15 +60,6 @@ public class CategoryController {
     return ResponseEntity.ok().body(list.stream().map(CategoryResponseDTO::fromDomain).toList());
   }
 
-  @Operation(summary = "Create Category", description = "Creates a new category for the authenticated user")
-  @PostMapping
-  public ResponseEntity<CategoryResponseDTO> createCategory(Authentication authentication,
-      @RequestBody CategoryRequestDTO data) {
-    Long userId = SecurityUtils.getUserId(authentication);
-    Category category = categoryService.create(userId, data.name());
-
-    return ResponseEntity.ok().body(CategoryResponseDTO.fromDomain(category));
-  }
 
   @Operation(summary = "Update Category", description = "Updates an existing category for the authenticated user")
   @PutMapping("/{categoryId}")

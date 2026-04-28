@@ -1,6 +1,6 @@
 package com.rafaelw.financeControl.infra.inbound.rest.headers;
 
-import com.rafaelw.financeControl.application.utils.PaginatedResponse;
+import com.rafaelw.financeControl.infra.outbound.persistence.repository.utils.PaginatedResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 

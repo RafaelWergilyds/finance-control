@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.application.utils;
+package com.rafaelw.financeControl.infra.inbound.rest.utils;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;

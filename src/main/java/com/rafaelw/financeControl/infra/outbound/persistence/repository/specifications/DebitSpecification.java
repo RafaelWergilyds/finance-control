@@ -1,6 +1,6 @@
 package com.rafaelw.financeControl.infra.outbound.persistence.repository.specifications;
 
-import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.DebitFilterDTO;
+import com.rafaelw.financeControl.application.dto.DebitFilterDTO;
 import com.rafaelw.financeControl.infra.outbound.persistence.entities.DebitPersist;
 import java.time.Instant;
 import java.time.LocalDate;

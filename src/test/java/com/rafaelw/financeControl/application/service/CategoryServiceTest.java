@@ -75,7 +75,7 @@ class CategoryServiceTest {
             .userId(userId)
             .build();
 
-    when(categoryRepositoryPort.findByIdAndUserId(categoryId, userId)).thenReturn(
+    when(categoryRepositoryPort.findByIdAndUserId(userId, categoryId)).thenReturn(
         Optional.of(domainCategory));
 
     Optional<Category> response = service.findById(userId, categoryId);
@@ -83,7 +83,7 @@ class CategoryServiceTest {
     assertThat(response).isPresent();
     assertThat(response.get().getName()).isEqualTo(categoryName);
 
-    verify(categoryRepositoryPort, times(1)).findByIdAndUserId(categoryId, userId);
+    verify(categoryRepositoryPort, times(1)).findByIdAndUserId(userId, categoryId);
   }
 
   @Test
@@ -92,13 +92,13 @@ class CategoryServiceTest {
     Long userId = 1L;
     Long categoryId = 1L;
 
-    when(categoryRepositoryPort.findByIdAndUserId(categoryId, userId)).thenReturn(Optional.empty());
+    when(categoryRepositoryPort.findByIdAndUserId(userId, categoryId)).thenReturn(Optional.empty());
 
     Optional<Category> response = service.findById(userId, categoryId);
 
     assertThat(response).isEmpty();
 
-    verify(categoryRepositoryPort, times(1)).findByIdAndUserId(categoryId, userId);
+    verify(categoryRepositoryPort, times(1)).findByIdAndUserId(userId, categoryId);
   }
 
   @Test
@@ -134,7 +134,7 @@ class CategoryServiceTest {
             .userId(userId)
             .build();
 
-    when(categoryRepositoryPort.findByIdAndUserId(categoryId, userId)).thenReturn(
+    when(categoryRepositoryPort.findByIdAndUserId(userId, categoryId)).thenReturn(
         Optional.of(domainCategory));
     when(categoryRepositoryPort.save(any(Category.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -143,7 +143,7 @@ class CategoryServiceTest {
     assertThat(response).isPresent();
     assertThat(response.get().getName()).isEqualTo(newName);
 
-    verify(categoryRepositoryPort, times(1)).findByIdAndUserId(categoryId, userId);
+    verify(categoryRepositoryPort, times(1)).findByIdAndUserId(userId, categoryId);
     verify(categoryRepositoryPort, times(1)).save(any(Category.class));
   }
 
@@ -159,13 +159,13 @@ class CategoryServiceTest {
             .userId(userId)
             .build();
 
-    when(categoryRepositoryPort.findByIdAndUserId(categoryId, userId)).thenReturn(
+    when(categoryRepositoryPort.findByIdAndUserId(userId, categoryId)).thenReturn(
         Optional.of(domainCategory));
     doNothing().when(categoryRepositoryPort).delete(categoryId);
 
     service.delete(userId, categoryId);
 
-    verify(categoryRepositoryPort, times(1)).findByIdAndUserId(categoryId, userId);
+    verify(categoryRepositoryPort, times(1)).findByIdAndUserId(userId, categoryId);
     verify(categoryRepositoryPort, times(1)).delete(categoryId);
   }
 }

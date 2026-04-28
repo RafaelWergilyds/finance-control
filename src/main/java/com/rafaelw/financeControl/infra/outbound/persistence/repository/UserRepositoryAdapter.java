@@ -1,6 +1,6 @@
 package com.rafaelw.financeControl.infra.outbound.persistence.repository;
 
-import com.rafaelw.financeControl.application.mappers.UserMapper;
+import com.rafaelw.financeControl.infra.outbound.persistence.repository.mappers.UserMapper;
 import com.rafaelw.financeControl.application.ports.out.UserRepositoryPort;
 import com.rafaelw.financeControl.domain.model.entities.User;
 import com.rafaelw.financeControl.infra.outbound.persistence.entities.UserPersist;

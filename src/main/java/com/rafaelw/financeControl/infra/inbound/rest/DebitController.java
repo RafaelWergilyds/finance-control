@@ -1,14 +1,17 @@
 package com.rafaelw.financeControl.infra.inbound.rest;
 
-import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.DebitFilterDTO;
+import com.rafaelw.financeControl.application.dto.DebitFilterDTO;
+import com.rafaelw.financeControl.domain.model.entities.Debit;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.DebitRequestDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.DebitResponseDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.DebitUpdateDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.TotalDebitsResponse;
-import com.rafaelw.financeControl.application.service.DebitService;
-import com.rafaelw.financeControl.application.utils.PaginatedResponse;
-import com.rafaelw.financeControl.application.utils.SecurityUtils;
+import com.rafaelw.financeControl.application.service.DebitServiceImpl;
+import com.rafaelw.financeControl.infra.outbound.persistence.repository.utils.PaginatedResponse;
+import com.rafaelw.financeControl.infra.inbound.rest.utils.SecurityUtils;
 import com.rafaelw.financeControl.infra.inbound.rest.headers.PaginationHeader;
+
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 
@@ -34,18 +37,29 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class DebitController {
 
   @Autowired
-  private DebitService debitService;
+  private DebitServiceImpl debitService;
 
   @Autowired
   private PaginationHeader paginationHeader;
+
+  @Operation(summary = "Create Debit", description = "Create a debit for the user")
+  @PostMapping
+  public ResponseEntity<DebitResponseDTO> create(Authentication authentication,
+      @RequestBody DebitRequestDTO data) {
+    Long userId = SecurityUtils.getUserId(authentication);
+    Debit debit = debitService.create(userId, data.name(), data.amount(), data.categoryId());
+    return ResponseEntity.ok().body(DebitResponseDTO.fromDomain(debit));
+  }
 
   @Operation(summary = "Find by Id", description = "find a debit by id")
   @GetMapping(value = "/{debitId}")
   public ResponseEntity<DebitResponseDTO> findById(Authentication authentication,
       @PathVariable Long debitId) {
     Long userId = SecurityUtils.getUserId(authentication);
-    DebitResponseDTO response = debitService.findById(userId, debitId);
-    return ResponseEntity.ok().body(response);
+    return debitService.findById(userId,debitId)
+            .map(DebitResponseDTO::fromDomain)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
   }
 
   @Operation(summary = "Find All User's Debit", description = "Find the user's debit registered")
@@ -54,22 +68,17 @@ public class DebitController {
       Authentication authentication,
       DebitFilterDTO filter, Integer pageSize, Long cursor) {
     Long userId = SecurityUtils.getUserId(authentication);
-    PaginatedResponse<DebitResponseDTO> response = debitService.findAll(userId, filter,
+    PaginatedResponse<Debit> response = debitService.findAll(userId, filter,
         pageSize, cursor);
     HttpHeaders responseHeaders = paginationHeader.execute(response);
-    return ResponseEntity.ok().headers(responseHeaders).body(response.data());
+    return ResponseEntity.ok().headers(responseHeaders)
+            .body(response
+                    .data()
+                    .stream()
+                    .map(DebitResponseDTO::fromDomain)
+                    .toList());
   }
 
-  @Operation(summary = "Create Debit", description = "Create a debit for the user")
-  @PostMapping
-  public ResponseEntity<DebitResponseDTO> createDebit(Authentication authentication,
-      @RequestBody DebitRequestDTO data) {
-    Long userId = SecurityUtils.getUserId(authentication);
-    DebitResponseDTO response = debitService.create(userId, data);
-    URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{debitId}")
-        .buildAndExpand(response.id()).toUri();
-    return ResponseEntity.created(uri).body(response);
-  }
 
   @Operation(summary = "Update Debit", description = "Updates a user's debit")
   @PutMapping("/{debitId}")
@@ -77,8 +86,10 @@ public class DebitController {
       @PathVariable Long debitId, @RequestBody
       DebitUpdateDTO data) {
     Long userId = SecurityUtils.getUserId(authentication);
-    DebitResponseDTO response = debitService.update(userId, debitId, data);
-    return ResponseEntity.ok().body(response);
+    return debitService.update(userId, debitId, data.name(), data.amount(), data.categoryId())
+            .map(DebitResponseDTO::fromDomain)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
   }
 
   @Operation(summary = "Delete Debit", description = "Delete a user's debit")
@@ -94,8 +105,8 @@ public class DebitController {
   public ResponseEntity<TotalDebitsResponse> getTotalDebits(Authentication authentication,
       DebitFilterDTO filter) {
     Long userId = SecurityUtils.getUserId(authentication);
-    TotalDebitsResponse response = debitService.getTotalSum(userId, filter);
-    return ResponseEntity.ok().body(response);
+    BigDecimal sum = debitService.getTotalSum(userId, filter);
+    return ResponseEntity.ok().body(TotalDebitsResponse.total(sum));
   }
 
 }

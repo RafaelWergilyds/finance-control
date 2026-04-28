@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.application.mappers;
+package com.rafaelw.financeControl.infra.outbound.persistence.repository.mappers;
 
 import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.DebitResponseDTO;
 import com.rafaelw.financeControl.domain.model.entities.Category;
@@ -29,8 +29,7 @@ public class DebitMapper {
     if(debitPersist.getCategory() != null){
       Category category = new Category();
       category.setId(debitPersist.getCategory().getId());
-      category.setName(debitPersist.getCategory().getName());
-      category.setUserId(debit.getUserId());
+      debit.setCategoryId(category.getId());
     }
 
     return debit;

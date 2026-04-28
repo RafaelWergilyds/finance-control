@@ -26,8 +26,8 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Transactional(readOnly = true)
-  public Optional<Category> findById(Long userId, Long categoryId) {
-    return categoryRepositoryPort.findByIdAndUserId(categoryId, userId);
+  public Optional<Category> findById(Long userId, Long id) {
+    return categoryRepositoryPort.findByIdAndUserId(id, userId);
   }
 
   @Transactional(readOnly = true)
