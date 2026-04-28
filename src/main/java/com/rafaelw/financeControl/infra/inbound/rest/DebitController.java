@@ -5,7 +5,7 @@ import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.DebitRequestDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.DebitResponseDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.DebitUpdateDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.TotalDebitsResponse;
-import com.rafaelw.financeControl.application.usecase.DebitService;
+import com.rafaelw.financeControl.application.service.DebitService;
 import com.rafaelw.financeControl.application.utils.PaginatedResponse;
 import com.rafaelw.financeControl.application.utils.SecurityUtils;
 import com.rafaelw.financeControl.infra.inbound.rest.headers.PaginationHeader;

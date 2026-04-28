@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.application.usecase;
+package com.rafaelw.financeControl.application.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,8 +15,8 @@ import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.DebitUpdateDTO;
 import com.rafaelw.financeControl.application.mappers.CategoryMapper;
 import com.rafaelw.financeControl.application.mappers.DebitMapper;
 import com.rafaelw.financeControl.application.mappers.UserMapper;
-import com.rafaelw.financeControl.application.usecase.exceptions.CategoryNotFoundException;
-import com.rafaelw.financeControl.application.usecase.exceptions.DebitNotFoundException;
+import com.rafaelw.financeControl.application.service.exceptions.CategoryNotFoundException;
+import com.rafaelw.financeControl.application.service.exceptions.DebitNotFoundException;
 import com.rafaelw.financeControl.application.utils.PaginatedResponse;
 import com.rafaelw.financeControl.domain.model.entities.Category;
 import com.rafaelw.financeControl.domain.model.entities.Debit;

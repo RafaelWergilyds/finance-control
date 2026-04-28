@@ -1,7 +1,7 @@
-package com.rafaelw.financeControl.application.usecase;
+package com.rafaelw.financeControl.application.service;
 
-import com.rafaelw.financeControl.application.usecase.exceptions.EmailNotRegisteredException;
-import com.rafaelw.financeControl.application.usecase.exceptions.WrongPasswordException;
+import com.rafaelw.financeControl.application.service.exceptions.EmailNotRegisteredException;
+import com.rafaelw.financeControl.application.service.exceptions.WrongPasswordException;
 import com.rafaelw.financeControl.infra.outbound.persistence.entities.UserPersist;
 import com.rafaelw.financeControl.infra.outbound.persistence.repository.JpaUserRepository;
 import java.time.Instant;

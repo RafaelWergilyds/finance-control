@@ -1,11 +1,11 @@
 package com.rafaelw.financeControl.infra.inbound.rest;
 
+import com.rafaelw.financeControl.domain.model.entities.Category;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.category.CategoryRequestDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.category.CategoryResponseDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.category.CategoryUpdateDTO;
-import com.rafaelw.financeControl.application.usecase.CategoryService;
+import com.rafaelw.financeControl.application.service.CategoryServiceImpl;
 import com.rafaelw.financeControl.application.utils.SecurityUtils;
-import java.net.URI;
 import java.util.List;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/categories")
@@ -28,23 +27,27 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class CategoryController {
 
   @Autowired
-  private CategoryService categoryService;
+  private CategoryServiceImpl categoryService;
 
   @Operation(summary = "Find Category by ID", description = "Finds a category by its ID for the authenticated user")
   @GetMapping("/{categoryId}")
   public ResponseEntity<CategoryResponseDTO> findById(Authentication authentication,
       @PathVariable Long categoryId) {
+
     Long userId = SecurityUtils.getUserId(authentication);
-    CategoryResponseDTO response = categoryService.findById(userId, categoryId);
-    return ResponseEntity.ok().body(response);
+    return categoryService.findById(userId, categoryId)
+            .map(CategoryResponseDTO::fromDomain)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
   }
 
   @Operation(summary = "Find All User's Categories", description = "Retrieves all categories associated with the authenticated user")
   @GetMapping
   public ResponseEntity<List<CategoryResponseDTO>> findAllByUser(Authentication authentication) {
     Long userId = SecurityUtils.getUserId(authentication);
-    List<CategoryResponseDTO> response = categoryService.findAll(userId);
-    return ResponseEntity.ok().body(response);
+    List<Category> list = categoryService.findAll(userId);
+
+    return ResponseEntity.ok().body(list.stream().map(CategoryResponseDTO::fromDomain).toList());
   }
 
   @Operation(summary = "Create Category", description = "Creates a new category for the authenticated user")
@@ -52,11 +55,9 @@ public class CategoryController {
   public ResponseEntity<CategoryResponseDTO> createCategory(Authentication authentication,
       @RequestBody CategoryRequestDTO data) {
     Long userId = SecurityUtils.getUserId(authentication);
-    CategoryResponseDTO response = categoryService.create(userId, data);
-    URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-        .path("/{id}")
-        .buildAndExpand(response.id()).toUri();
-    return ResponseEntity.created(uri).body(response);
+    Category category = categoryService.create(userId, data.name());
+
+    return ResponseEntity.ok().body(CategoryResponseDTO.fromDomain(category));
   }
 
   @Operation(summary = "Update Category", description = "Updates an existing category for the authenticated user")
@@ -64,8 +65,11 @@ public class CategoryController {
   public ResponseEntity<CategoryResponseDTO> update(Authentication authentication,
       @PathVariable Long categoryId, @RequestBody CategoryUpdateDTO data) {
     Long userId = SecurityUtils.getUserId(authentication);
-    CategoryResponseDTO response = categoryService.update(userId, categoryId, data);
-    return ResponseEntity.ok().body(response);
+
+    return categoryService.update(userId, categoryId, data.name())
+            .map(CategoryResponseDTO::fromDomain)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
   }
 
   @Operation(summary = "Delete Category", description = "Deletes a category for the authenticated user")

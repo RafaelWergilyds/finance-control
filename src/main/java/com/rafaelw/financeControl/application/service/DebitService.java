@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.application.usecase;
+package com.rafaelw.financeControl.application.service;
 
 import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.DebitFilterDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.DebitRequestDTO;
@@ -8,9 +8,9 @@ import com.rafaelw.financeControl.infra.inbound.rest.dto.debit.TotalDebitsRespon
 import com.rafaelw.financeControl.application.mappers.CategoryMapper;
 import com.rafaelw.financeControl.application.mappers.DebitMapper;
 import com.rafaelw.financeControl.application.mappers.UserMapper;
-import com.rafaelw.financeControl.application.usecase.exceptions.CategoryNotFoundException;
-import com.rafaelw.financeControl.application.usecase.exceptions.DebitNotFoundException;
-import com.rafaelw.financeControl.application.usecase.exceptions.UserNotFoundException;
+import com.rafaelw.financeControl.application.service.exceptions.CategoryNotFoundException;
+import com.rafaelw.financeControl.application.service.exceptions.DebitNotFoundException;
+import com.rafaelw.financeControl.application.service.exceptions.UserNotFoundException;
 import com.rafaelw.financeControl.application.utils.PaginatedResponse;
 import com.rafaelw.financeControl.application.utils.Pagination;
 import com.rafaelw.financeControl.domain.model.entities.Category;

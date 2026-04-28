@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.application.usecase;
+package com.rafaelw.financeControl.application.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -25,7 +25,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
-class UserUseCaseTest {
+class UserServiceTest {
 
   @Mock
   private UserRepositoryPort userRepositoryPort;
@@ -34,7 +34,7 @@ class UserUseCaseTest {
   private PasswordEncoder passwordEncoder;
 
   @InjectMocks
-  private UserUseCaseImpl service;
+  private UserServiceImpl service;
 
   @BeforeEach
   void setup() {

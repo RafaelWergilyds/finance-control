@@ -1,4 +1,4 @@
-package com.rafaelw.financeControl.application.usecase.exceptions;
+package com.rafaelw.financeControl.application.service.exceptions;
 
 import com.rafaelw.financeControl.domain.services.exceptions.InvalidCredentialsException;
 

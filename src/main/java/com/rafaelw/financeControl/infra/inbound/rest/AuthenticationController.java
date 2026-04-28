@@ -2,7 +2,7 @@ package com.rafaelw.financeControl.infra.inbound.rest;
 
 import com.rafaelw.financeControl.infra.inbound.rest.dto.auth.AuthenticationRequest;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.auth.AuthenticationResponse;
-import com.rafaelw.financeControl.application.usecase.AuthenticationService;
+import com.rafaelw.financeControl.application.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

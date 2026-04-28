@@ -1,6 +1,6 @@
-package com.rafaelw.financeControl.application.usecase;
+package com.rafaelw.financeControl.application.service;
 
-import com.rafaelw.financeControl.application.ports.in.UserUseCase;
+import com.rafaelw.financeControl.application.ports.in.UserService;
 import com.rafaelw.financeControl.application.ports.out.UserRepositoryPort;
 import com.rafaelw.financeControl.domain.model.entities.User;
 import com.rafaelw.financeControl.domain.factories.UserFactory;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserUseCaseImpl implements UserUseCase {
+public class UserServiceImpl implements UserService {
 
   @Autowired
   private final UserRepositoryPort userRepositoryPort;
@@ -23,7 +23,7 @@ public class UserUseCaseImpl implements UserUseCase {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
-  public UserUseCaseImpl(UserRepositoryPort userRepositoryPort) {
+  public UserServiceImpl(UserRepositoryPort userRepositoryPort) {
     this.userRepositoryPort = userRepositoryPort;
   }
 

@@ -1,6 +1,6 @@
 package com.rafaelw.financeControl.infra.inbound.rest.exceptions;
 
-import com.rafaelw.financeControl.application.usecase.exceptions.NotFoundException;
+import com.rafaelw.financeControl.application.service.exceptions.NotFoundException;
 import com.rafaelw.financeControl.domain.services.exceptions.InvalidCredentialsException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;

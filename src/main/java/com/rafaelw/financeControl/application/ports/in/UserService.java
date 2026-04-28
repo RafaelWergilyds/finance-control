@@ -5,7 +5,7 @@ import com.rafaelw.financeControl.domain.model.entities.User;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserUseCase {
+public interface UserService {
     User create(String name, String email, String password);
     Optional<User> findById(Long id);
     List<User> findAll();

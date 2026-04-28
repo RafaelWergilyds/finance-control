@@ -3,7 +3,7 @@ package com.rafaelw.financeControl.infra.inbound.rest;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.user.UserRequestDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.user.UserResponseDTO;
 import com.rafaelw.financeControl.infra.inbound.rest.dto.user.UserUpdateDTO;
-import com.rafaelw.financeControl.application.usecase.UserUseCaseImpl;
+import com.rafaelw.financeControl.application.service.UserServiceImpl;
 import com.rafaelw.financeControl.application.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,20 +27,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   @Autowired
-  private UserUseCaseImpl userUseCase;
-
+  private UserServiceImpl userService;
 
   @Operation(summary = "Find Users", description = "Search for all users in the system")
   @GetMapping
   public ResponseEntity<List<UserResponseDTO>> findAll() {
-    var list = userUseCase.findAll();
+    var list = userService.findAll();
     return ResponseEntity.ok().body(list.stream().map(UserResponseDTO::fromDomain).toList());
   }
 
   @Operation(summary = "Find by Id", description = "Find a user by id")
   @GetMapping("/{id}")
   public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id) {
-    return userUseCase.findById(id)
+    return userService.findById(id)
             .map(UserResponseDTO::fromDomain)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
@@ -49,7 +48,7 @@ public class UserController {
   @Operation(summary = "Create User", description = "Create a user with name, email and password")
   @PostMapping
   public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserRequestDTO data) {
-    var user = userUseCase.create(data.name(), data.email(), data.password());
+    var user = userService.create(data.name(), data.email(), data.password());
     return ResponseEntity.ok(UserResponseDTO.fromDomain(user));
   }
 
@@ -57,7 +56,7 @@ public class UserController {
   @PutMapping("/{id}")
   public ResponseEntity<UserResponseDTO> update(@PathVariable Long id,
       @Valid @RequestBody UserUpdateDTO data) {
-    return userUseCase.update(id, data.name(), data.email(), data.password())
+    return userService.update(id, data.name(), data.email(), data.password())
             .map(UserResponseDTO::fromDomain)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
@@ -66,7 +65,7 @@ public class UserController {
   @Operation(summary = "Delete User", description = "Delete a existing user by id")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
-    userUseCase.delete(id);
+    userService.delete(id);
     return ResponseEntity.noContent().build();
   }
 
@@ -74,7 +73,7 @@ public class UserController {
   @GetMapping("/profile")
   public ResponseEntity<UserResponseDTO> getProfile(Authentication authentication) {
     Long userId = SecurityUtils.getUserId(authentication);
-    return userUseCase.findById(userId)
+    return userService.findById(userId)
             .map(UserResponseDTO::fromDomain)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
@@ -85,7 +84,7 @@ public class UserController {
   public ResponseEntity<UserResponseDTO> updateProfile(Authentication authentication,
       @Valid @RequestBody UserUpdateDTO data) {
     Long userId = SecurityUtils.getUserId(authentication);
-    return userUseCase.update(userId, data.name(), data.email(), data.password())
+    return userService.update(userId, data.name(), data.email(), data.password())
             .map(UserResponseDTO::fromDomain)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
