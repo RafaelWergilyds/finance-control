@@ -27,6 +27,15 @@ public class UserServiceImpl implements UserService {
     this.userRepositoryPort = userRepositoryPort;
   }
 
+  @Transactional
+  public User create(String name, String email, String password) {
+    verifyEmailAlreadyExists(email);
+
+    User user = UserFactory.create(name, email, password, passwordEncoder);
+
+    return userRepositoryPort.save(user);
+  }
+
   @Transactional(readOnly = true)
   public List<User> findAll() {
     return userRepositoryPort.findAll();
@@ -35,15 +44,6 @@ public class UserServiceImpl implements UserService {
   @Transactional(readOnly = true)
   public Optional<User> findById(Long id) {
     return userRepositoryPort.findById(id);
-  }
-
-  @Transactional
-  public User create(String name, String email, String password) {
-    verifyEmailAlreadyExists(email);
-
-    User user = UserFactory.create(name, email, password, passwordEncoder);
-
-    return userRepositoryPort.save(user);
   }
 
   @Transactional

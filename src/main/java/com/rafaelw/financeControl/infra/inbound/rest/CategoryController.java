@@ -36,7 +36,7 @@ public class CategoryController {
     Long userId = SecurityUtils.getUserId(authentication);
     Category category = categoryService.create(userId, data.name());
 
-    return ResponseEntity.ok().body(CategoryResponseDTO.fromDomain(category));
+    return ResponseEntity.status(201).body(CategoryResponseDTO.fromDomain(category));
   }
 
   @Operation(summary = "Find Category by ID", description = "Finds a category by its ID for the authenticated user")

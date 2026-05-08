@@ -35,8 +35,13 @@ public class DeleteCategoryTest extends DBContainer {
     String token = given().contentType(ContentType.JSON).body(login).when().post("/auth/login")
         .then().statusCode(200).extract().path("accessToken");
 
+    Integer categoryId = given().header("Authorization", "Bearer " + token)
+        .contentType(ContentType.JSON)
+        .body("{\"name\": \"DeleteMe\"}")
+        .post("/categories").then().statusCode(201).extract().path("id");
+
     given()
         .header("Authorization", "Bearer " + token)
-        .delete("/categories/1").then().statusCode(204);
+        .delete("/categories/" + categoryId).then().statusCode(204);
   }
 }

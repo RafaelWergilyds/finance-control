@@ -48,7 +48,7 @@ public class DebitController {
       @RequestBody DebitRequestDTO data) {
     Long userId = SecurityUtils.getUserId(authentication);
     Debit debit = debitService.create(userId, data.name(), data.amount(), data.categoryId());
-    return ResponseEntity.ok().body(DebitResponseDTO.fromDomain(debit));
+    return ResponseEntity.status(201).body(DebitResponseDTO.fromDomain(debit));
   }
 
   @Operation(summary = "Find by Id", description = "find a debit by id")

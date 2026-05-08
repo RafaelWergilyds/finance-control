@@ -33,7 +33,7 @@ public class UserController {
   @PostMapping
   public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserRequestDTO data) {
     var user = userService.create(data.name(), data.email(), data.password());
-    return ResponseEntity.ok(UserResponseDTO.fromDomain(user));
+    return ResponseEntity.status(201).body(UserResponseDTO.fromDomain(user));
   }
 
   @Operation(summary = "Find Users", description = "Search for all users in the system")

@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -26,8 +27,18 @@ public class TestConfig {
   private JpaDebitRepository debitRepository;
   @Autowired
   private PasswordEncoder passwordEncoder;
+  @Autowired
+  private JdbcTemplate jdbcTemplate;
 
   public void setup() {
+    debitRepository.deleteAll();
+    categoryRepository.deleteAll();
+    userRepository.deleteAll();
+
+    jdbcTemplate.execute("ALTER SEQUENCE users_seq RESTART WITH 1");
+    jdbcTemplate.execute("ALTER SEQUENCE categories_seq RESTART WITH 1");
+    jdbcTemplate.execute("ALTER SEQUENCE debits_seq RESTART WITH 1");
+
     UserPersist user = new UserPersist(null, "Joel", "joel@gmail.com",
         passwordEncoder.encode("12345678"), true, Role.ADMIN,
         null, null, Instant.now(), Instant.now());
